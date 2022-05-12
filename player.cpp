@@ -1,15 +1,16 @@
 #include "player.hpp"
 
-typedef struct History
+struct History
 {
     Player::piece board[8][8];
     History* prev;
-} History_t ;
+};
 
 struct Player::Impl
 {
     Player::piece lastBoard[8][8]; //Board di gioco
-    History_t* boardOffset;
+    History* boardOffset;
+    int player_nr;
 };
 
 Player::Player(int player_nr)
@@ -18,6 +19,7 @@ Player::Player(int player_nr)
         throw player_exception{player_exception::index_out_of_bounds, "Player value not valid."};
         
     this->pimpl = new Impl;
+    this->pimpl->player_nr = player_nr;
 
 }
 Player::~Player()
@@ -50,7 +52,7 @@ Player::piece Player::operator()(int r, int c, int history_offset) const
         temp = temp->prev;
     }
 
-    if(history_offset)
+    if(history_offset || temp == nullptr)
         throw player_exception{player_exception::index_out_of_bounds, "Board with the given offset does not exist."};
 
     return temp->board[r][c];
