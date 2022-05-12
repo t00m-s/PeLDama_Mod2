@@ -89,6 +89,9 @@ public:
 	 */
 	int recurrence() const;
 	
+	void print() const;
+
+	void printHistory() const;
 private:
 
 	struct Impl;

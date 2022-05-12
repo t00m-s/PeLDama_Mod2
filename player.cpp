@@ -15,8 +15,8 @@ struct Player::Impl
 Player::Player(int player_nr)
 {
     if(!(player_nr == 1 || player_nr == 2))
-        std::cout << "mammt";
-
+        throw player_exception{player_exception::index_out_of_bounds, "Player value not valid."};
+        
     this->pimpl = new Impl;
 
 }
@@ -61,7 +61,7 @@ void Player::load_board(const std::string &filename)
     // std::getline(stream, doveSalvare)
 }
 
-void Player::init_board(const std::string &filename) const
+void Player::init_board(const std::string &filename) const //done
 {
     std::ofstream writeBoard;
     writeBoard.open(filename);   
@@ -74,10 +74,10 @@ void Player::init_board(const std::string &filename) const
     {
         if(i % 2)
             for(size_t j = 0; j < 8; ++j)
-                this->pimpl->lastBoard[i][j] = j % 2 ? Player::piece::x : Player::piece::e;
+                this->pimpl->lastBoard[i][j] = j % 2 ? Player::piece::e : Player::piece::x;
         else
             for(size_t j = 0; j < 8; ++j)
-                this->pimpl->lastBoard[i][j] = j % 2 ? Player::piece::e : Player::piece::x;
+                this->pimpl->lastBoard[i][j] = j % 2 ? Player::piece::x : Player::piece::e;
     }
 
     for(size_t i = 3; i < 5; ++i)
@@ -89,10 +89,10 @@ void Player::init_board(const std::string &filename) const
     {
         if(i % 2)
             for(size_t j = 0; j < 8; ++j)
-                this->pimpl->lastBoard[i][j] = j % 2 ? Player::piece::o : Player::piece::e;
+                this->pimpl->lastBoard[i][j] = j % 2 ? Player::piece::e : Player::piece::o;
         else
             for(size_t j = 0; j < 8; ++j)
-                this->pimpl->lastBoard[i][j] = j % 2 ? Player::piece::e : Player::piece::o;
+                this->pimpl->lastBoard[i][j] = j % 2 ? Player::piece::o : Player::piece::e;
     }
 
     for(size_t i = 0; i < 8; ++i)
@@ -119,7 +119,7 @@ void Player::init_board(const std::string &filename) const
                     break;
             }
         }
-        if(i != 7)
+        if(i < 7)
             row.append("\n");
         writeBoard << row;
     }
@@ -165,4 +165,38 @@ bool Player::loses() const
 int Player::recurrence() const
 {
     return 0;
+}
+
+void Player::print() const
+{
+    for(int i = 7; i >= 0; --i)
+    {
+        for(size_t j = 0; j < 8; ++j)
+        {
+            switch(this->pimpl->lastBoard[i][j])
+            {
+                case Player::piece::o:
+                    std::cout << "o";
+                    break;
+                case Player::piece::O:
+                    std::cout << "O";
+                    break;
+                case Player::piece::x:
+                    std::cout << "x";
+                    break;
+                case Player::piece::X:
+                    std::cout << "X";
+                    break;
+                default:
+                    std::cout << " ";
+                    break;
+            }
+        }
+        std::cout << std::endl;
+    }
+}
+
+void Player::printHistory() const
+{
+
 }
