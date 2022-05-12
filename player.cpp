@@ -59,6 +59,16 @@ Player::piece Player::operator()(int r, int c, int history_offset) const
 void Player::load_board(const std::string &filename)
 {
     // std::getline(stream, doveSalvare)
+    History* newHead = new History;
+    newHead->prev = this->pimpl->boardOffset;
+    this->pimpl->boardOffset = newHead;
+    for(size_t i = 0; i < 8; ++i)
+    {
+        for(size_t j = 0; j < 8; ++j)
+        {
+            newHead->board[i][j] = Player::piece::e; 
+        }
+    }
 }
 
 void Player::init_board(const std::string &filename) const //done
