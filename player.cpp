@@ -187,9 +187,37 @@ void Player::init_board(const std::string &filename) const //done
 
 void Player::store_board(const std::string& filename, int history_offset = 0) const
 {
+    int cnt = 0;
+    std::ofstream writer(filename, std::ios::trunc);
+    if(writer)
+    {
+        History* temp = this->pimpl->boardOffset;
+        while(temp && cnt != history_offset)
+        {
+            ++cnt;
+            temp = temp->prev;
+        }
+        
+        if(!temp || cnt != history_offset)
+            throw player_exception{player_exception::index_out_of_bounds, "Board with chosen offset does not exist."};
 
+        for(size_t i = 0; i < 8; ++i)
+        {
+            for(size_t j = 0; j < 8; ++j)
+            {
+                switch(temp->board[i][j])
+                {
+                    case Player::piece::x:
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }
+        
+    }
+    writer.close();
 }
-
 
 void Player::move()
 {
