@@ -22,8 +22,17 @@ Player::Player(int player_nr)
     this->pimpl->player_nr = player_nr;
 
 }
+
+void deleteHistory(History* hist)
+{
+    if(hist->prev)
+        deleteHistory(hist->prev);
+    
+    delete hist;
+}
 Player::~Player()
 {
+    deleteHistory(this->pimpl->boardOffset);
     delete pimpl;
 }
 
