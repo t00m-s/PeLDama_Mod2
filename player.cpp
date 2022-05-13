@@ -30,6 +30,7 @@ void deleteHistory(History* hist)
     
     delete hist;
 }
+
 Player::~Player()
 {
     deleteHistory(this->pimpl->boardOffset);
@@ -69,27 +70,63 @@ Player::piece Player::operator()(int r, int c, int history_offset) const
 
 void Player::load_board(const std::string &filename)
 {
-    // std::getline(stream, doveSalvare)
+    std::fstream loader;
+    loader.open(filename);
+    if(!loader)
+        throw player_exception{player_exception::missing_file, "Wrong file format."};
+
+    size_t oPieces = 0;
+    size_t xPieces = 0;
     History* newHead = new History;
-    newHead->prev = this->pimpl->boardOffset;
+    newHead->prev = this->pimpl->boardOffset; //Attacco in testa
     this->pimpl->boardOffset = newHead;
     for(size_t i = 0; i < 8; ++i)
     {
+        std::string temp;
+        std::getline(loader, temp);
         for(size_t j = 0; j < 8; ++j)
-        {
-            newHead->board[i][j] = Player::piece::e; 
+        {   
+            if(i % 2 == 0 && j % 2 == 0 && temp[j] != ' ')
+                throw player_exception{player_exception::invalid_board, "Pieces on while cells are not allowed."};
+
+            if(i % 2 != 0 && j % 2 != 0 && temp[j] != ' ')
+                throw player_exception{player_exception::invalid_board, "Pieces on while cells are not allowed."};
+
+            switch(temp[j])
+            {
+                case 'x':
+                    this->pimpl->boardOffset->board[i][j] = Player::piece::x;
+                    ++xPieces;
+                    break;
+                case 'X':
+                    this->pimpl->boardOffset->board[i][j] = Player::piece::X;
+                    ++xPieces;
+                    break;
+                case 'o':
+                    this->pimpl->boardOffset->board[i][j] = Player::piece::o;
+                    ++oPieces;
+                    break;
+                case 'O':
+                    this->pimpl->boardOffset->board[i][j] = Player::piece::O;
+                    ++oPieces;
+                    break;
+                default:
+                    this->pimpl->boardOffset->board[i][j] = Player::piece::e;
+                    break;
+            }
         }
     }
+    loader.close();
+    if(oPieces > 12 || xPieces > 12)
+        throw player_exception{player_exception::invalid_board, "Too many pieces."};
+    
 }
 
 void Player::init_board(const std::string &filename) const //done
 {
     std::ofstream writeBoard;
     writeBoard.open(filename);   
-    // 1 3 5 7
-    // 0 2 4 6
-    // 1 3 5 7
-
+    
     //Player::piece::x
     for(size_t i = 0; i < 3; ++i)
     {
@@ -147,6 +184,12 @@ void Player::init_board(const std::string &filename) const //done
     writeBoard.close(); // Il distruttore si arrangia da solo teoricamente
 
 }
+
+void Player::store_board(const std::string& filename, int history_offset = 0) const
+{
+
+}
+
 
 void Player::move()
 {
