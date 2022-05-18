@@ -28,6 +28,7 @@ public:
 	 * player 2 starts in the high row values (rows 5,6,7).
 	 */ 
 	Player(int player_nr = 1);
+
 	~Player(); //remember to release the allocated memory!
 	
 	Player(const Player&); //copy constructor

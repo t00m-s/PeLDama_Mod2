@@ -3,25 +3,16 @@
 int main()
 {
     Player p1;
-    //p1.init_board("board1.txt");
-    p1.print();
+    p1.init_board("xd.txt");
     try
     {
-        p1.load_board("board1.txt");
+        p1.load_board("xd.txt");
+        p1.printHistory();
     }
     catch(player_exception err)
     {
-        std::cout << err.msg << std::endl;
+        std::cout << "Sgroda" << std::endl;
     }
 
-    try
-    {
-        std::cout << p1(0, 1, 0) << std::endl; 
-    }
-    catch(player_exception err)
-    {
-        std::cout << err.msg << std::endl;
-    }
-    
     return 0;
 }

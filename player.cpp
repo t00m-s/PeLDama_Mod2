@@ -19,8 +19,9 @@ Player::Player(int player_nr)
         throw player_exception{player_exception::index_out_of_bounds, "Player value not valid."};
         
     this->pimpl = new Impl;
+    this->pimpl->boardOffset = new History;
+    this->pimpl->boardOffset->prev = nullptr;
     this->pimpl->player_nr = player_nr;
-
 }
 
 void deleteHistory(History* hist)
@@ -37,10 +38,15 @@ Player::~Player()
     delete pimpl;
 }
 
+Player::Player(const Player& rhs)
+{
+}
+
 Player& Player::operator=(const Player &rhs)
 {
     if(this != &rhs)
-    {}
+    {
+    }
     return *this;
 }
 
@@ -95,23 +101,23 @@ void Player::load_board(const std::string &filename)
             switch(temp[j])
             {
                 case 'x':
-                    this->pimpl->boardOffset->board[i][j] = Player::piece::x;
+                    newHead->board[i][j] = Player::piece::x;
                     ++xPieces;
                     break;
                 case 'X':
-                    this->pimpl->boardOffset->board[i][j] = Player::piece::X;
+                    newHead->board[i][j] = Player::piece::X;
                     ++xPieces;
                     break;
                 case 'o':
-                    this->pimpl->boardOffset->board[i][j] = Player::piece::o;
+                    newHead->board[i][j] = Player::piece::o;
                     ++oPieces;
                     break;
                 case 'O':
-                    this->pimpl->boardOffset->board[i][j] = Player::piece::O;
+                    newHead->board[i][j] = Player::piece::O;
                     ++oPieces;
                     break;
                 default:
-                    this->pimpl->boardOffset->board[i][j] = Player::piece::e;
+                    newHead->board[i][j] = Player::piece::e;
                     break;
             }
         }
@@ -127,7 +133,7 @@ void Player::init_board(const std::string &filename) const //done
     std::ofstream writeBoard;
     writeBoard.open(filename);   
     
-    //Player::piece::x
+    //x
     for(size_t i = 0; i < 3; ++i)
     {
         if(i % 2)
@@ -138,11 +144,12 @@ void Player::init_board(const std::string &filename) const //done
                 this->pimpl->lastBoard[i][j] = j % 2 ? Player::piece::x : Player::piece::e;
     }
 
+    //empty
     for(size_t i = 3; i < 5; ++i)
         for(size_t j = 0; j < 8; ++j)
             this->pimpl->lastBoard[i][j] = Player::piece::e;
 
-    //Player::piece::o
+    //o
     for(size_t i = 5; i < 8; ++i)
     {
         if(i % 2)
@@ -153,6 +160,7 @@ void Player::init_board(const std::string &filename) const //done
                 this->pimpl->lastBoard[i][j] = j % 2 ? Player::piece::o : Player::piece::e;
     }
 
+    //Salva su file
     for(size_t i = 0; i < 8; ++i)
     {
         std::string row = "";
@@ -185,14 +193,14 @@ void Player::init_board(const std::string &filename) const //done
 
 }
 
-void Player::store_board(const std::string& filename, int history_offset = 0) const
+void Player::store_board(const std::string& filename, int history_offset) const
 {
     int cnt = 0;
     std::ofstream writer(filename, std::ios::trunc);
     if(writer)
     {
         History* temp = this->pimpl->boardOffset;
-        while(temp && cnt != history_offset)
+        while(temp && cnt < history_offset)
         {
             ++cnt;
             temp = temp->prev;
@@ -203,29 +211,50 @@ void Player::store_board(const std::string& filename, int history_offset = 0) co
 
         for(size_t i = 0; i < 8; ++i)
         {
+            std::string row = "";
             for(size_t j = 0; j < 8; ++j)
             {
                 switch(temp->board[i][j])
                 {
                     case Player::piece::x:
+                        row.append("x");
+                        break;
+                    case Player::piece::X:
+                        row.append("X");
+                        break;
+                    case Player::piece::o:
+                        row.append("o");
+                        break;
+                    case Player::piece::O:
+                        row.append("O");
                         break;
                     default:
+                        row.append(" ");
                         break;
                 }
             }
-        }
-        
+            if(i < 7)
+                row.append("\n");
+            
+            writer << row;
+        }   
     }
     writer.close();
 }
 
+//
+
 void Player::move()
 {
+    //https://www.youtube.com/watch?v=l-hh51ncgDI
+    //Spiegazione 
+
 
 }
 
 bool Player::valid_move() const
 {
+    //Trovo dov'è il cambio 
     return false;
 }
 
@@ -290,5 +319,34 @@ void Player::print() const
 
 void Player::printHistory() const
 {
-
+    History* temp = this->pimpl->boardOffset;
+    while(temp->prev) //Apparently esiste una seconda board quando creo che è piena di x wtf
+    {
+        for(int i = 7; i >= 0; --i)
+        {
+            for(size_t j = 0; j < 8; ++j)
+            {
+                switch(temp->board[i][j])
+                {
+                    case Player::piece::o:
+                        std::cout << "o";
+                        break;
+                    case Player::piece::O:
+                        std::cout << "O";
+                        break;
+                    case Player::piece::x:
+                        std::cout << "x";
+                        break;
+                    case Player::piece::X:
+                        std::cout << "X";
+                        break;
+                    default:
+                        std::cout << " ";
+                        break;
+                }
+            }
+            std::cout << std::endl;
+        }
+        temp = temp->prev;
+    }
 }
