@@ -1,17 +1,12 @@
 [
 {
   "directory": "/home/t00m-s/Development/PeLDama_Mod2/build",
-  "command": "/usr/bin/g++ -I/home/t00m-s/Development/PeLDama_Mod2/. -Wall -Wextra -g -std=gnu++14 -o CMakeFiles/dama.dir/play.cpp.o -c /home/t00m-s/Development/PeLDama_Mod2/play.cpp",
-  "file": "/home/t00m-s/Development/PeLDama_Mod2/play.cpp"
-},
-{
-  "directory": "/home/t00m-s/Development/PeLDama_Mod2/build",
-  "command": "/usr/bin/g++ -I/home/t00m-s/Development/PeLDama_Mod2/. -Wall -Wextra -g -std=gnu++14 -o CMakeFiles/dama.dir/verify.cpp.o -c /home/t00m-s/Development/PeLDama_Mod2/verify.cpp",
-  "file": "/home/t00m-s/Development/PeLDama_Mod2/verify.cpp"
-},
-{
-  "directory": "/home/t00m-s/Development/PeLDama_Mod2/build",
-  "command": "/usr/bin/g++ -I/home/t00m-s/Development/PeLDama_Mod2/. -Wall -Wextra -g -std=gnu++14 -o CMakeFiles/dama.dir/player.cpp.o -c /home/t00m-s/Development/PeLDama_Mod2/player.cpp",
+  "command": "/usr/bin/g++ -g -std=gnu++14 -o CMakeFiles/dama_clion.dir/player.cpp.o -c /home/t00m-s/Development/PeLDama_Mod2/player.cpp",
   "file": "/home/t00m-s/Development/PeLDama_Mod2/player.cpp"
+},
+{
+  "directory": "/home/t00m-s/Development/PeLDama_Mod2/build",
+  "command": "/usr/bin/g++ -g -std=gnu++14 -o CMakeFiles/dama_clion.dir/testMain.cpp.o -c /home/t00m-s/Development/PeLDama_Mod2/testMain.cpp",
+  "file": "/home/t00m-s/Development/PeLDama_Mod2/testMain.cpp"
 }
 ]

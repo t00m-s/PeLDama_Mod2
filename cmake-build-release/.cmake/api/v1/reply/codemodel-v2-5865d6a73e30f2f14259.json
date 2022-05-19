@@ -6,10 +6,10 @@
 			[
 				{
 					"build" : ".",
-					"jsonFile" : "directory-.-Debug-f5ebdc15457944623624.json",
+					"jsonFile" : "directory-.-Release-f5ebdc15457944623624.json",
 					"minimumCMakeVersion" : 
 					{
-						"string" : "3.22"
+						"string" : "3.20"
 					},
 					"projectIndex" : 0,
 					"source" : ".",
@@ -19,7 +19,7 @@
 					]
 				}
 			],
-			"name" : "Debug",
+			"name" : "Release",
 			"projects" : 
 			[
 				{
@@ -27,7 +27,7 @@
 					[
 						0
 					],
-					"name" : "PeLDama_Mod2",
+					"name" : "Dama",
 					"targetIndexes" : 
 					[
 						0
@@ -38,9 +38,9 @@
 			[
 				{
 					"directoryIndex" : 0,
-					"id" : "dama::@6890427a1f51a3e7e1df",
-					"jsonFile" : "target-dama-Debug-a7f461829d3b745a152a.json",
-					"name" : "dama",
+					"id" : "dama_clion::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-dama_clion-Release-6fe38fd65175135bad5b.json",
+					"name" : "dama_clion",
 					"projectIndex" : 0
 				}
 			]
@@ -49,7 +49,7 @@
 	"kind" : "codemodel",
 	"paths" : 
 	{
-		"build" : "/home/t00m-s/Development/PeLDama_Mod2/build",
+		"build" : "/home/t00m-s/Development/PeLDama_Mod2/cmake-build-release",
 		"source" : "/home/t00m-s/Development/PeLDama_Mod2"
 	},
 	"version" : 

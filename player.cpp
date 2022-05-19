@@ -265,22 +265,119 @@ void Player::pop()
 
 bool Player::wins(int player_nr) const
 {
-    return false;
+    if(player_nr != 1 || player_nr != 2)
+        throw player_exception{player_exception::index_out_of_bounds, "Player number not valid."};
+
+    bool win = false;
+
+    if(player_nr == 1) //'x'
+    {
+        size_t otherPieces = 0;
+        
+        for(size_t i = 0; i < 8; ++i)
+            for(size_t j = 0; j < 8; ++j)
+                switch(this->pimpl->boardOffset->board[i][j])
+                {
+                    case Player::piece::o:
+                        ++otherPieces;
+                        break;
+                    case Player::piece::O:
+                        ++otherPieces;
+                        break;
+                    default:
+                        break;
+                }
+
+        if(!otherPieces)
+            win = true;
+    }
+
+    if(player_nr == 2) // 'o'
+    {
+        size_t otherPieces = 0;
+        
+        for(size_t i = 0; i < 8; ++i)
+            for(size_t j = 0; j < 8; ++j)
+                switch(this->pimpl->boardOffset->board[i][j])
+                {
+                    case Player::piece::x:
+                        ++otherPieces;
+                        break;
+                    case Player::piece::X:
+                        ++otherPieces;
+                        break;
+                    default:
+                        break;
+                }
+
+        if(!otherPieces)
+            win = true;
+    }
+
+
+    return win;
 }
 
 bool Player::wins() const
 {
-    return false;
+    return wins(this->pimpl->player_nr);
 }
 
 bool Player::loses(int player_nr) const
 {
-    return false;
+    if(player_nr != 1 || player_nr != 2)
+        throw player_exception{player_exception::index_out_of_bounds, "Player number not valid."};
+    
+    bool lost = false;
+    if(player_nr == 1) //'x'
+    {
+        size_t myPieces = 0;
+        
+        for(size_t i = 0; i < 8; ++i)
+            for(size_t j = 0; j < 8; ++j)
+                switch(this->pimpl->boardOffset->board[i][j])
+                {
+                    case Player::piece::x:
+                        ++myPieces;
+                        break;
+                    case Player::piece::X:
+                        ++myPieces;
+                        break;
+                    default:
+                        break;
+                }
+
+        if(!myPieces)
+            lost = true;
+    }
+
+    if(player_nr == 2) // 'o'
+    {
+        size_t myPieces = 0;
+        
+        for(size_t i = 0; i < 8; ++i)
+            for(size_t j = 0; j < 8; ++j)
+                switch(this->pimpl->boardOffset->board[i][j])
+                {
+                    case Player::piece::o:
+                        ++myPieces;
+                        break;
+                    case Player::piece::O:
+                        ++myPieces;
+                        break;
+                    default:
+                        break;
+                }
+
+        if(!myPieces)
+            lost = true;
+    }
+    return lost;
 }
 
 bool Player::loses() const
 {
-    return false;
+    return loses(this->pimpl->player_nr);
 }
 
 int Player::recurrence() const

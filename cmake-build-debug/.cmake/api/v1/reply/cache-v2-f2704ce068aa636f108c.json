@@ -43,7 +43,7 @@
 				}
 			],
 			"type" : "STRING",
-			"value" : "Release"
+			"value" : "Debug"
 		},
 		{
 			"name" : "CMAKE_CACHEFILE_DIR",
@@ -55,7 +55,7 @@
 				}
 			],
 			"type" : "INTERNAL",
-			"value" : "/home/t00m-s/Development/PeLDama_Mod2/cmake-build-release"
+			"value" : "/home/t00m-s/Development/PeLDama_Mod2/cmake-build-debug"
 		},
 		{
 			"name" : "CMAKE_CACHE_MAJOR_VERSION",
@@ -831,7 +831,7 @@
 				}
 			],
 			"type" : "STATIC",
-			"value" : "PeLDama_Mod2"
+			"value" : "Dama"
 		},
 		{
 			"name" : "CMAKE_RANLIB",
@@ -1114,6 +1114,42 @@
 			"value" : "FALSE"
 		},
 		{
+			"name" : "Dama_BINARY_DIR",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : "Value Computed by CMake"
+				}
+			],
+			"type" : "STATIC",
+			"value" : "/home/t00m-s/Development/PeLDama_Mod2/cmake-build-debug"
+		},
+		{
+			"name" : "Dama_IS_TOP_LEVEL",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : "Value Computed by CMake"
+				}
+			],
+			"type" : "STATIC",
+			"value" : "ON"
+		},
+		{
+			"name" : "Dama_SOURCE_DIR",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : "Value Computed by CMake"
+				}
+			],
+			"type" : "STATIC",
+			"value" : "/home/t00m-s/Development/PeLDama_Mod2"
+		},
+		{
 			"name" : "PeLDama_Mod2_BINARY_DIR",
 			"properties" : 
 			[
@@ -1123,7 +1159,7 @@
 				}
 			],
 			"type" : "STATIC",
-			"value" : "/home/t00m-s/Development/PeLDama_Mod2/cmake-build-release"
+			"value" : "/home/t00m-s/Development/PeLDama_Mod2/cmake-build-debug"
 		},
 		{
 			"name" : "PeLDama_Mod2_IS_TOP_LEVEL",
@@ -1139,6 +1175,42 @@
 		},
 		{
 			"name" : "PeLDama_Mod2_SOURCE_DIR",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : "Value Computed by CMake"
+				}
+			],
+			"type" : "STATIC",
+			"value" : "/home/t00m-s/Development/PeLDama_Mod2"
+		},
+		{
+			"name" : "Project_BINARY_DIR",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : "Value Computed by CMake"
+				}
+			],
+			"type" : "STATIC",
+			"value" : "/home/t00m-s/Development/PeLDama_Mod2/cmake-build-debug"
+		},
+		{
+			"name" : "Project_IS_TOP_LEVEL",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : "Value Computed by CMake"
+				}
+			],
+			"type" : "STATIC",
+			"value" : "ON"
+		},
+		{
+			"name" : "Project_SOURCE_DIR",
 			"properties" : 
 			[
 				{
