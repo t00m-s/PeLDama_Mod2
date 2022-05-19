@@ -68,7 +68,7 @@ Player::piece Player::operator()(int r, int c, int history_offset) const
         temp = temp->prev;
     }
 
-    if(history_offset || temp == nullptr)
+    if(history_offset || !temp)
         throw player_exception{player_exception::index_out_of_bounds, "Board with the given offset does not exist."};
 
     return temp->board[r][c];
@@ -98,6 +98,9 @@ void Player::load_board(const std::string &filename)
             if(i % 2 != 0 && j % 2 != 0 && temp[j] != ' ')
                 throw player_exception{player_exception::invalid_board, "Pieces on while cells are not allowed."};
 
+            if(oPieces > 12 || xPieces > 12)
+                throw player_exception{player_exception::invalid_board, "Too many pieces."};
+
             switch(temp[j])
             {
                 case 'x':
@@ -123,9 +126,6 @@ void Player::load_board(const std::string &filename)
         }
     }
     loader.close();
-    if(oPieces > 12 || xPieces > 12)
-        throw player_exception{player_exception::invalid_board, "Too many pieces."};
-    
 }
 
 void Player::init_board(const std::string &filename) const //done
@@ -314,7 +314,6 @@ bool Player::wins(int player_nr) const
             win = true;
     }
 
-
     return win;
 }
 
@@ -372,6 +371,7 @@ bool Player::loses(int player_nr) const
         if(!myPieces)
             lost = true;
     }
+
     return lost;
 }
 
@@ -382,7 +382,26 @@ bool Player::loses() const
 
 int Player::recurrence() const
 {
-    return 0;
+    if(!this->pimpl->boardOffset)
+        throw player_exception{player_exception::index_out_of_bounds, "History does not exist."};
+    int times = 1;
+
+    History* temp = this->pimpl->boardOffset->prev;
+    if(!temp)
+        return times;
+    
+    while(temp)
+    {
+        bool eq = true;
+        for(size_t i = 0; i < 8; ++i)
+            for(size_t j = 0; j < 8; ++j)
+                eq = eq && (this->pimpl->boardOffset->board[i][j] == temp->board[i][j]);
+
+        if(eq)
+            ++times;
+        temp = temp->prev;
+    }
+    return times;
 }
 
 void Player::print() const
