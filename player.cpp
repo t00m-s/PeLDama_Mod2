@@ -242,7 +242,39 @@ void Player::store_board(const std::string& filename, int history_offset) const
     writer.close();
 }
 
-//
+int evaluateBoard(Player::piece board[8][8])
+{
+    /*
+        *Pezzi normali: value 1
+        *Dame: 10
+    */
+    int eval = 0;
+    for(size_t i = 0; i < 8; ++i)
+        for(size_t j = 0; j < 8; ++j)
+            switch(board[i][j])
+            {
+                case Player::piece::x:
+                    ++eval;
+                    break;
+                case Player::piece::X:
+                    eval += 10;
+                    break;
+                case Player::piece::o:
+                    --eval;
+                    break;
+                case Player::piece::O:
+                    eval -= 10;
+                    break;
+                default:
+                    break;
+
+            }
+    
+    return eval;
+}
+
+void minimax()
+{}
 
 void Player::move()
 {
@@ -260,7 +292,12 @@ bool Player::valid_move() const
 
 void Player::pop()
 {
-
+    if(!this->pimpl->boardOffset)
+        throw player_exception{player_exception::index_out_of_bounds, "History does not exist."};
+    
+    History* temp = this->pimpl->boardOffset;
+    this->pimpl->boardOffset = this->pimpl->boardOffset->prev;
+    delete temp;
 }
 
 bool Player::wins(int player_nr) const
