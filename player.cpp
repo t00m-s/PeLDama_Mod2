@@ -1,4 +1,5 @@
 #include "player.hpp"
+#define POS_INF  ((unsigned) ~0)
 
 struct History
 {
@@ -242,13 +243,13 @@ void Player::store_board(const std::string& filename, int history_offset) const
     writer.close();
 }
 
-int evaluateBoard(Player::piece board[8][8])
+double evaluateBoard(Player::piece board[8][8])
 {
     /*
         *Pezzi normali: value 1
         *Dame: 10
     */
-    int eval = 0;
+    double eval = 0;
     for(size_t i = 0; i < 8; ++i)
         for(size_t j = 0; j < 8; ++j)
             switch(board[i][j])
@@ -273,8 +274,27 @@ int evaluateBoard(Player::piece board[8][8])
     return eval;
 }
 
-void minimax()
-{}
+double minimax(Player::piece board[8][8], int depth, int player_nr)
+{
+    if(depth == 0)
+        return evaluateBoard(board);
+
+    Player::piece cpyBoard[8][8];
+    for(int i = 0; i < 8; ++i)
+        for(int j = 0; j < 8; ++j)
+            cpyBoard[i][j] = board[i][j];
+
+    if(player_nr == 1)
+    {
+
+    }
+
+    if(player_nr == 2)
+    {
+                
+    }    
+    
+}
 
 void Player::move()
 {
