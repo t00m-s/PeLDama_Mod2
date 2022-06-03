@@ -284,14 +284,30 @@ double minimax(Player::piece board[8][8], int depth, int player_nr)
         for(int j = 0; j < 8; ++j)
             cpyBoard[i][j] = board[i][j];
 
-    if(player_nr == 1)
+    if(player_nr == 1) //Massimizza per player1
     {
-
+        auto maxEval = -400000; //Valore a caso negativo 
+        for(int i = 7; i >= 0; --i)
+            for(int j = 0; j < 8; ++j)
+            {
+                //Mossa
+                auto eval = minimax(cpyBoard, depth - 1, 2);
+                maxEval = eval > maxEval ? eval : maxEval;
+                return maxEval;
+            }
     }
 
-    if(player_nr == 2)
+    if(player_nr == 2) //Massimizza per player2 (minimizza player1)
     {
-                
+        auto minEval = POS_INF;
+        for(int i = 7; i >= 0; --i)
+            for(int j = 0; j < 8; ++j)
+            {
+                //Mossa
+                auto eval = minimax(cpyBoard, depth - 1, 1);
+                minEval = eval < minEval ? eval : minEval;
+                return minEval;
+            }         
     }    
     
 }
