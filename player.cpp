@@ -274,9 +274,36 @@ double evaluateBoard(Player::piece board[8][8])
     return eval;
 }
 
+bool noMoves(Player::piece board[8][8], int player_nr)
+{
+    bool moves = false;
+    if(player_nr == 1)
+    {
+        int i = 0, j = 0;
+        while(!moves && i < 8)
+        {
+            while(!moves && j < 8)
+            {
+                ++j;
+            }
+            j = 0;
+        }
+    }
+
+    if(player_nr == 2)
+    {
+        for(int i = 8; i >= 0; --i)
+            for(int j = 0; j < 8; ++j)
+            {
+
+            }
+    }
+    return moves;
+}
+
 double minimax(Player::piece board[8][8], int depth, int player_nr)
 {
-    if(depth == 0)
+    if(depth == 0 || noMoves(board, player_nr))
         return evaluateBoard(board);
 
     Player::piece cpyBoard[8][8];
@@ -291,6 +318,16 @@ double minimax(Player::piece board[8][8], int depth, int player_nr)
             for(int j = 0; j < 8; ++j)
             {
                 //Mossa
+                if(cpyBoard[i][j] == Player::piece::x)
+                {
+                    
+                }
+
+                if(cpyBoard[i][j] == Player::piece::X)
+                {
+
+                }
+
                 auto eval = minimax(cpyBoard, depth - 1, 2);
                 maxEval = eval > maxEval ? eval : maxEval;
                 return maxEval;
