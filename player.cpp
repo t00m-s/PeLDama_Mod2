@@ -301,9 +301,12 @@ bool noMoves(Player::piece board[8][8], int player_nr)
     return moves;
 }
 
-double minimax(Player::piece board[8][8], int depth, int player_nr)
+double minimax(Player::piece board[8][8], int depth, int player_nr, int alpha, int beta)
 {
-    if(depth == 0 || noMoves(board, player_nr))
+    if(noMoves(board, player_nr))  //
+        return -400000;
+
+    if(depth == 0)
         return evaluateBoard(board);
 
     Player::piece cpyBoard[8][8];
@@ -328,8 +331,11 @@ double minimax(Player::piece board[8][8], int depth, int player_nr)
 
                 }
 
-                auto eval = minimax(cpyBoard, depth - 1, 2);
+                auto eval = minimax(cpyBoard, depth - 1, 2, alpha, beta);
                 maxEval = eval > maxEval ? eval : maxEval;
+                alpha = alpha > eval ? alpha : eval;
+                if(alpha >= beta)
+                    break;
                 return maxEval;
             }
     }
@@ -341,8 +347,11 @@ double minimax(Player::piece board[8][8], int depth, int player_nr)
             for(int j = 0; j < 8; ++j)
             {
                 //Mossa
-                auto eval = minimax(cpyBoard, depth - 1, 1);
+                auto eval = minimax(cpyBoard, depth - 1, 1, alpha, beta);
                 minEval = eval < minEval ? eval : minEval;
+                beta = beta < eval ? beta : eval;
+                if(alpha >= beta)
+                    break;
                 return minEval;
             }         
     }    
@@ -353,7 +362,8 @@ void Player::move()
 {
     //https://www.youtube.com/watch?v=l-hh51ncgDI
     //Spiegazione 
-
+    if(noMoves(this->pimpl->lastBoard, this->pimpl->player_nr))
+        return; //Salva una board uguale
 
 }
 
