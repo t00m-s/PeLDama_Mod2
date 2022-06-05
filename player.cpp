@@ -542,15 +542,219 @@ double minimax(Player::piece board[8][8], int depth, int player_nr, int alpha, i
             for(int j = 0; j < 8; ++j)
             {
                 //Mossa
-                auto eval = minimax(cpyBoard, depth - 1, 1, alpha, beta);
-                minEval = eval < minEval ? eval : minEval;
-                beta = beta < eval ? beta : eval;
-                if(alpha >= beta)
-                    break;
-                return minEval;
-            }         
+                if(board[i][j] == Player::piece::x) //Solo basso sx e dx, ricordati che sono invertite nella memoria 
+                {
+                    if(i + 1 < 8 && j - 1 >= 0)
+                    {
+                        switch(board[i + 1][j - 1])
+                        {
+                            case Player::piece::e:
+                                cpyBoard[i][j] = Player::piece::e;
+                                cpyBoard[i + 1][j - 1] = i + 1 == 7 ? Player::piece::X : Player::piece::x; //Promuove in caso
+                                break;
+                            case Player::piece::o:
+                                if(i + 2 < 8 && j - 2 >= 0)
+                                {    
+                                    cpyBoard[i][j] = Player::piece::e;
+                                    cpyBoard[i + 1][j - 1] = Player::piece::e;
+                                    cpyBoard[i + 2][j - 2] = i + 2 == 7 ? Player::piece::X : Player::piece::x; //Promuove in caso
+                                }
+                                break;
+                            default: // pezzo alleato o che non può mangiare
+                                break;
+                        }
+                        auto eval = minimax(cpyBoard, depth - 1, 2, alpha, beta);
+                        minEval = eval > minEval ? eval : minEval;
+                        alpha = alpha > eval ? alpha : eval;
+                        if(alpha >= beta)
+                            break;
+                        return minEval;
+                    }
+
+                    if(i + 1 < 8 && j + 1 < 8)
+                    {
+                        for(int i = 0; i < 8; ++i) //Potenzialmente inutile se non modificata prima
+                            for(int j = 0; j < 8; ++j)
+                                cpyBoard[i][j] = board[i][j];
+
+                        switch(board[i + 1][j + 1])
+                        {
+                            case Player::piece::e:
+                                cpyBoard[i][j] = Player::piece::e;
+                                cpyBoard[i + 1][j + 1] = i + 1 == 7 ? Player::piece::X : Player::piece::x; //Promuove in caso
+                                break;
+                            case Player::piece::o:
+                                if(i + 2 < 8 && j + 2 < 8)
+                                {    
+                                    cpyBoard[i][j] = Player::piece::e;
+                                    cpyBoard[i + 1][j + 1] = Player::piece::e;
+                                    cpyBoard[i + 2][j + 2] = i + 2 == 7 ? Player::piece::X : Player::piece::x; //Promuove in caso
+                                }
+                                break;
+                            default: // pezzo alleato o che non può mangiare
+                                break;
+                        }
+
+                        auto eval = minimax(cpyBoard, depth - 1, 2, alpha, beta);
+                        minEval = eval > minEval ? eval : minEval;
+                        alpha = alpha > eval ? alpha : eval;
+                        if(alpha >= beta)
+                            break;
+                        return minEval;
+                    }
+                }
+
+                if(board[i][j] == Player::piece::X) // Tutte e 4 direzioni
+                {
+
+                    for(int i = 0; i < 8; ++i)
+                        for(int j = 0; j < 8; ++j)
+                            cpyBoard[i][j] = board[i][j];
+
+                    if(i + 1 < 8 && j - 1 >= 0) //Alto SX
+                    {
+                        switch(board[i + 1][j - 1])
+                        {
+                            case Player::piece::e:
+                                cpyBoard[i][j] = Player::piece::e;
+                                cpyBoard[i + 1][j - 1] = Player::piece::X;
+                                break;
+                            case Player::piece::o:
+                                if(i + 2 < 8 && j - 2 >= 0)
+                                {    
+                                    cpyBoard[i][j] = Player::piece::e;
+                                    cpyBoard[i + 1][j - 1] = Player::piece::e;
+                                    cpyBoard[i + 2][j - 2] = Player::piece::X;
+                                }
+                                break;
+                            case Player::piece::O:
+                                if(i + 2 < 8 && j - 2 >= 0)
+                                {    
+                                    cpyBoard[i][j] = Player::piece::e;
+                                    cpyBoard[i + 1][j - 1] = Player::piece::e;
+                                    cpyBoard[i + 2][j - 2] = Player::piece::X;
+                                }
+                                break;
+                            default: // pezzo alleato o che non può mangiare
+                                break;
+                        }
+                        auto eval = minimax(cpyBoard, depth - 1, 2, alpha, beta);
+                        minEval = eval > minEval ? eval : minEval;
+                        alpha = alpha > eval ? alpha : eval;
+                        if(alpha >= beta)
+                            break;
+                        return minEval;
+                    }
+
+                    if(i + 1 < 8 && j + 1 < 8) //Alto DX
+                    {
+                        switch(board[i + 1][j + 1])
+                        {
+                            case Player::piece::e:
+                                cpyBoard[i][j] = Player::piece::e;
+                                cpyBoard[i + 1][j + 1] = Player::piece::X;
+                                break;
+                            case Player::piece::o:
+                                if(i + 2 < 8 && j + 2 < 8)
+                                {    
+                                    cpyBoard[i][j] = Player::piece::e;
+                                    cpyBoard[i + 1][j + 1] = Player::piece::e;
+                                    cpyBoard[i + 2][j + 2] = Player::piece::X;
+                                }
+                                break;
+                            case Player::piece::O:
+                                if(i + 2 < 8 && j - 2 < 8)
+                                {    
+                                    cpyBoard[i][j] = Player::piece::e;
+                                    cpyBoard[i + 1][j + 1] = Player::piece::e;
+                                    cpyBoard[i + 2][j + 2] = Player::piece::X;
+                                }
+                                break;
+                            default: // pezzo alleato
+                                break;
+                        }
+                        auto eval = minimax(cpyBoard, depth - 1, 2, alpha, beta);
+                        minEval = eval > minEval ? eval : minEval;
+                        alpha = alpha > eval ? alpha : eval;
+                        if(alpha >= beta)
+                            break;
+                        return minEval;
+                    }
+
+                    if(i - 1 >= 0 && j - 1 >= 0) //Basso SX
+                    {
+                        switch(board[i - 1][j - 1])
+                        {
+                            case Player::piece::e:
+                                cpyBoard[i][j] = Player::piece::e;
+                                cpyBoard[i - 1][j - 1] = Player::piece::X;
+                                break;
+                            case Player::piece::o:
+                                if(i - 2 >= 0 && j - 2 >= 0)
+                                {    
+                                    cpyBoard[i][j] = Player::piece::e;
+                                    cpyBoard[i - 1][j - 1] = Player::piece::e;
+                                    cpyBoard[i - 2][j - 2] = Player::piece::X;
+                                }
+                                break;
+                            case Player::piece::O:
+                                if(i - 2 >= 0 && j - 2 >= 0)
+                                {    
+                                    cpyBoard[i][j] = Player::piece::e;
+                                    cpyBoard[i - 1][j - 1] = Player::piece::e;
+                                    cpyBoard[i - 2][j - 2] = Player::piece::X;
+                                }
+                                break;
+                            default: // pezzo alleato
+                                break;
+                        }
+                        auto eval = minimax(cpyBoard, depth - 1, 2, alpha, beta);
+                        minEval = eval > minEval ? eval : minEval;
+                        alpha = alpha > eval ? alpha : eval;
+                        if(alpha >= beta)
+                            break;
+                        return minEval;
+                    }
+
+                    if(i - 1 >= 0 && j + 1 < 8) //Basso DX
+                    {
+                        switch(board[i - 1][j + 1])
+                        {
+                            case Player::piece::e:
+                                cpyBoard[i][j] = Player::piece::e;
+                                cpyBoard[i - 1][j + 1] = Player::piece::X;
+                                break;
+                            case Player::piece::o:
+                                if(i - 2 >= 0 && j + 2 <= 8)
+                                {    
+                                    cpyBoard[i][j] = Player::piece::e;
+                                    cpyBoard[i - 1][j + 1] = Player::piece::e;
+                                    cpyBoard[i - 2][j + 2] = Player::piece::X;
+                                }
+                                break;
+                            case Player::piece::O:
+                                if(i - 2 >= 0 && j + 2 <= 8)
+                                {    
+                                    cpyBoard[i][j] = Player::piece::e;
+                                    cpyBoard[i - 1][j + 1] = Player::piece::e;
+                                    cpyBoard[i - 2][j + 2] = Player::piece::X;
+                                }
+                                break;
+                            default: // pezzo alleato o che non può mangiare
+                                break;
+                        }
+                        auto eval = minimax(cpyBoard, depth - 1, 2, alpha, beta);
+                        minEval = eval > minEval ? eval : minEval;
+                        alpha = alpha > eval ? alpha : eval;
+                        if(alpha >= beta)
+                            break;
+                        return minEval;
+                    }
+                }
+            }
+      
     }    
-    return 0; // Giusto per i warning
+    return 0; //Suppress warning
 }
 
 void Player::move()
