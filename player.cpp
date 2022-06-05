@@ -303,7 +303,7 @@ bool noMoves(Player::piece board[8][8], int player_nr)
 
 double minimax(Player::piece board[8][8], int depth, int player_nr, int alpha, int beta)
 {
-    if(noMoves(board, player_nr))  //
+    if(noMoves(board, player_nr))  //Settare un valore per indicare perdita per il giocatore
         return -400000;
 
     if(depth == 0)
@@ -314,19 +314,44 @@ double minimax(Player::piece board[8][8], int depth, int player_nr, int alpha, i
         for(int j = 0; j < 8; ++j)
             cpyBoard[i][j] = board[i][j];
 
-    if(player_nr == 1) //Massimizza per player1
+    if(player_nr == 1) //Massimizza per player1 
     {
         auto maxEval = -400000; //Valore a caso negativo 
-        for(int i = 7; i >= 0; --i)
+        for(int i = 0; i < 8; ++i)
             for(int j = 0; j < 8; ++j)
             {
                 //Mossa
-                if(cpyBoard[i][j] == Player::piece::x)
+                if(board[i][j] == Player::piece::x) //Solo basso sx e dx, ricordati che sono invertite nella memoria 
                 {
-                    
+                    if(i + 1 < 8 && j - 1 >= 0)
+                    {
+                        switch(board[i + 1][j - 1])
+                        {
+                            case Player::piece::e:
+                                for(int i = 0; i < 8; ++i)
+                                    for(int j = 0; j < 8; ++j)
+                                        cpyBoard[i][j] = board[i][j];
+                                cpyBoard[i][j] = Player::piece::e;
+                                cpyBoard[i + 1][j - 1] = i + 1 == 7 ? Player::piece::X : Player::piece::x;
+                                break;
+                            case Player::piece::o:
+                                if(i + 2 < 8 && j - 2 >= 0)
+                                {    
+                                    for(int i = 0; i < 8; ++i)
+                                        for(int j = 0; j < 8; ++j)
+                                            cpyBoard[i][j] = board[i][j];
+                                    cpyBoard[i][j] = Player::piece::e;
+                                    cpyBoard[i + 1][j - 1] = Player::piece::e;
+                                    cpyBoard[i + 2][j - 2] = i + 2 == 7 ? Player::piece::X : Player::piece::x;
+                                }
+                                break;
+                            default: // pezzo alleato o che non può mangiare
+                                break;
+                        }
+                    }
                 }
 
-                if(cpyBoard[i][j] == Player::piece::X)
+                if(board[i][j] == Player::piece::X) // Tutte e 4 direzioni
                 {
 
                 }
@@ -355,7 +380,7 @@ double minimax(Player::piece board[8][8], int depth, int player_nr, int alpha, i
                 return minEval;
             }         
     }    
-    
+    return 0; // Giusto per i warning
 }
 
 void Player::move()
@@ -512,13 +537,14 @@ int Player::recurrence() const
     
     while(temp)
     {
-        bool eq = true;
+        bool equal = true;
         for(size_t i = 0; i < 8; ++i)
             for(size_t j = 0; j < 8; ++j)
-                eq = eq && (this->pimpl->boardOffset->board[i][j] == temp->board[i][j]);
+                equal = equal && (this->pimpl->boardOffset->board[i][j] == temp->board[i][j]);
 
-        if(eq)
+        if(equal)
             ++times;
+        
         temp = temp->prev;
     }
     return times;
