@@ -40,12 +40,49 @@ Player::~Player()
 
 Player::Player(const Player& rhs)
 {
+    this->pimpl = new Impl;
+    this->pimpl->boardOffset = new History;
+    this->pimpl->player_nr = rhs.pimpl->player_nr;
+
+    History* temp = rhs.pimpl->boardOffset;
+    History* t  = this->pimpl->boardOffset;
+    while(temp)
+    {
+        for(int i = 0; i < 8; ++i)
+            for(int j = 0; j < 8; ++j)
+                t->board[i][j] = temp->board[i][j];
+
+        if(temp->prev)
+        {
+            temp = temp->prev;
+            t->prev = new History;
+            t = t ->prev;
+        }
+    }
 }
 
 Player& Player::operator=(const Player &rhs)
 {
     if(this != &rhs)
     {
+        deleteHistory(this->pimpl->boardOffset);
+        this->pimpl->player_nr = rhs.pimpl->player_nr;
+        this->pimpl->boardOffset = new History;
+        History* temp = rhs.pimpl->boardOffset;
+        History* t  = this->pimpl->boardOffset;
+        while(temp)
+        {
+            for(int i = 0; i < 8; ++i)
+                for(int j = 0; j < 8; ++j)
+                    t->board[i][j] = temp->board[i][j];
+
+            if(temp->prev)
+            {
+                temp = temp->prev;
+                t->prev = new History;
+                t = t ->prev;
+            }
+        }
     }
     return *this;
 }
@@ -787,8 +824,33 @@ void Player::move()
 
 bool Player::valid_move() const
 {
-    //Trovo dov'è il cambio 
-    return false;
+    //Controllo se la board è uguale a quella precedente   
+    if(!this->pimpl->boardOffset || !this->pimpl->boardOffset->prev)
+        throw player_exception{player_exception::index_out_of_bounds, "Less than two boards in history."};
+    
+    bool equalBoards = true;
+    for(int i = 0; i < 8; ++i)
+        for(int j = 0; j < 8; ++j)
+            equalBoards = equalBoards && 
+                (this->pimpl->boardOffset->board[i][j] == this->pimpl->boardOffset->prev->board[i][j]);
+    
+    if(equalBoards)
+        return false;
+
+    //Trovo dov'è il cambio
+    size_t changed = 0;
+    std::pair<int, int> positions[3] = {std::make_pair(-1, -1), std::make_pair(-1, -1), std::make_pair(-1, -1)};
+    for(int i = 0; i < 8 && changed < 3; ++i)
+        for(int j = 0; j < 8 && changed < 3; ++j)
+            if(this->pimpl->boardOffset->board[i][j] != this->pimpl->boardOffset->prev->board[i][j])
+                positions[changed++] = std::make_pair(i, j);
+
+    if(changed > 3)
+        return false;
+
+    
+ 
+    return true;
 }
 
 void Player::pop()
