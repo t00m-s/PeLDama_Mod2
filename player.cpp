@@ -9,7 +9,6 @@ struct History
 
 struct Player::Impl
 {
-    Player::piece lastBoard[8][8]; //Board di gioco
     History* boardOffset;
     int player_nr;
 };
@@ -133,32 +132,32 @@ void Player::init_board(const std::string &filename) const //done
 {
     std::ofstream writeBoard;
     writeBoard.open(filename);   
-    
+    Player::piece board[8][8];
     //x
     for(size_t i = 0; i < 3; ++i)
     {
         if(i % 2)
             for(size_t j = 0; j < 8; ++j)
-                this->pimpl->lastBoard[i][j] = j % 2 ? Player::piece::e : Player::piece::x;
+                board[i][j] = j % 2 ? Player::piece::e : Player::piece::x;
         else
             for(size_t j = 0; j < 8; ++j)
-                this->pimpl->lastBoard[i][j] = j % 2 ? Player::piece::x : Player::piece::e;
+                board[i][j] = j % 2 ? Player::piece::x : Player::piece::e;
     }
 
     //empty
     for(size_t i = 3; i < 5; ++i)
         for(size_t j = 0; j < 8; ++j)
-            this->pimpl->lastBoard[i][j] = Player::piece::e;
+            board[i][j] = Player::piece::e;
 
     //o
     for(size_t i = 5; i < 8; ++i)
     {
         if(i % 2)
             for(size_t j = 0; j < 8; ++j)
-                this->pimpl->lastBoard[i][j] = j % 2 ? Player::piece::e : Player::piece::o;
+                board[i][j] = j % 2 ? Player::piece::e : Player::piece::o;
         else
             for(size_t j = 0; j < 8; ++j)
-                this->pimpl->lastBoard[i][j] = j % 2 ? Player::piece::o : Player::piece::e;
+                board[i][j] = j % 2 ? Player::piece::o : Player::piece::e;
     }
 
     //Salva su file
@@ -167,7 +166,7 @@ void Player::init_board(const std::string &filename) const //done
         std::string row = "";
         for(size_t j = 0; j < 8; ++j)
         {
-            switch(this->pimpl->lastBoard[i][j])
+            switch(board[i][j])
             {
                 case Player::piece::x:
                     row.append("x");
@@ -768,9 +767,21 @@ double minimax(Player::piece board[8][8], int depth, int player_nr, double alpha
 void Player::move()
 {
     //https://www.youtube.com/watch?v=l-hh51ncgDI
-    //Spiegazione 
-    if(noMoves(this->pimpl->lastBoard, this->pimpl->player_nr))
-        return; //Salva una board uguale
+    //Spiegazione minimax 
+    if(!this->pimpl->boardOffset)
+        throw player_exception{player_exception::invalid_board, "Board history does not exist."};
+
+    if(noMoves(this->pimpl->boardOffset->board, this->pimpl->player_nr)) //Salva una board uguale
+    {
+        History* t = new History;
+        for(int i = 0; i < 8; ++i)
+            for(int j = 0; j < 8; ++j)
+                t->board[i][j] = this->pimpl->boardOffset->board[i][j];
+
+        t->prev = this->pimpl->boardOffset;
+        this->pimpl->boardOffset = t;
+        return;
+    }
 
 }
 
@@ -818,8 +829,7 @@ bool Player::wins(int player_nr) const
         if(!otherPieces)
             win = true;
     }
-
-    if(player_nr == 2) // 'o'
+    else    // 'o'
     {
         size_t otherPieces = 0;
         
@@ -938,7 +948,7 @@ void Player::print() const
     {
         for(size_t j = 0; j < 8; ++j)
         {
-            switch(this->pimpl->lastBoard[i][j])
+            switch(this->pimpl->boardOffset->board[i][j])
             {
                 case Player::piece::o:
                     std::cout << "o";
