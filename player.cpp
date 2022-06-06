@@ -93,10 +93,10 @@ void Player::load_board(const std::string &filename)
         for(size_t j = 0; j < 8; ++j)
         {   
             if(i % 2 == 0 && j % 2 == 0 && temp[j] != ' ')
-                throw player_exception{player_exception::invalid_board, "Pieces on while cells are not allowed."};
+                throw player_exception{player_exception::invalid_board, "Pieces on white cells are not allowed."};
 
             if(i % 2 != 0 && j % 2 != 0 && temp[j] != ' ')
-                throw player_exception{player_exception::invalid_board, "Pieces on while cells are not allowed."};
+                throw player_exception{player_exception::invalid_board, "Pieces on white cells are not allowed."};
 
             if(oPieces > 12 || xPieces > 12)
                 throw player_exception{player_exception::invalid_board, "Too many pieces."};
