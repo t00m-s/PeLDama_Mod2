@@ -320,19 +320,111 @@ bool noMoves(Player::piece board[8][8], int player_nr)
         {
             while(!moves && j < 8)
             {
+                if(board[i][j] == Player::piece::x)
+                {
+                    if(i + 1 < 8 && j - 1 >= 0 && board[i + 1][j - 1] == Player::piece::e) //casella vuota SX
+                        moves = true;
+
+                    if(!moves && i + 1 < 8 && j + 1 < 8 && board[i + 1][j + 1] == Player::piece::e) //casella vuota DX
+                        moves = true;
+
+                    //Pezzo nemico sx e posso mangiarlo
+                    if(!moves && i + 1 < 8 && j - 1 >= 0 && board[i + 1][j - 1] == Player::piece::o)
+                        if(i + 2 < 8 && j - 2 >= 0 && board[i + 2][j - 2] == Player::piece::e)
+                            moves = true;
+
+                    //Pezzo nemico dx e posso mangiarlo
+                    if(!moves && i + 1 < 8 && j + 1 < 8 && board[i + 1][j + 1] == Player::piece::o)
+                        if(i + 2 < 8 && j + 2 < 8 && board[i + 2][j + 2] == Player::piece::e)
+                            moves = true;
+                }
+
+                if(board[i][j] == Player::piece::X)
+                {
+                    if(i + 1 < 8 && j - 1 >= 0 && board[i + 1][j - 1] == Player::piece::e) //casella vuota SX
+                        moves = true;
+
+                    if(!moves && i + 1 < 8 && j + 1 < 8 && board[i + 1][j + 1] == Player::piece::e) //casella vuota DX
+                        moves = true;
+
+                    //Pezzo nemico alto sx e posso mangiarlo
+                    if(!moves && i + 1 < 8 && j - 1 >= 0 && (board[i + 1][j - 1] == Player::piece::o)
+                                                        || board[i + 1][j - 1] == Player::piece::O)
+                        if(i + 2 < 8 && j - 2 >= 0 && board[i + 2][j - 2] == Player::piece::e)
+                            moves = true;
+
+                    //Pezzo nemico alto dx e posso mangiarlo
+                    if(!moves && i + 1 < 8 && j + 1 < 8 && (board[i + 1][j + 1] == Player::piece::o
+                                                        || board[i + 1][j + 1] == Player::piece::O))
+                        if(i + 2 < 8 && j + 2 < 8 && board[i + 2][j + 2] == Player::piece::e)
+                            moves = true;
+                }
                 ++j;
             }
             j = 0;
+            ++i;
         }
     }
 
     if(player_nr == 2)
     {
-        for(int i = 8; i >= 0; --i)
-            for(int j = 0; j < 8; ++j)
+        int i = 0, j = 0;
+        while(!moves && i < 8)
+        {
+            while(!moves && j < 8)
             {
+                if(board[i][j] == Player::piece::o)
+                {
+                    if(i - 1 >= 0 && j - 1 >= 0 && board[i - 1][j - 1] == Player::piece::e) //casella vuota SX
+                        moves = true;
 
+                    if(!moves && i - 1 >= 0 && j + 1 < 8 && board[i - 1][j + 1] == Player::piece::e) //casella vuota DX
+                        moves = true;
+
+                    //Pezzo nemico sx e posso mangiarlo
+                    if(!moves && i - 1 >= 0 && j - 1 >= 0 && board[i - 1][j - 1] == Player::piece::x)
+                        if(i - 2 >= 0 && j - 2 >= 0 && board[i - 2][j - 2] == Player::piece::e)
+                            moves = true;
+
+                    //Pezzo nemico dx e posso mangiarlo
+                    if(!moves && i - 1 >= 0 && j + 1 < 8 && board[i - 1][j + 1] == Player::piece::x)
+                        if(i - 2 >= 0 && j + 2 < 8 && board[i - 2][j + 2] == Player::piece::e)
+                            moves = true;
+                }
+
+                if(board[i][j] == Player::piece::X)
+                {
+                    if(i + 1 < 8 && j - 1 >= 0 && board[i + 1][j - 1] == Player::piece::e) //casella vuota SX
+                        moves = true;
+
+                    if(!moves && i + 1 < 8 && j + 1 < 8 && board[i + 1][j + 1] == Player::piece::e) //casella vuota DX
+                        moves = true;
+
+                    //Pezzo 'o' nemico sx e posso mangiarlo
+                    if(!moves && i + 1 < 8 && j - 1 >= 0 && board[i + 1][j - 1] == Player::piece::o)
+                        if(i + 2 < 8 && j - 2 >= 0 && board[i + 2][j - 2] == Player::piece::e)
+                            moves = true;
+
+                    //Pezzo 'o' nemico dx e posso mangiarlo
+                    if(!moves && i + 1 < 8 && j + 1 < 8 && board[i + 1][j + 1] == Player::piece::o)
+                        if(i + 2 < 8 && j + 2 < 8 && board[i + 2][j + 2] == Player::piece::e)
+                            moves = true;
+
+                    //Pezzo 'O' nemico sx e posso mangiarlo
+                    if(!moves && i + 1 < 8 && j - 1 >= 0 && board[i + 1][j - 1] == Player::piece::O)
+                        if(i + 2 < 8 && j - 2 >= 0 && board[i + 2][j - 2] == Player::piece::e)
+                            moves = true;
+
+                    //Pezzo 'O' nemico dx e posso mangiarlo
+                    if(!moves && i + 1 < 8 && j + 1 < 8 && board[i + 1][j + 1] == Player::piece::O)
+                        if(i + 2 < 8 && j + 2 < 8 && board[i + 2][j + 2] == Player::piece::e)
+                            moves = true;
+                }
+                ++j;
             }
+            j = 0;
+            ++i;
+        }
     }
     return moves;
 }
