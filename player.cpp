@@ -1,6 +1,7 @@
 #include "player.hpp"
 #define POS_INF  ((unsigned) ~0)
-
+//TODO:
+//Create functions to reuse code(eg. move legality)
 struct History
 {
     Player::piece board[8][8];
@@ -1125,9 +1126,38 @@ void Player::move()
                                 value = tempValue;
                                 cellPosition.first = i;
                                 cellPosition.second = j;
+                                direction = 'Q';
                             }
                             //Undo della mossa
+                            temporaryBoard[i][j] = Player::piece::x;
+                            temporaryBoard[i + 1][j - 1] = Player::piece::e;
                         }
+                        //Pezzo nemico
+                        if(i + 2 < 8 && j - 2 >= 0 
+                            && temporaryBoard[i + 1][j - 1] == Player::piece::o 
+                            && temporaryBoard[i + 2][j - 2] == Player::piece::e)
+                        {
+                            temporaryBoard[i][j] = Player::piece::e;
+                            temporaryBoard[i + 1][j + 1] = Player::piece::e;
+                            temporaryBoard[i + 2][j + 2] = i + 2 == 7 ? Player::piece::X : Player::piece::x;
+                            double tempValue = minimax(temporaryBoard, 3, this->pimpl->player_nr, -400000, POS_INF);
+                            if(tempValue > value)
+                            {
+                                value = tempValue;
+                                cellPosition.first = i;
+                                cellPosition.second = j;
+                                direction = 'E';
+                            }
+                            //Undo della mossa
+                            temporaryBoard[i][j] = Player::piece::x;
+                            temporaryBoard[i + 1][j + 1] = Player::piece::o;
+                            temporaryBoard[i + 2][j + 2] = Player::piece::e;
+                        }
+                    }
+                    //Alto DX
+                    if(i + 1 < 8 && j + 1 < 8)
+                    {
+
                     }
                 }
                 
@@ -1137,6 +1167,7 @@ void Player::move()
                 }
             }
         }
+
     }
 
 
@@ -1144,6 +1175,15 @@ void Player::move()
     {
 
     }
+
+    //Salva nella history
+    History* t = new History;
+    t->prev = this->pimpl->boardOffset;
+    this->pimpl->boardOffset = t;
+    for(int i = 0; i < 8; ++i)
+        for(int j = 0; j < 8; ++j)
+            this->pimpl->boardOffset->board[i][j] = temporaryBoard[i][j];
+    
 }
 
 bool Player::valid_move() const
