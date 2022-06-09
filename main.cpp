@@ -11,7 +11,7 @@ int main()
     }
     catch(player_exception err)
     {
-        std::cout << "Sgroda" << std::endl;
+        std::cout << err.msg << std::endl;
     }
 
     return 0;

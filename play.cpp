@@ -3,7 +3,7 @@
 #include <fstream>
 #include <string>
 #include <thread>
-
+#include "player.hpp"
 using std::cout;
 using std::cin;
 using std::endl;
@@ -13,7 +13,7 @@ using std::string;
 int main(int argc, char **argv){
 	
 	int player_nr = atoi(argv[1]);	
-	//Player p(player_nr);
+	Player p(player_nr);
 	
 	cout << "Playing as player " << player_nr << endl;
 	

@@ -11,7 +11,7 @@
 # =============================================================================
 
 # =============================================================================
-# Project: Dama
+# Project: PeLDama
 # Configurations: Debug
 # =============================================================================
 
@@ -41,41 +41,41 @@ include CMakeFiles/rules.ninja
 
 cmake_ninja_workdir = /home/t00m-s/Development/PeLDama_Mod2/build/
 # =============================================================================
-# Object build statements for EXECUTABLE target dama_clion
+# Object build statements for EXECUTABLE target PeLDama
 
 
 #############################################
-# Order-only phony target for dama_clion
+# Order-only phony target for PeLDama
 
-build cmake_object_order_depends_target_dama_clion: phony || CMakeFiles/dama_clion.dir
+build cmake_object_order_depends_target_PeLDama: phony || CMakeFiles/PeLDama.dir
 
-build CMakeFiles/dama_clion.dir/player.cpp.o: CXX_COMPILER__dama_clion_Debug /home/t00m-s/Development/PeLDama_Mod2/player.cpp || cmake_object_order_depends_target_dama_clion
-  DEP_FILE = CMakeFiles/dama_clion.dir/player.cpp.o.d
+build CMakeFiles/PeLDama.dir/testMain.cpp.o: CXX_COMPILER__PeLDama_Debug /home/t00m-s/Development/PeLDama_Mod2/testMain.cpp || cmake_object_order_depends_target_PeLDama
+  DEP_FILE = CMakeFiles/PeLDama.dir/testMain.cpp.o.d
   FLAGS = -g -std=gnu++14
-  OBJECT_DIR = CMakeFiles/dama_clion.dir
-  OBJECT_FILE_DIR = CMakeFiles/dama_clion.dir
+  OBJECT_DIR = CMakeFiles/PeLDama.dir
+  OBJECT_FILE_DIR = CMakeFiles/PeLDama.dir
 
-build CMakeFiles/dama_clion.dir/testMain.cpp.o: CXX_COMPILER__dama_clion_Debug /home/t00m-s/Development/PeLDama_Mod2/testMain.cpp || cmake_object_order_depends_target_dama_clion
-  DEP_FILE = CMakeFiles/dama_clion.dir/testMain.cpp.o.d
+build CMakeFiles/PeLDama.dir/player.cpp.o: CXX_COMPILER__PeLDama_Debug /home/t00m-s/Development/PeLDama_Mod2/player.cpp || cmake_object_order_depends_target_PeLDama
+  DEP_FILE = CMakeFiles/PeLDama.dir/player.cpp.o.d
   FLAGS = -g -std=gnu++14
-  OBJECT_DIR = CMakeFiles/dama_clion.dir
-  OBJECT_FILE_DIR = CMakeFiles/dama_clion.dir
+  OBJECT_DIR = CMakeFiles/PeLDama.dir
+  OBJECT_FILE_DIR = CMakeFiles/PeLDama.dir
 
 
 # =============================================================================
-# Link build statements for EXECUTABLE target dama_clion
+# Link build statements for EXECUTABLE target PeLDama
 
 
 #############################################
-# Link the executable dama_clion
+# Link the executable PeLDama
 
-build dama_clion: CXX_EXECUTABLE_LINKER__dama_clion_Debug CMakeFiles/dama_clion.dir/player.cpp.o CMakeFiles/dama_clion.dir/testMain.cpp.o
+build PeLDama: CXX_EXECUTABLE_LINKER__PeLDama_Debug CMakeFiles/PeLDama.dir/testMain.cpp.o CMakeFiles/PeLDama.dir/player.cpp.o
   FLAGS = -g
-  OBJECT_DIR = CMakeFiles/dama_clion.dir
+  OBJECT_DIR = CMakeFiles/PeLDama.dir
   POST_BUILD = :
   PRE_LINK = :
-  TARGET_FILE = dama_clion
-  TARGET_PDB = dama_clion.dbg
+  TARGET_FILE = PeLDama
+  TARGET_PDB = PeLDama.dbg
 
 
 #############################################
@@ -112,7 +112,7 @@ build rebuild_cache: phony CMakeFiles/rebuild_cache.util
 #############################################
 # Folder: /home/t00m-s/Development/PeLDama_Mod2/build
 
-build all: phony dama_clion
+build all: phony PeLDama
 
 # =============================================================================
 # Built-in targets

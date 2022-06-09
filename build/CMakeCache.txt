@@ -141,7 +141,7 @@ CMAKE_PROJECT_DESCRIPTION:STATIC=
 CMAKE_PROJECT_HOMEPAGE_URL:STATIC=
 
 //Value Computed by CMake
-CMAKE_PROJECT_NAME:STATIC=Dama
+CMAKE_PROJECT_NAME:STATIC=PeLDama
 
 //Path to a program.
 CMAKE_RANLIB:FILEPATH=/usr/bin/ranlib
@@ -215,6 +215,12 @@ Dama_IS_TOP_LEVEL:STATIC=ON
 Dama_SOURCE_DIR:STATIC=/home/t00m-s/Development/PeLDama_Mod2
 
 //Value Computed by CMake
+PeLDama_BINARY_DIR:STATIC=/home/t00m-s/Development/PeLDama_Mod2/build
+
+//Value Computed by CMake
+PeLDama_IS_TOP_LEVEL:STATIC=ON
+
+//Value Computed by CMake
 PeLDama_Mod2_BINARY_DIR:STATIC=/home/t00m-s/Development/PeLDama_Mod2/build
 
 //Value Computed by CMake
@@ -222,6 +228,9 @@ PeLDama_Mod2_IS_TOP_LEVEL:STATIC=ON
 
 //Value Computed by CMake
 PeLDama_Mod2_SOURCE_DIR:STATIC=/home/t00m-s/Development/PeLDama_Mod2
+
+//Value Computed by CMake
+PeLDama_SOURCE_DIR:STATIC=/home/t00m-s/Development/PeLDama_Mod2
 
 
 ########################

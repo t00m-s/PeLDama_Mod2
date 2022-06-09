@@ -1,3 +1,0 @@
-/home/t00m-s/Development/PeLDama_Mod2/cmake-build-release/CMakeFiles/dama_clion.dir
-/home/t00m-s/Development/PeLDama_Mod2/cmake-build-release/CMakeFiles/edit_cache.dir
-/home/t00m-s/Development/PeLDama_Mod2/cmake-build-release/CMakeFiles/rebuild_cache.dir
