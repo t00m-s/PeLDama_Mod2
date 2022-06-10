@@ -1379,8 +1379,61 @@ void Player::move()
                 }
             }
         }
+
+        //Effettua la mossa
+        switch(direction)
+        {
+            case 'Q':
+                Player::piece original = temporaryBoard[cellPosition.first][cellPosition.second];
+                temporaryBoard[cellPosition.first][cellPosition.second] = Player::piece::e;
+                if(temporaryBoard[cellPosition.first + 1][cellPosition.second - 1] == Player::piece::e)
+                    temporaryBoard[cellPosition.first + 1][cellPosition.second - 1] = original;
+                else
+                {
+                    temporaryBoard[cellPosition.first + 1][cellPosition.second - 1] = Player::piece::e;
+                    temporaryBoard[cellPosition.first + 2][cellPosition.second - 2] = original;
+                }
+                break;
+            case 'E':
+                Player::piece original = temporaryBoard[cellPosition.first][cellPosition.second];
+                temporaryBoard[cellPosition.first][cellPosition.second] = Player::piece::e;
+                if(temporaryBoard[cellPosition.first + 1][cellPosition.second + 1] == Player::piece::e)
+                    temporaryBoard[cellPosition.first + 1][cellPosition.second + 1] = original;
+                else
+                {
+                    temporaryBoard[cellPosition.first + 1][cellPosition.second + 1] = Player::piece::e;
+                    temporaryBoard[cellPosition.first + 2][cellPosition.second + 2] = original;
+                }
+                break;
+            case 'A': //Pezzo per forza è DAMA 'X'
+                Player::piece original = temporaryBoard[cellPosition.first][cellPosition.second];
+                temporaryBoard[cellPosition.first][cellPosition.second] = Player::piece::e;
+                if(temporaryBoard[cellPosition.first - 1][cellPosition.second - 1] == Player::piece::e)
+                    temporaryBoard[cellPosition.first - 1][cellPosition.second - 1] = original;
+                else
+                {
+                    temporaryBoard[cellPosition.first - 1][cellPosition.second - 1] = Player::piece::e;
+                    temporaryBoard[cellPosition.first - 2][cellPosition.second - 2] = original;
+                }
+                break;
+            case 'D': //Pezzo per forza è DAMA 'X'
+                Player::piece original = temporaryBoard[cellPosition.first][cellPosition.second];
+                temporaryBoard[cellPosition.first][cellPosition.second] = Player::piece::e;
+                if(temporaryBoard[cellPosition.first - 1][cellPosition.second + 1] == Player::piece::e)
+                    temporaryBoard[cellPosition.first - 1][cellPosition.second + 1] = original;
+                else
+                {
+                    temporaryBoard[cellPosition.first - 1][cellPosition.second + 1] = Player::piece::e;
+                    temporaryBoard[cellPosition.first - 2][cellPosition.second + 2] = original;
+                }
+                break;
+            default: //Non dovrebbe mai entrarci ma non si sa mai
+                throw player_exception{player_exception::invalid_board, "Something went wrong, please blame the developer."};
+
+        }
+
     }
-    
+
     if(this->pimpl->player_nr == 2)
     {
 
@@ -1392,7 +1445,7 @@ void Player::move()
     this->pimpl->boardOffset = t;
     for(int i = 0; i < 8; ++i)
         for(int j = 0; j < 8; ++j)
-            this->pimpl->boardOffset->board[i][j] = temporaryBoard[i][j];
+            t->board[i][j] = temporaryBoard[i][j];
     
 }
 
