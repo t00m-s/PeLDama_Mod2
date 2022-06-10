@@ -1120,7 +1120,7 @@ void Player::move()
                         {
                             temporaryBoard[i][j] = Player::piece::e;
                             temporaryBoard[i + 1][j - 1] = i + 1 == 7 ? Player::piece::X : Player::piece::x;
-                            double tempValue = minimax(temporaryBoard, 3, this->pimpl->player_nr, -400000, POS_INF);
+                            double tempValue = minimax(temporaryBoard, 3, 2, -400000, POS_INF);
                             if(tempValue > value)
                             {
                                 value = tempValue;
@@ -1138,9 +1138,9 @@ void Player::move()
                             && temporaryBoard[i + 2][j - 2] == Player::piece::e)
                         {
                             temporaryBoard[i][j] = Player::piece::e;
-                            temporaryBoard[i + 1][j + 1] = Player::piece::e;
-                            temporaryBoard[i + 2][j + 2] = i + 2 == 7 ? Player::piece::X : Player::piece::x;
-                            double tempValue = minimax(temporaryBoard, 3, this->pimpl->player_nr, -400000, POS_INF);
+                            temporaryBoard[i + 1][j - 1] = Player::piece::e;
+                            temporaryBoard[i + 2][j - 2] = i + 2 == 7 ? Player::piece::X : Player::piece::x;
+                            double tempValue = minimax(temporaryBoard, 3, 2, -400000, POS_INF);
                             if(tempValue > value)
                             {
                                 value = tempValue;
@@ -1150,8 +1150,8 @@ void Player::move()
                             }
                             //Undo della mossa
                             temporaryBoard[i][j] = Player::piece::x;
-                            temporaryBoard[i + 1][j + 1] = Player::piece::o;
-                            temporaryBoard[i + 2][j + 2] = Player::piece::e;
+                            temporaryBoard[i + 1][j - 1] = Player::piece::o;
+                            temporaryBoard[i + 2][j - 2] = Player::piece::e;
                         }
                     }
                     //Alto DX
@@ -1162,7 +1162,7 @@ void Player::move()
                         {
                             temporaryBoard[i][j] = Player::piece::e;
                             temporaryBoard[i + 1][j + 1] = i + 1 == 7 ? Player::piece::X : Player::piece::x;
-                            double tempValue = minimax(temporaryBoard, 3, this->pimpl->player_nr, -400000, POS_INF);
+                            double tempValue = minimax(temporaryBoard, 3, 2, -400000, POS_INF);
                             if(tempValue > value)
                             {
                                 value = tempValue;
@@ -1182,7 +1182,7 @@ void Player::move()
                             temporaryBoard[i][j] = Player::piece::e;
                             temporaryBoard[i + 1][j + 1] = Player::piece::e;
                             temporaryBoard[i + 2][j + 2] = i + 2 == 7 ? Player::piece::X : Player::piece::x;
-                            double tempValue = minimax(temporaryBoard, 3, this->pimpl->player_nr, -400000, POS_INF);
+                            double tempValue = minimax(temporaryBoard, 3, 2, -400000, POS_INF);
                             if(tempValue > value)
                             {
                                 value = tempValue;
@@ -1200,14 +1200,187 @@ void Player::move()
                 
                 if(temporaryBoard[i][j] == Player::piece::X)
                 {
-
+                    //Alto SX
+                    if(i + 1 < 8 && j - 1 >= 0)
+                    {
+                        //Pezzo vuoto
+                        if(temporaryBoard[i + 1][j - 1] == Player::piece::e)
+                        {
+                            temporaryBoard[i][j] = Player::piece::e;
+                            temporaryBoard[i + 1][j - 1] = Player::piece::X;
+                            double tempValue = minimax(temporaryBoard, 3, 2, -400000, POS_INF);
+                            if(tempValue > value)
+                            {
+                                value = tempValue;
+                                cellPosition.first = i;
+                                cellPosition.second = j;
+                                direction = 'Q';
+                            }
+                            //Undo della mossa
+                            temporaryBoard[i][j] = Player::piece::X;
+                            temporaryBoard[i + 1][j - 1] = Player::piece::e;
+                        }
+                        //Pezzo nemico
+                        if(i + 2 < 8 && j - 2 >= 0 
+                            && (temporaryBoard[i + 1][j - 1] == Player::piece::o 
+                                || temporaryBoard[i + 1][j - 1] == Player::piece::O) 
+                            && temporaryBoard[i + 2][j - 2] == Player::piece::e)
+                        {
+                            Player::piece removed = temporaryBoard[i + 1][j - 1];
+                            temporaryBoard[i][j] = Player::piece::e;
+                            temporaryBoard[i + 1][j - 1] = Player::piece::e;
+                            temporaryBoard[i + 2][j - 2] = Player::piece::X;
+                            double tempValue = minimax(temporaryBoard, 3, 2, -400000, POS_INF);
+                            if(tempValue > value)
+                            {
+                                value = tempValue;
+                                cellPosition.first = i;
+                                cellPosition.second = j;
+                                direction = 'Q';
+                            }
+                            //Undo della mossa
+                            temporaryBoard[i][j] = Player::piece::x;
+                            temporaryBoard[i + 1][j + 1] = removed;
+                            temporaryBoard[i + 2][j + 2] = Player::piece::e;
+                        }
+                    }
+                    //Alto DX
+                    if(i + 1 < 8 && j + 1 < 8)
+                    {
+                        //Pezzo vuoto
+                        if(temporaryBoard[i + 1][j + 1] == Player::piece::e)
+                        {
+                            temporaryBoard[i][j] = Player::piece::e;
+                            temporaryBoard[i + 1][j + 1] = Player::piece::X;
+                            double tempValue = minimax(temporaryBoard, 3, 2, -400000, POS_INF);
+                            if(tempValue > value)
+                            {
+                                value = tempValue;
+                                cellPosition.first = i;
+                                cellPosition.second = j;
+                                direction = 'E';
+                            }
+                            //Undo della mossa
+                            temporaryBoard[i][j] = Player::piece::X;
+                            temporaryBoard[i + 1][j + 1] = Player::piece::e;
+                        }
+                        //Pezzo nemico 
+                        if(i + 2 < 8 && j + 2 < 8 
+                            && (temporaryBoard[i + 1][j + 1] == Player::piece::o
+                                || temporaryBoard[i + 1][j + 1] == Player::piece::O)
+                            && temporaryBoard[i + 2][j + 2] == Player::piece::e)
+                        {
+                            Player::piece removed = temporaryBoard[i + 1][j + 1];
+                            temporaryBoard[i][j] = Player::piece::e;
+                            temporaryBoard[i + 1][j + 1] = Player::piece::e;
+                            temporaryBoard[i + 2][j + 2] = Player::piece::X;
+                            double tempValue = minimax(temporaryBoard, 3, this->pimpl->player_nr, -400000, POS_INF);
+                            if(tempValue > value)
+                            {
+                                value = tempValue;
+                                cellPosition.first = i;
+                                cellPosition.second = j;
+                                direction = 'E';
+                            }
+                            //Undo della mossa
+                            temporaryBoard[i][j] = Player::piece::X;
+                            temporaryBoard[i + 1][j + 1] = removed;
+                            temporaryBoard[i + 2][j + 2] = Player::piece::e;
+                        }
+                    }
+                    //Basso SX
+                    if(i - 1 >= 0 && j - 1 >= 0)
+                    {
+                        //Pezzo vuoto
+                        if(temporaryBoard[i - 1][j - 1] == Player::piece::e)
+                        {
+                            temporaryBoard[i][j] = Player::piece::e;
+                            temporaryBoard[i - 1][j - 1] = Player::piece::X;
+                            double tempValue = minimax(temporaryBoard, 3, 2, -400000, POS_INF);
+                            if(tempValue > value)
+                            {
+                                value = tempValue;
+                                cellPosition.first = i;
+                                cellPosition.second = j;
+                                direction = 'A';
+                            }
+                            //Undo della mossa
+                            temporaryBoard[i][j] = Player::piece::X;
+                            temporaryBoard[i - 1][j - 1] = Player::piece::e;
+                        }
+                        //Pezzo nemico 
+                        if(i - 2 >= 0 && j - 2 >= 0 
+                            && (temporaryBoard[i - 1][j - 1] == Player::piece::o
+                                || temporaryBoard[i - 1][j - 1] == Player::piece::O)
+                            && temporaryBoard[i - 2][j - 2] == Player::piece::e)
+                        {
+                            Player::piece removed = temporaryBoard[i - 1][j - 1];
+                            temporaryBoard[i][j] = Player::piece::e;
+                            temporaryBoard[i - 1][j - 1] = Player::piece::e;
+                            temporaryBoard[i - 2][j - 2] = Player::piece::X;
+                            double tempValue = minimax(temporaryBoard, 3, this->pimpl->player_nr, -400000, POS_INF);
+                            if(tempValue > value)
+                            {
+                                value = tempValue;
+                                cellPosition.first = i;
+                                cellPosition.second = j;
+                                direction = 'A';
+                            }
+                            //Undo della mossa
+                            temporaryBoard[i][j] = Player::piece::X;
+                            temporaryBoard[i - 1][j - 1] = removed;
+                            temporaryBoard[i - 2][j - 2] = Player::piece::e;
+                        } 
+                    }
+                    //Basso DX
+                    if(i - 1 >= 0 && j + 1 < 8)
+                    {
+                        //Pezzo vuoto
+                        if(temporaryBoard[i - 1][j + 1] == Player::piece::e)
+                        {
+                            temporaryBoard[i][j] = Player::piece::e;
+                            temporaryBoard[i - 1][j + 1] = Player::piece::X;
+                            double tempValue = minimax(temporaryBoard, 3, 2, -400000, POS_INF);
+                            if(tempValue > value)
+                            {
+                                value = tempValue;
+                                cellPosition.first = i;
+                                cellPosition.second = j;
+                                direction = 'D';
+                            }
+                            //Undo della mossa
+                            temporaryBoard[i][j] = Player::piece::X;
+                            temporaryBoard[i - 1][j + 1] = Player::piece::e;
+                        }
+                        //Pezzo nemico 
+                        if(i - 2 >= 0 && j + 2 < 8 
+                            && (temporaryBoard[i - 1][j + 1] == Player::piece::o
+                                || temporaryBoard[i - 1][j + 1] == Player::piece::O)
+                            && temporaryBoard[i - 2][j + 2] == Player::piece::e)
+                        {
+                            Player::piece removed = temporaryBoard[i - 1][j + 1];
+                            temporaryBoard[i][j] = Player::piece::e;
+                            temporaryBoard[i - 1][j + 1] = Player::piece::e;
+                            temporaryBoard[i - 2][j + 2] = Player::piece::X;
+                            double tempValue = minimax(temporaryBoard, 3, this->pimpl->player_nr, -400000, POS_INF);
+                            if(tempValue > value)
+                            {
+                                value = tempValue;
+                                cellPosition.first = i;
+                                cellPosition.second = j;
+                                direction = 'D';
+                            }
+                            //Undo della mossa
+                            temporaryBoard[i][j] = Player::piece::X;
+                            temporaryBoard[i - 1][j + 1] = removed;
+                            temporaryBoard[i - 2][j + 2] = Player::piece::e;
+                        }
+                    }
                 }
             }
         }
-
     }
-
-
+    
     if(this->pimpl->player_nr == 2)
     {
 
