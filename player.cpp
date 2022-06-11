@@ -1681,6 +1681,7 @@ void Player::move()
     }
 
     //Effettua la mossa
+    //RICORDATI DI PROMUOVERE
     switch(direction)
     {
         case 'Q':
@@ -1688,9 +1689,17 @@ void Player::move()
                 Player::piece original = moveBoard[cellPosition.first][cellPosition.second];
                 moveBoard[cellPosition.first][cellPosition.second] = Player::piece::e;
                 if(moveBoard[cellPosition.first + 1][cellPosition.second - 1] == Player::piece::e)
+                {    
+                    if(original == Player::piece::x)
+                        original = cellPosition.first + 1 == 7 ? Player::piece::X : original;
+                    
                     moveBoard[cellPosition.first + 1][cellPosition.second - 1] = original;
+                }
                 else
                 {
+                    if(original == Player::piece::x)
+                        original = cellPosition.first + 2 == 7 ? Player::piece::X : original;
+
                     moveBoard[cellPosition.first + 1][cellPosition.second - 1] = Player::piece::e;
                     moveBoard[cellPosition.first + 2][cellPosition.second - 2] = original;
                 }
@@ -1701,9 +1710,19 @@ void Player::move()
                 Player::piece original = moveBoard[cellPosition.first][cellPosition.second];
                 moveBoard[cellPosition.first][cellPosition.second] = Player::piece::e;
                 if(moveBoard[cellPosition.first + 1][cellPosition.second + 1] == Player::piece::e)
+                {
+
+                    if(original == Player::piece::x)
+                        original = cellPosition.first + 1 == 7 ? Player::piece::X : original;
+
                     moveBoard[cellPosition.first + 1][cellPosition.second + 1] = original;
+                }
                 else
                 {
+
+                    if(original == Player::piece::x)
+                        original = cellPosition.first + 2 == 7 ? Player::piece::X : original;
+
                     moveBoard[cellPosition.first + 1][cellPosition.second + 1] = Player::piece::e;
                     moveBoard[cellPosition.first + 2][cellPosition.second + 2] = original;
                 }
@@ -1714,9 +1733,17 @@ void Player::move()
                 Player::piece original = moveBoard[cellPosition.first][cellPosition.second];
                 moveBoard[cellPosition.first][cellPosition.second] = Player::piece::e;
                 if(moveBoard[cellPosition.first - 1][cellPosition.second - 1] == Player::piece::e)
+                {    
+                    if(original == Player::piece::o)
+                        original = cellPosition.first - 1 == 0 ? Player::piece::O : original;
+
                     moveBoard[cellPosition.first - 1][cellPosition.second - 1] = original;
+                }
                 else
                 {
+                    if(original == Player::piece::o)
+                        original = cellPosition.first - 2 == 0 ? Player::piece::O : original;
+
                     moveBoard[cellPosition.first - 1][cellPosition.second - 1] = Player::piece::e;
                     moveBoard[cellPosition.first - 2][cellPosition.second - 2] = original;
                 }
@@ -1727,9 +1754,17 @@ void Player::move()
                 Player::piece original = moveBoard[cellPosition.first][cellPosition.second];
                 moveBoard[cellPosition.first][cellPosition.second] = Player::piece::e;
                 if(moveBoard[cellPosition.first - 1][cellPosition.second + 1] == Player::piece::e)
+                {
+                    if(original == Player::piece::o)
+                        original = cellPosition.first - 1 == 0 ? Player::piece::O : original;
+
                     moveBoard[cellPosition.first - 1][cellPosition.second + 1] = original;
+                }
                 else
                 {
+                    if(original == Player::piece::o)
+                        original = cellPosition.first - 2 == 0 ? Player::piece::O : original;
+
                     moveBoard[cellPosition.first - 1][cellPosition.second + 1] = Player::piece::e;
                     moveBoard[cellPosition.first - 2][cellPosition.second + 2] = original;
                 }
