@@ -1,8 +1,17 @@
 all: player.o
-	g++ -std=c++14 -Ofast -Wall -Wextra -o PeLDama player.o main.cpp
+	g++ -std=c++14 -Ofast -Wall -Wextra -o Dama player.o main.cpp
 	
 player.o: player.cpp
 	g++ -c -std=c++14 -Ofast -Wall -Wextra -o player.o player.cpp
 
+playerDebug.o: player.cpp
+	g++ -c -std=c++14 -Wall -Wextra -Og -o playerDebug.o player.cpp
+
+debug: playerDebug.o
+	g++ -std=c++14 -Wall -Wextra -o DamaDebug playerDebug.o main.cpp
+
 clean:
 	rm *.o *.txt
+
+ex:
+	rm Dama && rm DamaDebug

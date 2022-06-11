@@ -427,7 +427,7 @@ bool noMoves(Player::piece board[8][8], int player_nr)
             ++i;
         }
     }
-    return moves;
+    return !moves;
 }
 
 double minimax(Player::piece board[8][8], int depth, int player_nr, double alpha, double beta) 
@@ -439,12 +439,7 @@ double minimax(Player::piece board[8][8], int depth, int player_nr, double alpha
 
     if(depth == 0)
         return evaluateBoard(board);
-/*
-    Player::piece cpyBoard[8][8];
-    for(int i = 0; i < 8; ++i)
-        for(int j = 0; j < 8; ++j)
-            cpyBoard[i][j] = board[i][j];
-*/
+
     if(player_nr == 1) //Massimizza per player1 
     {
         auto maxEval = -400000; //Valore a caso negativo 
@@ -457,7 +452,7 @@ double minimax(Player::piece board[8][8], int depth, int player_nr, double alpha
                 //Mossa
                 if(board[i][j] == Player::piece::x) //Solo basso sx e dx, ricordati che sono invertite nella memoria 
                 {
-                    if(i + 1 < 8 && j - 1 >= 0)
+                    if(i + 1 < 8 && j - 1 >= 0) //BASSO SX 
                     {
                         
                         switch(board[i + 1][j - 1])
@@ -500,15 +495,17 @@ double minimax(Player::piece board[8][8], int depth, int player_nr, double alpha
                         return maxEval;
                     }
 
-                    if(i + 1 < 8 && j + 1 < 8)
+                    if(i + 1 < 8 && j + 1 < 8) //BASSO DX
                     {
                         switch(board[i + 1][j + 1])
                         {
                             case Player::piece::e:
-                                first = board[i + 1][j + 1];
-                                board[i][j] = Player::piece::e;
-                                board[i + 1][j + 1] = i + 1 == 7 ? Player::piece::X : Player::piece::x; //Promuove
-                                modified = true;
+                                {
+                                    first = board[i + 1][j + 1];
+                                    board[i][j] = Player::piece::e;
+                                    board[i + 1][j + 1] = i + 1 == 7 ? Player::piece::X : Player::piece::x; //Promuove
+                                    modified = true;
+                                }
                                 break;
                             case Player::piece::o:
                                 if(i + 2 < 8 && j + 2 < 8)
@@ -550,10 +547,12 @@ double minimax(Player::piece board[8][8], int depth, int player_nr, double alpha
                         switch(board[i + 1][j - 1])
                         {
                             case Player::piece::e:
-                                modified = true;
-                                first = board[i + 1][j - 1];
-                                board[i][j] = Player::piece::e;
-                                board[i + 1][j - 1] = Player::piece::X;
+                                {
+                                    modified = true;
+                                    first = board[i + 1][j - 1];
+                                    board[i][j] = Player::piece::e;
+                                    board[i + 1][j - 1] = Player::piece::X;
+                                }
                                 break;
                             case Player::piece::o:
                                 if(i + 2 < 8 && j - 2 >= 0)
@@ -602,10 +601,12 @@ double minimax(Player::piece board[8][8], int depth, int player_nr, double alpha
                         switch(board[i + 1][j + 1])
                         {
                             case Player::piece::e:
-                                modified = true;
-                                first = board[i + 1][j + 1];
-                                board[i][j] = Player::piece::e;
-                                board[i + 1][j + 1] = Player::piece::X;
+                                {   
+                                    modified = true;
+                                    first = board[i + 1][j + 1];
+                                    board[i][j] = Player::piece::e;
+                                    board[i + 1][j + 1] = Player::piece::X;
+                                }   
                                 break;
                             case Player::piece::o:
                                 if(i + 2 < 8 && j + 2 < 8)
@@ -654,10 +655,12 @@ double minimax(Player::piece board[8][8], int depth, int player_nr, double alpha
                         switch(board[i - 1][j - 1])
                         {
                             case Player::piece::e:
-                                modified = true;
-                                first = board[i - 1][j - 1];
-                                board[i][j] = Player::piece::e;
-                                board[i - 1][j - 1] = Player::piece::X;
+                                {
+                                    modified = true;
+                                    first = board[i - 1][j - 1];
+                                    board[i][j] = Player::piece::e;
+                                    board[i - 1][j - 1] = Player::piece::X;
+                                }
                                 break;
                             case Player::piece::o:
                                 if(i - 2 >= 0 && j - 2 >= 0)
@@ -706,10 +709,12 @@ double minimax(Player::piece board[8][8], int depth, int player_nr, double alpha
                         switch(board[i - 1][j + 1])
                         {
                             case Player::piece::e:
-                                modified = true;
-                                first = board[i - 1][j + 1];
-                                board[i][j] = Player::piece::e;
-                                board[i - 1][j + 1] = Player::piece::X;
+                                {
+                                    modified = true;
+                                    first = board[i - 1][j + 1];
+                                    board[i][j] = Player::piece::e;
+                                    board[i - 1][j + 1] = Player::piece::X;
+                                }
                                 break;
                             case Player::piece::o:
                                 if(i - 2 >= 0 && j + 2 <= 8)
@@ -769,15 +774,17 @@ double minimax(Player::piece board[8][8], int depth, int player_nr, double alpha
                 //Mossa
                 if(board[i][j] == Player::piece::o) //Solo basso sx e dx, ricordati che sono invertite nella memoria 
                 {
-                    if(i - 1 >= 0 && j - 1 >= 0) //Basso SX
+                    if(i - 1 >= 0 && j - 1 >= 0) //Alto SX
                     {
                         switch(board[i - 1][j - 1])
                         {
                             case Player::piece::e:
-                                modified = true;
-                                first = board[i - 1][j - 1];
-                                board[i][j] = Player::piece::e;
-                                board[i - 1][j - 1] = i - 1 == 0 ? Player::piece::O : Player::piece::o; //Promuove in caso
+                                {
+                                    modified = true;
+                                    first = board[i - 1][j - 1];
+                                    board[i][j] = Player::piece::e;
+                                    board[i - 1][j - 1] = i - 1 == 0 ? Player::piece::O : Player::piece::o; //Promuove in caso
+                                }
                                 break;
                             case Player::piece::x:
                                 if(i - 2 >= 0 && j - 2 >= 0)
@@ -810,15 +817,17 @@ double minimax(Player::piece board[8][8], int depth, int player_nr, double alpha
                         return minEval;
                     }
 
-                    if(i - 1 >= 0 && j + 1 < 8) //Basso DX
+                    if(i - 1 >= 0 && j + 1 < 8) //Alto DX
                     {
                         switch(board[i - 1][j + 1])
                         {
                             case Player::piece::e:
-                                modified = true;
-                                first = board[i - 1][j + 1];
-                                board[i][j] = Player::piece::e;
-                                board[i - 1][j + 1] = i - 1 == 0 ? Player::piece::O : Player::piece::o; //Promuove in caso
+                                {
+                                    modified = true;
+                                    first = board[i - 1][j + 1];
+                                    board[i][j] = Player::piece::e;
+                                    board[i - 1][j + 1] = i - 1 == 0 ? Player::piece::O : Player::piece::o; //Promuove in caso
+                                }
                                 break;
                             case Player::piece::x:
                                 if(i + 2 < 8 && j + 2 < 8)
@@ -860,10 +869,12 @@ double minimax(Player::piece board[8][8], int depth, int player_nr, double alpha
                         switch(board[i + 1][j - 1])
                         {
                             case Player::piece::e:
-                                modified = true;
-                                first = board[i + 1][j - 1];
-                                board[i][j] = Player::piece::e;
-                                board[i + 1][j - 1] = Player::piece::O;
+                                {
+                                    modified = true;
+                                    first = board[i + 1][j - 1];
+                                    board[i][j] = Player::piece::e;
+                                    board[i + 1][j - 1] = Player::piece::O;
+                                }
                                 break;
                             case Player::piece::x:
                                 if(i + 2 < 8 && j - 2 >= 0)
@@ -913,10 +924,12 @@ double minimax(Player::piece board[8][8], int depth, int player_nr, double alpha
                         switch(board[i + 1][j + 1])
                         {
                             case Player::piece::e:
-                                modified = true;
-                                first = board[i + 1][j + 1];
-                                board[i][j] = Player::piece::e;
-                                board[i + 1][j + 1] = Player::piece::O;
+                                {
+                                    modified = true;
+                                    first = board[i + 1][j + 1];
+                                    board[i][j] = Player::piece::e;
+                                    board[i + 1][j + 1] = Player::piece::O;
+                                }
                                 break;
                             case Player::piece::x:
                                 if(i + 2 < 8 && j + 2 < 8)
@@ -966,10 +979,12 @@ double minimax(Player::piece board[8][8], int depth, int player_nr, double alpha
                         switch(board[i - 1][j - 1])
                         {
                             case Player::piece::e:
-                                modified = true;
-                                first = board[i - 1][j - 1];
-                                board[i][j] = Player::piece::e;
-                                board[i - 1][j - 1] = Player::piece::O;
+                                {
+                                    modified = true;
+                                    first = board[i - 1][j - 1];
+                                    board[i][j] = Player::piece::e;
+                                    board[i - 1][j - 1] = Player::piece::O;
+                                }
                                 break;
                             case Player::piece::x:
                                 if(i - 2 >= 0 && j - 2 >= 0)
@@ -1019,10 +1034,12 @@ double minimax(Player::piece board[8][8], int depth, int player_nr, double alpha
                         switch(board[i - 1][j + 1])
                         {
                             case Player::piece::e:
-                                modified = true;
-                                first = board[i - 1][j + 1];
-                                board[i][j] = Player::piece::e;
-                                board[i - 1][j + 1] = Player::piece::O;
+                                {
+                                    modified = true;
+                                    first = board[i - 1][j + 1];
+                                    board[i][j] = Player::piece::e;
+                                    board[i - 1][j + 1] = Player::piece::O;
+                                }
                                 break;
                             case Player::piece::x:
                                 if(i - 2 >= 0 && j + 2 <= 8)
@@ -1078,6 +1095,8 @@ void Player::move()
 {
     //https://www.youtube.com/watch?v=l-hh51ncgDI
     //Spiegazione minimax 
+    std::cout << "Sono entrato nella move! " << std::endl;
+
     if(!this->pimpl->boardOffset)
         throw player_exception{player_exception::invalid_board, "Board history does not exist."};
 
@@ -1099,13 +1118,13 @@ void Player::move()
         return;
     }
 
+    std::pair<int, int> cellPosition; //row, column
+    char direction; // 'Q' alto sx 'E' alto dx 'A' basso sx 'D' basso dx
+
     //Prova tutte le mosse -> Sceglie quella con minimax maggiore/minore in base al player e salva
     if(this->pimpl->player_nr == 1)
     {
         double value = -400000;
-        std::pair<int, int> cellPosition; //row, column
-        char direction; // 'Q' alto sx 'E' alto dx 'A' basso sx 'D' basso dx
-
         for(int i = 0; i < 8; ++i)
         {
             for(int j = 0; j < 8; ++j)
@@ -1379,11 +1398,291 @@ void Player::move()
                 }
             }
         }
+    }
 
-        //Effettua la mossa
-        switch(direction)
+    if(this->pimpl->player_nr == 2)
+    {
+        double value = POS_INF;
+        for(int i = 0; i < 8; ++i)
         {
-            case 'Q':
+            for(int j = 0; j < 8; ++j)
+            {
+                if(temporaryBoard[i][j] == Player::piece::o)
+                {
+                    //Basso SX
+                    if(i - 1 >= 0 && j - 1 >= 0)
+                    {
+                        //Pezzo vuoto
+                        if(temporaryBoard[i - 1][j - 1] == Player::piece::e)
+                        {
+                            temporaryBoard[i][j] = Player::piece::e;
+                            temporaryBoard[i - 1][j - 1] = i - 1 == 0 ? Player::piece::O : Player::piece::o;
+                            double tempValue = minimax(temporaryBoard, 3, 1, -400000, POS_INF);
+                            if(tempValue < value)
+                            {
+                                value = tempValue;
+                                cellPosition.first = i;
+                                cellPosition.second = j;
+                                direction = 'A';
+                            }
+                            //Undo della mossa
+                            temporaryBoard[i][j] = Player::piece::o;
+                            temporaryBoard[i - 1][j - 1] = Player::piece::e;
+                        }
+                        //Pezzo nemico
+                        if(i - 2 >= 0 && j - 2 >= 0 
+                            && temporaryBoard[i - 1][j - 1] == Player::piece::x 
+                            && temporaryBoard[i - 2][j - 2] == Player::piece::e)
+                        {
+                            temporaryBoard[i][j] = Player::piece::e;
+                            temporaryBoard[i - 1][j - 1] = Player::piece::e;
+                            temporaryBoard[i - 2][j - 2] = i - 2 == 0 ? Player::piece::O : Player::piece::o;
+                            double tempValue = minimax(temporaryBoard, 3, 1, -400000, POS_INF);
+                            if(tempValue < value)
+                            {
+                                value = tempValue;
+                                cellPosition.first = i;
+                                cellPosition.second = j;
+                                direction = 'A';
+                            }
+                            //Undo della mossa
+                            temporaryBoard[i][j] = Player::piece::o;
+                            temporaryBoard[i - 1][j - 1] = Player::piece::x;
+                            temporaryBoard[i - 2][j - 2] = Player::piece::e;
+                        }
+                    }
+                    //Basso DX
+                    if(i - 1 >= 0 && j + 1 < 8)
+                    {
+                        //Pezzo vuoto
+                        if(temporaryBoard[i - 1][j + 1] == Player::piece::e)
+                        {
+                            temporaryBoard[i][j] = Player::piece::e;
+                            temporaryBoard[i - 1][j + 1] = i - 1 == 0 ? Player::piece::O : Player::piece::o;
+                            double tempValue = minimax(temporaryBoard, 3, 1, -400000, POS_INF);
+                            if(tempValue < value)
+                            {
+                                value = tempValue;
+                                cellPosition.first = i;
+                                cellPosition.second = j;
+                                direction = 'D';
+                            }
+                            //Undo della mossa
+                            temporaryBoard[i][j] = Player::piece::o;
+                            temporaryBoard[i - 1][j + 1] = Player::piece::e;
+                        }
+                        //Pezzo nemico 
+                        if(i - 2 >= 0 && j - 2 >= 0 
+                            && temporaryBoard[i - 1][j + 1] == Player::piece::x
+                            && temporaryBoard[i - 2][j + 2] == Player::piece::e)
+                        {
+                            temporaryBoard[i][j] = Player::piece::e;
+                            temporaryBoard[i - 1][j + 1] = Player::piece::e;
+                            temporaryBoard[i - 2][j + 2] = i - 2 == 0 ? Player::piece::O : Player::piece::o;
+                            double tempValue = minimax(temporaryBoard, 3, 1, -400000, POS_INF);
+                            if(tempValue < value)
+                            {
+                                value = tempValue;
+                                cellPosition.first = i;
+                                cellPosition.second = j;
+                                direction = 'D';
+                            }
+                            //Undo della mossa
+                            temporaryBoard[i][j] = Player::piece::o;
+                            temporaryBoard[i - 1][j + 1] = Player::piece::x;
+                            temporaryBoard[i - 2][j + 2] = Player::piece::e;
+                        }
+                    }
+                }
+                
+                if(temporaryBoard[i][j] == Player::piece::O)
+                {
+                    //Alto SX
+                    if(i + 1 < 8 && j - 1 >= 0)
+                    {
+                        //Pezzo vuoto
+                        if(temporaryBoard[i + 1][j - 1] == Player::piece::e)
+                        {
+                            temporaryBoard[i][j] = Player::piece::e;
+                            temporaryBoard[i + 1][j - 1] = Player::piece::O;
+                            double tempValue = minimax(temporaryBoard, 3, 1, -400000, POS_INF);
+                            if(tempValue < value)
+                            {
+                                value = tempValue;
+                                cellPosition.first = i;
+                                cellPosition.second = j;
+                                direction = 'Q';
+                            }
+                            //Undo della mossa
+                            temporaryBoard[i][j] = Player::piece::O;
+                            temporaryBoard[i + 1][j - 1] = Player::piece::e;
+                        }
+                        //Pezzo nemico
+                        if(i + 2 < 8 && j - 2 >= 0 
+                            && (temporaryBoard[i + 1][j - 1] == Player::piece::x 
+                                || temporaryBoard[i + 1][j - 1] == Player::piece::X) 
+                            && temporaryBoard[i + 2][j - 2] == Player::piece::e)
+                        {
+                            Player::piece removed = temporaryBoard[i + 1][j - 1];
+                            temporaryBoard[i][j] = Player::piece::e;
+                            temporaryBoard[i + 1][j - 1] = Player::piece::e;
+                            temporaryBoard[i + 2][j - 2] = Player::piece::O;
+                            double tempValue = minimax(temporaryBoard, 3, 1, -400000, POS_INF);
+                            if(tempValue < value)
+                            {
+                                value = tempValue;
+                                cellPosition.first = i;
+                                cellPosition.second = j;
+                                direction = 'Q';
+                            }
+                            //Undo della mossa
+                            temporaryBoard[i][j] = Player::piece::O;
+                            temporaryBoard[i + 1][j - 1] = removed;
+                            temporaryBoard[i + 2][j - 2] = Player::piece::e;
+                        }
+                    }
+                    //Alto DX
+                    if(i + 1 < 8 && j + 1 < 8)
+                    {
+                        //Pezzo vuoto
+                        if(temporaryBoard[i + 1][j + 1] == Player::piece::e)
+                        {
+                            temporaryBoard[i][j] = Player::piece::e;
+                            temporaryBoard[i + 1][j + 1] = Player::piece::O;
+                            double tempValue = minimax(temporaryBoard, 3, 1, -400000, POS_INF);
+                            if(tempValue > value)
+                            {
+                                value = tempValue;
+                                cellPosition.first = i;
+                                cellPosition.second = j;
+                                direction = 'E';
+                            }
+                            //Undo della mossa
+                            temporaryBoard[i][j] = Player::piece::O;
+                            temporaryBoard[i + 1][j + 1] = Player::piece::e;
+                        }
+                        //Pezzo nemico 
+                        if(i + 2 < 8 && j + 2 < 8 
+                            && (temporaryBoard[i + 1][j + 1] == Player::piece::x
+                                || temporaryBoard[i + 1][j + 1] == Player::piece::X)
+                            && temporaryBoard[i + 2][j + 2] == Player::piece::e)
+                        {
+                            Player::piece removed = temporaryBoard[i + 1][j + 1];
+                            temporaryBoard[i][j] = Player::piece::e;
+                            temporaryBoard[i + 1][j + 1] = Player::piece::e;
+                            temporaryBoard[i + 2][j + 2] = Player::piece::O;
+                            double tempValue = minimax(temporaryBoard, 3, 1, -400000, POS_INF);
+                            if(tempValue < value)
+                            {
+                                value = tempValue;
+                                cellPosition.first = i;
+                                cellPosition.second = j;
+                                direction = 'E';
+                            }
+                            //Undo della mossa
+                            temporaryBoard[i][j] = Player::piece::O;
+                            temporaryBoard[i + 1][j + 1] = removed;
+                            temporaryBoard[i + 2][j + 2] = Player::piece::e;
+                        }
+                    }
+                    //Basso SX
+                    if(i - 1 >= 0 && j - 1 >= 0)
+                    {
+                        //Pezzo vuoto
+                        if(temporaryBoard[i - 1][j - 1] == Player::piece::e)
+                        {
+                            temporaryBoard[i][j] = Player::piece::e;
+                            temporaryBoard[i - 1][j - 1] = Player::piece::O;
+                            double tempValue = minimax(temporaryBoard, 3, 1, -400000, POS_INF);
+                            if(tempValue > value)
+                            {
+                                value = tempValue;
+                                cellPosition.first = i;
+                                cellPosition.second = j;
+                                direction = 'A';
+                            }
+                            //Undo della mossa
+                            temporaryBoard[i][j] = Player::piece::O;
+                            temporaryBoard[i - 1][j - 1] = Player::piece::e;
+                        }
+                        //Pezzo nemico 
+                        if(i - 2 >= 0 && j - 2 >= 0 
+                            && (temporaryBoard[i - 1][j - 1] == Player::piece::x
+                                || temporaryBoard[i - 1][j - 1] == Player::piece::X)
+                            && temporaryBoard[i - 2][j - 2] == Player::piece::e)
+                        {
+                            Player::piece removed = temporaryBoard[i - 1][j - 1];
+                            temporaryBoard[i][j] = Player::piece::e;
+                            temporaryBoard[i - 1][j - 1] = Player::piece::e;
+                            temporaryBoard[i - 2][j - 2] = Player::piece::O;
+                            double tempValue = minimax(temporaryBoard, 3, 1, -400000, POS_INF);
+                            if(tempValue < value)
+                            {
+                                value = tempValue;
+                                cellPosition.first = i;
+                                cellPosition.second = j;
+                                direction = 'A';
+                            }
+                            //Undo della mossa
+                            temporaryBoard[i][j] = Player::piece::O;
+                            temporaryBoard[i - 1][j - 1] = removed;
+                            temporaryBoard[i - 2][j - 2] = Player::piece::e;
+                        } 
+                    }
+                    //Basso DX
+                    if(i - 1 >= 0 && j + 1 < 8)
+                    {
+                        //Pezzo vuoto
+                        if(temporaryBoard[i - 1][j + 1] == Player::piece::e)
+                        {
+                            temporaryBoard[i][j] = Player::piece::e;
+                            temporaryBoard[i - 1][j + 1] = Player::piece::O;
+                            double tempValue = minimax(temporaryBoard, 3, 1, -400000, POS_INF);
+                            if(tempValue < value)
+                            {
+                                value = tempValue;
+                                cellPosition.first = i;
+                                cellPosition.second = j;
+                                direction = 'D';
+                            }
+                            //Undo della mossa
+                            temporaryBoard[i][j] = Player::piece::O;
+                            temporaryBoard[i - 1][j + 1] = Player::piece::e;
+                        }
+                        //Pezzo nemico 
+                        if(i - 2 >= 0 && j + 2 < 8 
+                            && (temporaryBoard[i - 1][j + 1] == Player::piece::x
+                                || temporaryBoard[i - 1][j + 1] == Player::piece::X)
+                            && temporaryBoard[i - 2][j + 2] == Player::piece::e)
+                        {
+                            Player::piece removed = temporaryBoard[i - 1][j + 1];
+                            temporaryBoard[i][j] = Player::piece::e;
+                            temporaryBoard[i - 1][j + 1] = Player::piece::e;
+                            temporaryBoard[i - 2][j + 2] = Player::piece::O;
+                            double tempValue = minimax(temporaryBoard, 3, 1, -400000, POS_INF);
+                            if(tempValue < value)
+                            {
+                                value = tempValue;
+                                cellPosition.first = i;
+                                cellPosition.second = j;
+                                direction = 'D';
+                            }
+                            //Undo della mossa
+                            temporaryBoard[i][j] = Player::piece::O;
+                            temporaryBoard[i - 1][j + 1] = removed;
+                            temporaryBoard[i - 2][j + 2] = Player::piece::e;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    //Effettua la mossa
+    switch(direction)
+    {
+        case 'Q':
+            {
                 Player::piece original = temporaryBoard[cellPosition.first][cellPosition.second];
                 temporaryBoard[cellPosition.first][cellPosition.second] = Player::piece::e;
                 if(temporaryBoard[cellPosition.first + 1][cellPosition.second - 1] == Player::piece::e)
@@ -1393,8 +1692,10 @@ void Player::move()
                     temporaryBoard[cellPosition.first + 1][cellPosition.second - 1] = Player::piece::e;
                     temporaryBoard[cellPosition.first + 2][cellPosition.second - 2] = original;
                 }
-                break;
-            case 'E':
+            }
+            break;
+        case 'E':
+            {
                 Player::piece original = temporaryBoard[cellPosition.first][cellPosition.second];
                 temporaryBoard[cellPosition.first][cellPosition.second] = Player::piece::e;
                 if(temporaryBoard[cellPosition.first + 1][cellPosition.second + 1] == Player::piece::e)
@@ -1404,8 +1705,10 @@ void Player::move()
                     temporaryBoard[cellPosition.first + 1][cellPosition.second + 1] = Player::piece::e;
                     temporaryBoard[cellPosition.first + 2][cellPosition.second + 2] = original;
                 }
-                break;
-            case 'A': //Pezzo per forza è DAMA 'X'
+            }
+            break;
+        case 'A':
+            {
                 Player::piece original = temporaryBoard[cellPosition.first][cellPosition.second];
                 temporaryBoard[cellPosition.first][cellPosition.second] = Player::piece::e;
                 if(temporaryBoard[cellPosition.first - 1][cellPosition.second - 1] == Player::piece::e)
@@ -1415,8 +1718,10 @@ void Player::move()
                     temporaryBoard[cellPosition.first - 1][cellPosition.second - 1] = Player::piece::e;
                     temporaryBoard[cellPosition.first - 2][cellPosition.second - 2] = original;
                 }
-                break;
-            case 'D': //Pezzo per forza è DAMA 'X'
+            }
+            break;
+        case 'D': 
+            {
                 Player::piece original = temporaryBoard[cellPosition.first][cellPosition.second];
                 temporaryBoard[cellPosition.first][cellPosition.second] = Player::piece::e;
                 if(temporaryBoard[cellPosition.first - 1][cellPosition.second + 1] == Player::piece::e)
@@ -1426,17 +1731,12 @@ void Player::move()
                     temporaryBoard[cellPosition.first - 1][cellPosition.second + 1] = Player::piece::e;
                     temporaryBoard[cellPosition.first - 2][cellPosition.second + 2] = original;
                 }
-                break;
-            default: //Non dovrebbe mai entrarci ma non si sa mai
-                throw player_exception{player_exception::invalid_board, "Something went wrong, please blame the developer."};
-
-        }
-
-    }
-
-    if(this->pimpl->player_nr == 2)
-    {
-
+            }
+            break;
+        default: //Non dovrebbe mai entrarci ma non si sa mai
+            std::cout << "Why: " << direction << std::endl;
+            throw player_exception{player_exception::invalid_board, "Something went wrong, please blame the developer."};
+            break;
     }
 
     //Salva nella history
@@ -1451,7 +1751,7 @@ void Player::move()
 
 bool Player::valid_move() const
 {
-    //Controllo se la board è uguale a quella precedente   
+ /*   //Controllo se la board è uguale a quella precedente   
     if(!this->pimpl->boardOffset || !this->pimpl->boardOffset->prev)
         throw player_exception{player_exception::index_out_of_bounds, "Less than two boards in history."};
     
@@ -1476,7 +1776,7 @@ bool Player::valid_move() const
         return false;
 
     
- 
+ */
     return true;
 }
 
@@ -1492,7 +1792,7 @@ void Player::pop()
 
 bool Player::wins(int player_nr) const
 {
-    if(player_nr != 1 || player_nr != 2)
+    if(!(player_nr == 1 || player_nr == 2))
         throw player_exception{player_exception::index_out_of_bounds, "Player number not valid."};
 
     bool win = false;
@@ -1515,7 +1815,7 @@ bool Player::wins(int player_nr) const
                         break;
                 }
 
-        if(!otherPieces)
+        if(otherPieces == 0)
             win = true;
     }
     else    // 'o'
@@ -1536,7 +1836,7 @@ bool Player::wins(int player_nr) const
                         break;
                 }
 
-        if(!otherPieces)
+        if(otherPieces == 0)
             win = true;
     }
 
@@ -1550,7 +1850,7 @@ bool Player::wins() const
 
 bool Player::loses(int player_nr) const
 {
-    if(player_nr != 1 || player_nr != 2)
+    if(!(player_nr == 1 || player_nr == 2))
         throw player_exception{player_exception::index_out_of_bounds, "Player number not valid."};
     
     bool lost = false;
