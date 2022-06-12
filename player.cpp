@@ -20,9 +20,8 @@ Player::Player(int player_nr)
         throw player_exception{player_exception::index_out_of_bounds, "Player value not valid."};
         
     this->pimpl = new Impl;
-    this->pimpl->boardOffset = new History;
-    this->pimpl->boardOffset->prev = nullptr;
     this->pimpl->player_nr = player_nr;
+    this->pimpl->boardOffset = nullptr;
 }
 
 void deleteHistory(History* hist)
@@ -42,33 +41,12 @@ Player::~Player()
 Player::Player(const Player& rhs)
 {
     this->pimpl = new Impl;
-    this->pimpl->boardOffset = new History;
     this->pimpl->player_nr = rhs.pimpl->player_nr;
-
-    History* temp = rhs.pimpl->boardOffset;
-    History* t  = this->pimpl->boardOffset;
-    while(temp)
+    
+    if(rhs.pimpl->boardOffset != nullptr)
     {
-        for(int i = 0; i < 8; ++i)
-            for(int j = 0; j < 8; ++j)
-                t->board[i][j] = temp->board[i][j];
-
-        if(temp->prev)
-        {
-            temp = temp->prev;
-            t->prev = new History;
-            t = t ->prev;
-        }
-    }
-}
-
-Player& Player::operator=(const Player &rhs)
-{
-    if(this != &rhs)
-    {
-        deleteHistory(this->pimpl->boardOffset);
-        this->pimpl->player_nr = rhs.pimpl->player_nr;
         this->pimpl->boardOffset = new History;
+    
         History* temp = rhs.pimpl->boardOffset;
         History* t  = this->pimpl->boardOffset;
         while(temp)
@@ -79,11 +57,43 @@ Player& Player::operator=(const Player &rhs)
 
             if(temp->prev)
             {
-                temp = temp->prev;
                 t->prev = new History;
                 t = t ->prev;
             }
+            temp = temp->prev;
         }
+    }
+    else
+        this->pimpl->boardOffset = nullptr;
+}
+
+Player& Player::operator=(const Player &rhs)
+{
+    if(this != &rhs)
+    {
+        deleteHistory(this->pimpl->boardOffset);
+        this->pimpl->player_nr = rhs.pimpl->player_nr;
+        if(rhs.pimpl->boardOffset != nullptr)
+        {
+            this->pimpl->boardOffset = new History;
+            History* temp = rhs.pimpl->boardOffset;
+            History* t  = this->pimpl->boardOffset;
+            while(temp)
+            {
+                for(int i = 0; i < 8; ++i)
+                    for(int j = 0; j < 8; ++j)
+                        t->board[i][j] = temp->board[i][j];
+
+                if(temp->prev)
+                {
+                    t->prev = new History;
+                    t = t ->prev;
+                }
+                temp = temp->prev;
+            }
+        }
+        else
+            this->pimpl->boardOffset = nullptr;
     }
     return *this;
 }
@@ -169,7 +179,7 @@ void Player::load_board(const std::string &filename)
 void Player::init_board(const std::string &filename) const //done
 {
     std::ofstream writeBoard;
-    writeBoard.open(filename);   
+    writeBoard.open(filename, std::ios::trunc);
     Player::piece board[8][8];
     //x
     for(size_t i = 0; i < 3; ++i)
@@ -201,7 +211,7 @@ void Player::init_board(const std::string &filename) const //done
     //Salva su file
     for(size_t i = 0; i < 8; ++i)
     {
-        std::string row = "";
+        std::string row;
         for(size_t j = 0; j < 8; ++j)
         {
             switch(board[i][j])
@@ -349,8 +359,8 @@ bool noMoves(Player::piece board[8][8], int player_nr)
                         moves = true;
 
                     //Pezzo nemico alto sx e posso mangiarlo
-                    if(!moves && i + 1 < 8 && j - 1 >= 0 && (board[i + 1][j - 1] == Player::piece::o)
-                                                        || board[i + 1][j - 1] == Player::piece::O)
+                    if(!moves && i + 1 < 8 && j - 1 >= 0 && (board[i + 1][j - 1] == Player::piece::o
+                                                        || board[i + 1][j - 1] == Player::piece::O))
                         if(i + 2 < 8 && j - 2 >= 0 && board[i + 2][j - 2] == Player::piece::e)
                             moves = true;
 
@@ -431,8 +441,7 @@ bool noMoves(Player::piece board[8][8], int player_nr)
 }
 
 double minimax(Player::piece board[8][8], int depth, int player_nr, double alpha, double beta) 
-//TODO: Evitare di copiare tutta la board ogni volta
-//Alla fine della ricorsione annulla il movimento iniziale
+//TODO: Funzioni ausiliarie per muovere nelle 4 direzioni
 {
     if(noMoves(board, player_nr))  //Settare un valore per indicare perdita per il giocatore
         return player_nr == 1 ? -400000 : POS_INF;
@@ -442,7 +451,7 @@ double minimax(Player::piece board[8][8], int depth, int player_nr, double alpha
 
     if(player_nr == 1) //Massimizza per player1 
     {
-        auto maxEval = -400000; //Valore a caso negativo 
+        double maxEval = -400000; //Valore a caso negativo
         for(int i = 0; i < 8; ++i)
         {
             for(int j = 0; j < 8; ++j)
@@ -764,7 +773,7 @@ double minimax(Player::piece board[8][8], int depth, int player_nr, double alpha
 
     if(player_nr == 2) //Massimizza per player2 (minimizza player1)
     {
-        auto minEval = POS_INF;
+        double minEval = POS_INF;
         for(int i = 7; i >= 0; --i)
         {
             for(int j = 0; j < 8; ++j)
@@ -1684,7 +1693,9 @@ void Player::move()
     }
 
     //Effettua la mossa
-    //RICORDATI DI PROMUOVERE
+    //DEBUG DI NUOVO
+    std::cout << "PLAYER: " << this->pimpl->player_nr << std::endl;
+    std::cout << "R: " << cellPosition.first << " C: " << cellPosition.second << ", DIR:" << direction << std::endl;
     switch(direction)
     {
         case 'Q':
@@ -1779,9 +1790,7 @@ void Player::move()
             break;
     }
 
-    //DEBUG
-    std::cout << "Giocatore: " << this->pimpl->player_nr << "\nIndice pezzo: " << cellPosition.first << ", " << cellPosition.second << "\nDirezione:" << direction << std::endl << std::endl;
-
+    
     //Salva nella history
     History* t = new History;
     t->prev = this->pimpl->boardOffset;
@@ -1794,7 +1803,7 @@ void Player::move()
 
 bool Player::valid_move() const
 {
- /*   //Controllo se la board è uguale a quella precedente   
+    //Controllo se la board è uguale a quella precedente   
     if(!this->pimpl->boardOffset || !this->pimpl->boardOffset->prev)
         throw player_exception{player_exception::index_out_of_bounds, "Less than two boards in history."};
     
@@ -1819,7 +1828,7 @@ bool Player::valid_move() const
         return false;
 
     
- */
+
     return true;
 }
 
@@ -2006,7 +2015,7 @@ void Player::print() const
 void Player::printHistory() const
 {
     History* temp = this->pimpl->boardOffset;
-    while(temp->prev) //Apparently esiste una seconda board quando creo che è piena di x wtf
+    while(temp) //Apparently esiste una seconda board quando creo che è piena di x wtf
     {
         for(int i = 7; i >= 0; --i)
         {

@@ -8,7 +8,7 @@ playerDebug.o: player.cpp
 	g++ -c -std=c++14 -Wall -Wextra -Og -o playerDebug.o player.cpp
 
 debug: playerDebug.o
-	g++ -std=c++14 -Wall -Wextra -o DamaDebug playerDebug.o main.cpp
+	g++ -std=c++14 -Wall -Wextra -Og -o DamaDebug playerDebug.o main.cpp
 
 clean:
 	rm *.o *.txt

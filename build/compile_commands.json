@@ -1,12 +1,12 @@
 [
 {
   "directory": "/home/t00m-s/Development/PeLDama_Mod2/build",
-  "command": "/usr/bin/g++ -O2 -g -DNDEBUG -o CMakeFiles/Dama.dir/main.cpp.o -c /home/t00m-s/Development/PeLDama_Mod2/main.cpp",
+  "command": "/usr/bin/g++ -Wall -Wextra -g -std=gnu++14 -o CMakeFiles/DamaCLion.dir/main.cpp.o -c /home/t00m-s/Development/PeLDama_Mod2/main.cpp",
   "file": "/home/t00m-s/Development/PeLDama_Mod2/main.cpp"
 },
 {
   "directory": "/home/t00m-s/Development/PeLDama_Mod2/build",
-  "command": "/usr/bin/g++ -O2 -g -DNDEBUG -o CMakeFiles/Dama.dir/player.cpp.o -c /home/t00m-s/Development/PeLDama_Mod2/player.cpp",
+  "command": "/usr/bin/g++ -Wall -Wextra -g -std=gnu++14 -o CMakeFiles/DamaCLion.dir/player.cpp.o -c /home/t00m-s/Development/PeLDama_Mod2/player.cpp",
   "file": "/home/t00m-s/Development/PeLDama_Mod2/player.cpp"
 }
 ]

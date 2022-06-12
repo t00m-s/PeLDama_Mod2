@@ -2,7 +2,7 @@
 	"artifacts" : 
 	[
 		{
-			"path" : "Dama"
+			"path" : "DamaCLion"
 		}
 	],
 	"backtrace" : 1,
@@ -24,7 +24,7 @@
 			{
 				"command" : 0,
 				"file" : 0,
-				"line" : 7,
+				"line" : 5,
 				"parent" : 0
 			}
 		]
@@ -35,10 +35,21 @@
 			"compileCommandFragments" : 
 			[
 				{
-					"fragment" : "-O2 -g -DNDEBUG"
+					"fragment" : "-Wall -Wextra -g"
+				},
+				{
+					"fragment" : "-std=gnu++14"
 				}
 			],
 			"language" : "CXX",
+			"languageStandard" : 
+			{
+				"backtraces" : 
+				[
+					1
+				],
+				"standard" : "14"
+			},
 			"sourceIndexes" : 
 			[
 				0,
@@ -46,24 +57,24 @@
 			]
 		}
 	],
-	"id" : "Dama::@6890427a1f51a3e7e1df",
+	"id" : "DamaCLion::@6890427a1f51a3e7e1df",
 	"link" : 
 	{
 		"commandFragments" : 
 		[
 			{
-				"fragment" : "-O2 -g -DNDEBUG",
+				"fragment" : "-Wall -Wextra -g",
 				"role" : "flags"
 			},
 			{
-				"fragment" : "-rdynamic",
+				"fragment" : "",
 				"role" : "flags"
 			}
 		],
 		"language" : "CXX"
 	},
-	"name" : "Dama",
-	"nameOnDisk" : "Dama",
+	"name" : "DamaCLion",
+	"nameOnDisk" : "DamaCLion",
 	"paths" : 
 	{
 		"build" : ".",
