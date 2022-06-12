@@ -7,7 +7,7 @@ int main()
     Player p2(2);
     int i = 1;
     p1.init_board("board_1.txt");
-    while(i < 100)
+    while(i < 300)
     {
         try
         {

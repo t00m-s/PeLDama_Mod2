@@ -491,7 +491,7 @@ double minimax(Player::piece board[8][8], int depth, int player_nr, double alpha
                         maxEval = eval > maxEval ? eval : maxEval;
                         alpha = alpha > maxEval ? alpha : maxEval;
                         if(alpha >= beta) // Da ritornare un valore magari e non break
-                            break;
+                            return alpha;
                         return maxEval;
                     }
 
@@ -535,7 +535,7 @@ double minimax(Player::piece board[8][8], int depth, int player_nr, double alpha
                         maxEval = eval > maxEval ? eval : maxEval;
                         alpha = alpha > maxEval ? alpha : maxEval;
                         if(alpha >= beta)
-                            break;
+                            return alpha;
                         return maxEval;
                     }
                 }
@@ -592,7 +592,7 @@ double minimax(Player::piece board[8][8], int depth, int player_nr, double alpha
                         maxEval = eval > maxEval ? eval : maxEval;
                         alpha = alpha > maxEval ? alpha : maxEval;
                         if(alpha >= beta)
-                            break;
+                            return alpha;
                         return maxEval;
                     }
 
@@ -646,7 +646,7 @@ double minimax(Player::piece board[8][8], int depth, int player_nr, double alpha
                         maxEval = eval > maxEval ? eval : maxEval;
                         alpha = alpha > maxEval ? alpha : maxEval;
                         if(alpha >= beta)
-                            break;
+                            return alpha;
                         return maxEval;
                     }
 
@@ -700,7 +700,7 @@ double minimax(Player::piece board[8][8], int depth, int player_nr, double alpha
                         maxEval = eval > maxEval ? eval : maxEval;
                         alpha = alpha > maxEval ? alpha : maxEval;
                         if(alpha >= beta)
-                            break;
+                            return alpha;
                         return maxEval;
                     }
 
@@ -754,7 +754,7 @@ double minimax(Player::piece board[8][8], int depth, int player_nr, double alpha
                         maxEval = eval > maxEval ? eval : maxEval;
                         alpha = alpha > maxEval ? alpha : maxEval;
                         if(alpha >= beta)
-                            break;
+                            return alpha;
                         return maxEval;
                     }
                 }
@@ -813,7 +813,7 @@ double minimax(Player::piece board[8][8], int depth, int player_nr, double alpha
                         minEval = eval < minEval ? eval : minEval;
                         alpha = alpha < minEval ? alpha : minEval;
                         if(alpha >= beta)
-                            break;
+                            return beta;
                         return minEval;
                     }
 
@@ -857,7 +857,7 @@ double minimax(Player::piece board[8][8], int depth, int player_nr, double alpha
                         minEval = eval < minEval ? eval : minEval;
                         alpha = alpha < minEval ? alpha : minEval;
                         if(alpha >= beta)
-                            break;
+                            return beta;
                         return minEval;
                     }
                 }
@@ -915,7 +915,7 @@ double minimax(Player::piece board[8][8], int depth, int player_nr, double alpha
                         minEval = eval < minEval ? eval : minEval;
                         alpha = alpha < minEval ? alpha : minEval;
                         if(alpha >= beta)
-                            break;
+                            return beta;
                         return minEval;
                     }
 
@@ -970,7 +970,7 @@ double minimax(Player::piece board[8][8], int depth, int player_nr, double alpha
                         minEval = eval < minEval ? eval : minEval;
                         alpha = alpha < minEval ? alpha : minEval;
                         if(alpha >= beta)
-                            break;
+                            return beta;
                         return minEval;
                     }
 
@@ -1025,7 +1025,7 @@ double minimax(Player::piece board[8][8], int depth, int player_nr, double alpha
                         minEval = eval < minEval ? eval : minEval;
                         alpha = alpha < minEval ? alpha : minEval;
                         if(alpha >= beta)
-                            break;
+                            return beta;
                         return minEval;
                     }
 
@@ -1080,7 +1080,7 @@ double minimax(Player::piece board[8][8], int depth, int player_nr, double alpha
                         minEval = eval < minEval ? eval : minEval;
                         alpha = alpha < minEval ? alpha : minEval;
                         if(alpha >= beta)
-                            break;
+                            return beta;
                         return minEval;
                     }
                 }
@@ -1095,6 +1095,8 @@ void Player::move()
 {
     //https://www.youtube.com/watch?v=l-hh51ncgDI
     //Spiegazione minimax
+    int p1Depth = 10;
+    int p2Depth = 10;
 
     if(!this->pimpl->boardOffset)
         throw player_exception{player_exception::invalid_board, "Board history does not exist."};
@@ -1108,6 +1110,7 @@ void Player::move()
             temporaryBoard[i][j] = this->pimpl->boardOffset->board[i][j];
             moveBoard[i][j] = this->pimpl->boardOffset->board[i][j];
         }
+    
     if(noMoves(temporaryBoard, this->pimpl->player_nr)) //Salva una board uguale
     {
         History* t = new History;
@@ -1141,7 +1144,7 @@ void Player::move()
                         {
                             temporaryBoard[i][j] = Player::piece::e;
                             temporaryBoard[i + 1][j - 1] = i + 1 == 7 ? Player::piece::X : Player::piece::x;
-                            double tempValue = minimax(temporaryBoard, 7, 2, -400000, POS_INF);
+                            double tempValue = minimax(temporaryBoard, p1Depth, 2, -400000, POS_INF);
                             if(tempValue > value)
                             {
                                 value = tempValue;
@@ -1161,7 +1164,7 @@ void Player::move()
                             temporaryBoard[i][j] = Player::piece::e;
                             temporaryBoard[i + 1][j - 1] = Player::piece::e;
                             temporaryBoard[i + 2][j - 2] = i + 2 == 7 ? Player::piece::X : Player::piece::x;
-                            double tempValue = minimax(temporaryBoard, 7, 2, -400000, POS_INF);
+                            double tempValue = minimax(temporaryBoard, 10, 2, -400000, POS_INF);
                             if(tempValue > value)
                             {
                                 value = tempValue;
@@ -1183,7 +1186,7 @@ void Player::move()
                         {
                             temporaryBoard[i][j] = Player::piece::e;
                             temporaryBoard[i + 1][j + 1] = i + 1 == 7 ? Player::piece::X : Player::piece::x;
-                            double tempValue = minimax(temporaryBoard, 7, 2, -400000, POS_INF);
+                            double tempValue = minimax(temporaryBoard, p1Depth, 2, -400000, POS_INF);
                             if(tempValue > value)
                             {
                                 value = tempValue;
@@ -1203,7 +1206,7 @@ void Player::move()
                             temporaryBoard[i][j] = Player::piece::e;
                             temporaryBoard[i + 1][j + 1] = Player::piece::e;
                             temporaryBoard[i + 2][j + 2] = i + 2 == 7 ? Player::piece::X : Player::piece::x;
-                            double tempValue = minimax(temporaryBoard, 7, 2, -400000, POS_INF);
+                            double tempValue = minimax(temporaryBoard, p1Depth, 2, -400000, POS_INF);
                             if(tempValue > value)
                             {
                                 value = tempValue;
@@ -1229,7 +1232,7 @@ void Player::move()
                         {
                             temporaryBoard[i][j] = Player::piece::e;
                             temporaryBoard[i + 1][j - 1] = Player::piece::X;
-                            double tempValue = minimax(temporaryBoard, 7, 2, -400000, POS_INF);
+                            double tempValue = minimax(temporaryBoard, p1Depth, 2, -400000, POS_INF);
                             if(tempValue > value)
                             {
                                 value = tempValue;
@@ -1251,7 +1254,7 @@ void Player::move()
                             temporaryBoard[i][j] = Player::piece::e;
                             temporaryBoard[i + 1][j - 1] = Player::piece::e;
                             temporaryBoard[i + 2][j - 2] = Player::piece::X;
-                            double tempValue = minimax(temporaryBoard, 3, 2, -400000, POS_INF);
+                            double tempValue = minimax(temporaryBoard, p1Depth, 2, -400000, POS_INF);
                             if(tempValue > value)
                             {
                                 value = tempValue;
@@ -1273,7 +1276,7 @@ void Player::move()
                         {
                             temporaryBoard[i][j] = Player::piece::e;
                             temporaryBoard[i + 1][j + 1] = Player::piece::X;
-                            double tempValue = minimax(temporaryBoard, 7, 2, -400000, POS_INF);
+                            double tempValue = minimax(temporaryBoard, p1Depth, 2, -400000, POS_INF);
                             if(tempValue > value)
                             {
                                 value = tempValue;
@@ -1295,7 +1298,7 @@ void Player::move()
                             temporaryBoard[i][j] = Player::piece::e;
                             temporaryBoard[i + 1][j + 1] = Player::piece::e;
                             temporaryBoard[i + 2][j + 2] = Player::piece::X;
-                            double tempValue = minimax(temporaryBoard, 7, this->pimpl->player_nr, -400000, POS_INF);
+                            double tempValue = minimax(temporaryBoard, p1Depth, 2, -400000, POS_INF);
                             if(tempValue > value)
                             {
                                 value = tempValue;
@@ -1317,7 +1320,7 @@ void Player::move()
                         {
                             temporaryBoard[i][j] = Player::piece::e;
                             temporaryBoard[i - 1][j - 1] = Player::piece::X;
-                            double tempValue = minimax(temporaryBoard, 7, 2, -400000, POS_INF);
+                            double tempValue = minimax(temporaryBoard, p1Depth, 2, -400000, POS_INF);
                             if(tempValue > value)
                             {
                                 value = tempValue;
@@ -1339,7 +1342,7 @@ void Player::move()
                             temporaryBoard[i][j] = Player::piece::e;
                             temporaryBoard[i - 1][j - 1] = Player::piece::e;
                             temporaryBoard[i - 2][j - 2] = Player::piece::X;
-                            double tempValue = minimax(temporaryBoard, 7, this->pimpl->player_nr, -400000, POS_INF);
+                            double tempValue = minimax(temporaryBoard, p1Depth, 2, -400000, POS_INF);
                             if(tempValue > value)
                             {
                                 value = tempValue;
@@ -1361,7 +1364,7 @@ void Player::move()
                         {
                             temporaryBoard[i][j] = Player::piece::e;
                             temporaryBoard[i - 1][j + 1] = Player::piece::X;
-                            double tempValue = minimax(temporaryBoard, 7, 2, -400000, POS_INF);
+                            double tempValue = minimax(temporaryBoard, p1Depth, 2, -400000, POS_INF);
                             if(tempValue > value)
                             {
                                 value = tempValue;
@@ -1383,7 +1386,7 @@ void Player::move()
                             temporaryBoard[i][j] = Player::piece::e;
                             temporaryBoard[i - 1][j + 1] = Player::piece::e;
                             temporaryBoard[i - 2][j + 2] = Player::piece::X;
-                            double tempValue = minimax(temporaryBoard, 7, this->pimpl->player_nr, -400000, POS_INF);
+                            double tempValue = minimax(temporaryBoard, p1Depth, 2, -400000, POS_INF);
                             if(tempValue > value)
                             {
                                 value = tempValue;
@@ -1419,7 +1422,7 @@ void Player::move()
                         {
                             temporaryBoard[i][j] = Player::piece::e;
                             temporaryBoard[i - 1][j - 1] = i - 1 == 0 ? Player::piece::O : Player::piece::o;
-                            double tempValue = minimax(temporaryBoard, 7, 1, -400000, POS_INF);
+                            double tempValue = minimax(temporaryBoard, p2Depth, 1, -400000, POS_INF);
                             if(tempValue < value)
                             {
                                 value = tempValue;
@@ -1439,7 +1442,7 @@ void Player::move()
                             temporaryBoard[i][j] = Player::piece::e;
                             temporaryBoard[i - 1][j - 1] = Player::piece::e;
                             temporaryBoard[i - 2][j - 2] = i - 2 == 0 ? Player::piece::O : Player::piece::o;
-                            double tempValue = minimax(temporaryBoard, 7, 1, -400000, POS_INF);
+                            double tempValue = minimax(temporaryBoard, p2Depth, 1, -400000, POS_INF);
                             if(tempValue < value)
                             {
                                 value = tempValue;
@@ -1461,7 +1464,7 @@ void Player::move()
                         {
                             temporaryBoard[i][j] = Player::piece::e;
                             temporaryBoard[i - 1][j + 1] = i - 1 == 0 ? Player::piece::O : Player::piece::o;
-                            double tempValue = minimax(temporaryBoard, 7, 1, -400000, POS_INF);
+                            double tempValue = minimax(temporaryBoard, p2Depth, 1, -400000, POS_INF);
                             if(tempValue < value)
                             {
                                 value = tempValue;
@@ -1474,14 +1477,14 @@ void Player::move()
                             temporaryBoard[i - 1][j + 1] = Player::piece::e;
                         }
                         //Pezzo nemico 
-                        if(i - 2 >= 0 && j - 2 >= 0 
+                        if(i - 2 >= 0 && j + 2 < 8 
                             && temporaryBoard[i - 1][j + 1] == Player::piece::x
                             && temporaryBoard[i - 2][j + 2] == Player::piece::e)
                         {
                             temporaryBoard[i][j] = Player::piece::e;
                             temporaryBoard[i - 1][j + 1] = Player::piece::e;
                             temporaryBoard[i - 2][j + 2] = i - 2 == 0 ? Player::piece::O : Player::piece::o;
-                            double tempValue = minimax(temporaryBoard, 7, 1, -400000, POS_INF);
+                            double tempValue = minimax(temporaryBoard, p2Depth, 1, -400000, POS_INF);
                             if(tempValue < value)
                             {
                                 value = tempValue;
@@ -1507,7 +1510,7 @@ void Player::move()
                         {
                             temporaryBoard[i][j] = Player::piece::e;
                             temporaryBoard[i + 1][j - 1] = Player::piece::O;
-                            double tempValue = minimax(temporaryBoard, 7, 1, -400000, POS_INF);
+                            double tempValue = minimax(temporaryBoard, p2Depth, 1, -400000, POS_INF);
                             if(tempValue < value)
                             {
                                 value = tempValue;
@@ -1529,7 +1532,7 @@ void Player::move()
                             temporaryBoard[i][j] = Player::piece::e;
                             temporaryBoard[i + 1][j - 1] = Player::piece::e;
                             temporaryBoard[i + 2][j - 2] = Player::piece::O;
-                            double tempValue = minimax(temporaryBoard, 7, 1, -400000, POS_INF);
+                            double tempValue = minimax(temporaryBoard, p2Depth, 1, -400000, POS_INF);
                             if(tempValue < value)
                             {
                                 value = tempValue;
@@ -1551,7 +1554,7 @@ void Player::move()
                         {
                             temporaryBoard[i][j] = Player::piece::e;
                             temporaryBoard[i + 1][j + 1] = Player::piece::O;
-                            double tempValue = minimax(temporaryBoard, 7, 1, -400000, POS_INF);
+                            double tempValue = minimax(temporaryBoard, p2Depth, 1, -400000, POS_INF);
                             if(tempValue > value)
                             {
                                 value = tempValue;
@@ -1573,7 +1576,7 @@ void Player::move()
                             temporaryBoard[i][j] = Player::piece::e;
                             temporaryBoard[i + 1][j + 1] = Player::piece::e;
                             temporaryBoard[i + 2][j + 2] = Player::piece::O;
-                            double tempValue = minimax(temporaryBoard, 7, 1, -400000, POS_INF);
+                            double tempValue = minimax(temporaryBoard, p2Depth, 1, -400000, POS_INF);
                             if(tempValue < value)
                             {
                                 value = tempValue;
@@ -1595,7 +1598,7 @@ void Player::move()
                         {
                             temporaryBoard[i][j] = Player::piece::e;
                             temporaryBoard[i - 1][j - 1] = Player::piece::O;
-                            double tempValue = minimax(temporaryBoard, 7, 1, -400000, POS_INF);
+                            double tempValue = minimax(temporaryBoard, p2Depth, 1, -400000, POS_INF);
                             if(tempValue > value)
                             {
                                 value = tempValue;
@@ -1617,7 +1620,7 @@ void Player::move()
                             temporaryBoard[i][j] = Player::piece::e;
                             temporaryBoard[i - 1][j - 1] = Player::piece::e;
                             temporaryBoard[i - 2][j - 2] = Player::piece::O;
-                            double tempValue = minimax(temporaryBoard, 7, 1, -400000, POS_INF);
+                            double tempValue = minimax(temporaryBoard, p2Depth, 1, -400000, POS_INF);
                             if(tempValue < value)
                             {
                                 value = tempValue;
@@ -1639,7 +1642,7 @@ void Player::move()
                         {
                             temporaryBoard[i][j] = Player::piece::e;
                             temporaryBoard[i - 1][j + 1] = Player::piece::O;
-                            double tempValue = minimax(temporaryBoard, 7, 1, -400000, POS_INF);
+                            double tempValue = minimax(temporaryBoard, p2Depth, 1, -400000, POS_INF);
                             if(tempValue < value)
                             {
                                 value = tempValue;
@@ -1661,7 +1664,7 @@ void Player::move()
                             temporaryBoard[i][j] = Player::piece::e;
                             temporaryBoard[i - 1][j + 1] = Player::piece::e;
                             temporaryBoard[i - 2][j + 2] = Player::piece::O;
-                            double tempValue = minimax(temporaryBoard, 7, 1, -400000, POS_INF);
+                            double tempValue = minimax(temporaryBoard, p2Depth, 1, -400000, POS_INF);
                             if(tempValue < value)
                             {
                                 value = tempValue;
@@ -1777,7 +1780,7 @@ void Player::move()
     }
 
     //DEBUG
-    std::cout << "Giocatore: " << this->pimpl->player_nr << "\nMossa: " << cellPosition.first + 1<< ", " << cellPosition.second + 1<< "\nDirezione:" << direction << std::endl << std::endl;
+    std::cout << "Giocatore: " << this->pimpl->player_nr << "\nIndice pezzo: " << cellPosition.first << ", " << cellPosition.second << "\nDirezione:" << direction << std::endl << std::endl;
 
     //Salva nella history
     History* t = new History;
