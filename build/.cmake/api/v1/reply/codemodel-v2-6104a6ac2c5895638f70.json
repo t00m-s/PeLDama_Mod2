@@ -27,7 +27,7 @@
 					[
 						0
 					],
-					"name" : "Dama",
+					"name" : "Dam",
 					"targetIndexes" : 
 					[
 						0
@@ -38,9 +38,9 @@
 			[
 				{
 					"directoryIndex" : 0,
-					"id" : "DamaCLion::@6890427a1f51a3e7e1df",
-					"jsonFile" : "target-DamaCLion-Debug-96829ae6b558043201f5.json",
-					"name" : "DamaCLion",
+					"id" : "Dam::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-Dam-Debug-942f2b7cef43ecc70623.json",
+					"name" : "Dam",
 					"projectIndex" : 0
 				}
 			]

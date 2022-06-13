@@ -2,7 +2,7 @@
 	"artifacts" : 
 	[
 		{
-			"path" : "DamaCLion"
+			"path" : "Dam"
 		}
 	],
 	"backtrace" : 1,
@@ -24,7 +24,7 @@
 			{
 				"command" : 0,
 				"file" : 0,
-				"line" : 5,
+				"line" : 4,
 				"parent" : 0
 			}
 		]
@@ -35,7 +35,7 @@
 			"compileCommandFragments" : 
 			[
 				{
-					"fragment" : "-Wall -Wextra -g"
+					"fragment" : "-g"
 				},
 				{
 					"fragment" : "-std=gnu++14"
@@ -57,13 +57,13 @@
 			]
 		}
 	],
-	"id" : "DamaCLion::@6890427a1f51a3e7e1df",
+	"id" : "Dam::@6890427a1f51a3e7e1df",
 	"link" : 
 	{
 		"commandFragments" : 
 		[
 			{
-				"fragment" : "-Wall -Wextra -g",
+				"fragment" : "-g",
 				"role" : "flags"
 			},
 			{
@@ -73,8 +73,8 @@
 		],
 		"language" : "CXX"
 	},
-	"name" : "DamaCLion",
-	"nameOnDisk" : "DamaCLion",
+	"name" : "Dam",
+	"nameOnDisk" : "Dam",
 	"paths" : 
 	{
 		"build" : ".",
@@ -96,13 +96,13 @@
 		{
 			"backtrace" : 1,
 			"compileGroupIndex" : 0,
-			"path" : "main.cpp",
+			"path" : "player.cpp",
 			"sourceGroupIndex" : 0
 		},
 		{
 			"backtrace" : 1,
 			"compileGroupIndex" : 0,
-			"path" : "player.cpp",
+			"path" : "main.cpp",
 			"sourceGroupIndex" : 0
 		}
 	],

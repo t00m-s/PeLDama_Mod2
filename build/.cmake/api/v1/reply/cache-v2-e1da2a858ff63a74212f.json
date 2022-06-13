@@ -46,6 +46,18 @@
 			"value" : "/usr/bin/ar"
 		},
 		{
+			"name" : "CMAKE_BACKWARDS_COMPATIBILITY",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : "For backwards compatibility, what version of CMake commands and syntax should this version of CMake try to support."
+				}
+			],
+			"type" : "STRING",
+			"value" : "2.4"
+		},
+		{
 			"name" : "CMAKE_BUILD_TYPE",
 			"properties" : 
 			[
@@ -843,7 +855,7 @@
 				}
 			],
 			"type" : "STATIC",
-			"value" : "Dama"
+			"value" : "Dam"
 		},
 		{
 			"name" : "CMAKE_PROJECT_VERSION",
@@ -1522,6 +1534,42 @@
 			"value" : "1500"
 		},
 		{
+			"name" : "Dam_BINARY_DIR",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : "Value Computed by CMake"
+				}
+			],
+			"type" : "STATIC",
+			"value" : "/home/t00m-s/Development/PeLDama_Mod2/build"
+		},
+		{
+			"name" : "Dam_IS_TOP_LEVEL",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : "Value Computed by CMake"
+				}
+			],
+			"type" : "STATIC",
+			"value" : "ON"
+		},
+		{
+			"name" : "Dam_SOURCE_DIR",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : "Value Computed by CMake"
+				}
+			],
+			"type" : "STATIC",
+			"value" : "/home/t00m-s/Development/PeLDama_Mod2"
+		},
+		{
 			"name" : "Dama_BINARY_DIR",
 			"properties" : 
 			[
@@ -1558,6 +1606,18 @@
 			"value" : "/home/t00m-s/Development/PeLDama_Mod2"
 		},
 		{
+			"name" : "EXECUTABLE_OUTPUT_PATH",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : "Single output directory for building all executables."
+				}
+			],
+			"type" : "PATH",
+			"value" : ""
+		},
+		{
 			"name" : "GITCOMMAND",
 			"properties" : 
 			[
@@ -1572,6 +1632,18 @@
 			],
 			"type" : "FILEPATH",
 			"value" : "/usr/bin/git"
+		},
+		{
+			"name" : "LIBRARY_OUTPUT_PATH",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : "Single output directory for building all libraries."
+				}
+			],
+			"type" : "PATH",
+			"value" : ""
 		},
 		{
 			"name" : "MAKECOMMAND",

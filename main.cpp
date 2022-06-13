@@ -7,7 +7,7 @@ int main()
     Player p2(2);
     int i = 1;
     p1.init_board("board_1.txt");
-    while(i < 300)
+    while(i < 100)
     {
         try
         {
@@ -25,14 +25,6 @@ int main()
             return 0;
         }
     }
-    p1.printHistory();
-    Player p3(p1);
-    Player p4 = p1;
-    std::cout << "P3 HISTORY:" << std::endl;
-    p3.printHistory();
-
-    std::cout << "P4 HISTORY:" << std::endl;
-    p4.printHistory();
 
     return 0;
 }

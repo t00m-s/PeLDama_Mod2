@@ -11,7 +11,7 @@
 # =============================================================================
 
 # =============================================================================
-# Project: Dama
+# Project: Dam
 # Configurations: Debug
 # =============================================================================
 
@@ -41,41 +41,41 @@ include CMakeFiles/rules.ninja
 
 cmake_ninja_workdir = /home/t00m-s/Development/PeLDama_Mod2/build/
 # =============================================================================
-# Object build statements for EXECUTABLE target DamaCLion
+# Object build statements for EXECUTABLE target Dam
 
 
 #############################################
-# Order-only phony target for DamaCLion
+# Order-only phony target for Dam
 
-build cmake_object_order_depends_target_DamaCLion: phony || CMakeFiles/DamaCLion.dir
+build cmake_object_order_depends_target_Dam: phony || CMakeFiles/Dam.dir
 
-build CMakeFiles/DamaCLion.dir/main.cpp.o: CXX_COMPILER__DamaCLion_Debug /home/t00m-s/Development/PeLDama_Mod2/main.cpp || cmake_object_order_depends_target_DamaCLion
-  DEP_FILE = CMakeFiles/DamaCLion.dir/main.cpp.o.d
-  FLAGS = -Wall -Wextra -g -std=gnu++14
-  OBJECT_DIR = CMakeFiles/DamaCLion.dir
-  OBJECT_FILE_DIR = CMakeFiles/DamaCLion.dir
+build CMakeFiles/Dam.dir/player.cpp.o: CXX_COMPILER__Dam_Debug /home/t00m-s/Development/PeLDama_Mod2/player.cpp || cmake_object_order_depends_target_Dam
+  DEP_FILE = CMakeFiles/Dam.dir/player.cpp.o.d
+  FLAGS = -g -std=gnu++14
+  OBJECT_DIR = CMakeFiles/Dam.dir
+  OBJECT_FILE_DIR = CMakeFiles/Dam.dir
 
-build CMakeFiles/DamaCLion.dir/player.cpp.o: CXX_COMPILER__DamaCLion_Debug /home/t00m-s/Development/PeLDama_Mod2/player.cpp || cmake_object_order_depends_target_DamaCLion
-  DEP_FILE = CMakeFiles/DamaCLion.dir/player.cpp.o.d
-  FLAGS = -Wall -Wextra -g -std=gnu++14
-  OBJECT_DIR = CMakeFiles/DamaCLion.dir
-  OBJECT_FILE_DIR = CMakeFiles/DamaCLion.dir
+build CMakeFiles/Dam.dir/main.cpp.o: CXX_COMPILER__Dam_Debug /home/t00m-s/Development/PeLDama_Mod2/main.cpp || cmake_object_order_depends_target_Dam
+  DEP_FILE = CMakeFiles/Dam.dir/main.cpp.o.d
+  FLAGS = -g -std=gnu++14
+  OBJECT_DIR = CMakeFiles/Dam.dir
+  OBJECT_FILE_DIR = CMakeFiles/Dam.dir
 
 
 # =============================================================================
-# Link build statements for EXECUTABLE target DamaCLion
+# Link build statements for EXECUTABLE target Dam
 
 
 #############################################
-# Link the executable DamaCLion
+# Link the executable Dam
 
-build DamaCLion: CXX_EXECUTABLE_LINKER__DamaCLion_Debug CMakeFiles/DamaCLion.dir/main.cpp.o CMakeFiles/DamaCLion.dir/player.cpp.o
-  FLAGS = -Wall -Wextra -g
-  OBJECT_DIR = CMakeFiles/DamaCLion.dir
+build Dam: CXX_EXECUTABLE_LINKER__Dam_Debug CMakeFiles/Dam.dir/player.cpp.o CMakeFiles/Dam.dir/main.cpp.o
+  FLAGS = -g
+  OBJECT_DIR = CMakeFiles/Dam.dir
   POST_BUILD = :
   PRE_LINK = :
-  TARGET_FILE = DamaCLion
-  TARGET_PDB = DamaCLion.dbg
+  TARGET_FILE = Dam
+  TARGET_PDB = Dam.dbg
 
 
 #############################################
@@ -136,7 +136,7 @@ build rebuild_cache: phony CMakeFiles/rebuild_cache.util
 #############################################
 # Folder: /home/t00m-s/Development/PeLDama_Mod2/build
 
-build all: phony DamaCLion
+build all: phony Dam
 
 # =============================================================================
 # Built-in targets
