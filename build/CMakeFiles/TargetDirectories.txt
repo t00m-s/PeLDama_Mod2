@@ -1,0 +1,3 @@
+/home/tom/Development/PeLDama_Mod2/build/CMakeFiles/Dama_CLion.dir
+/home/tom/Development/PeLDama_Mod2/build/CMakeFiles/edit_cache.dir
+/home/tom/Development/PeLDama_Mod2/build/CMakeFiles/rebuild_cache.dir

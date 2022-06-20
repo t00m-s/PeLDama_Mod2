@@ -448,13 +448,13 @@ bool noMoves(Player::piece board[8][8], int player_nr)
 
                     //Pezzo nemico basso SX e posso mangiarlo
                     if(!moves && i - 1 >= 0 && j - 1 >= 0 && (board[i - 1][j - 1] == Player::piece::x
-                                                           || board[i - 1][j - 1] == Player::piece::X)))
+                                                           || board[i - 1][j - 1] == Player::piece::X))
                         if(i - 2 >= 0 && j - 2 >= 0 && board[i - 2][j - 2] == Player::piece::e)
                             moves = true;
 
                     //Pezzo nemico basso dx e posso mangiarlo
                     if(!moves && i - 1 >= 0 && j + 1 < 8 && (board[i - 1][j + 1] == Player::piece::x
-                                                          || board[i - 1][j - 1] == Player::piece::X)))
+                                                          || board[i - 1][j - 1] == Player::piece::X))
                     if(i - 2 >= 0 && j + 2 < 8 && board[i - 2][j + 2] == Player::piece::e)
                         moves = true;
                 }
@@ -654,6 +654,7 @@ bool move_downLeft(Player::piece board[8][8], int player_nr, int row, int col)
                     board[row][col] = Player::piece::e;
                     board[row - 1][col - 1] = Player::piece::e;
                     board[row - 2][col - 2] = row - 2 == 0 ? Player::piece::O : original;
+                    res = true;
                 }
             }
             else if(board[row - 1][col - 1] == Player::piece::X)
@@ -666,6 +667,7 @@ bool move_downLeft(Player::piece board[8][8], int player_nr, int row, int col)
                         board[row][col] = Player::piece::e;
                         board[row - 1][col - 1] = Player::piece::e;
                         board[row - 2][col - 2] = original;
+                        res = true;
                     }
                 }
             }
@@ -728,6 +730,7 @@ bool move_downRight(Player::piece board[8][8], int player_nr, int row, int col)
                     board[row][col] = Player::piece::e;
                     board[row - 1][col + 1] = Player::piece::e;
                     board[row - 2][col + 2] = row - 2 == 0 ? Player::piece::O : original;
+                    res = true;
                 }
             }
             else if(board[row - 1][col + 1] == Player::piece::X)
@@ -740,6 +743,7 @@ bool move_downRight(Player::piece board[8][8], int player_nr, int row, int col)
                         board[row][col] = Player::piece::e;
                         board[row - 1][col + 1] = Player::piece::e;
                         board[row - 2][col + 2] = original;
+                        res = true;
                     }
                 }
             }
@@ -750,15 +754,222 @@ bool move_downRight(Player::piece board[8][8], int player_nr, int row, int col)
     return res;
 }
 
-double minimax(Player::piece board[8][8], int depth, int player_nr) 
-//TODO: Funzioni ausiliarie per muovere nelle 4 direzioni
+double minimax(Player::piece board[8][8], int depth, int player_nr, double alpha, double beta) 
 {
     if(noMoves(board, player_nr))  //Settare un valore per indicare perdita per il giocatore
         return player_nr == 1 ? -400000 : POS_INF;
 
     if(depth == 0)
         return evaluateBoard(board);
+    
+    Player::piece tempBoard[8][8];
+    for(int i = 0; i < 8; ++i)
+        for(int j = 0; j < 8; ++j)
+            tempBoard[i][j] = board[i][j];
 
+    if(player_nr == 1)
+    {
+        double maxResult = -400000;
+        for(int i = 0; i < 8; ++i)
+        {
+            for(int j = 0; j < 8; ++j)
+            {
+                if(board[i][j] == Player::piece::x)
+                {
+                    if(move_topLeft(tempBoard, 1, i, j))
+                    {
+                        double eval = minimax(tempBoard, depth - 1, 2, alpha, beta);
+                        maxResult = eval > maxResult ? eval : maxResult;
+                        alpha = eval > alpha ? eval : alpha;
+                        //Undo move_topLeft
+                        for(int i = 0; i < 8; ++i)
+                            for(int j = 0; j < 8; ++j)
+                                tempBoard[i][j] = board[i][j];
+
+                        if(alpha >= beta)
+                            return alpha;
+                    }
+                    if(move_topRight(tempBoard, 1, i, j))
+                    {
+                        double eval = minimax(tempBoard, depth - 1, 2, alpha, beta);
+                        maxResult = eval > maxResult ? eval : maxResult;
+                        alpha = eval > alpha ? eval : alpha;
+
+                        for(int i = 0; i < 8; ++i)
+                            for(int j = 0; j < 8; ++j)
+                                tempBoard[i][j] = board[i][j];
+
+                        if(alpha >= beta)
+                            return alpha;
+                    }
+                }
+                else if(board[i][j] == Player::piece::X)
+                {
+                    if(move_topLeft(tempBoard, 1, i, j))
+                    {
+                        double eval = minimax(tempBoard, depth - 1, 2, alpha, beta);
+                        maxResult = eval > maxResult ? eval : maxResult;
+                        alpha = eval > alpha ? eval : alpha;
+                        //Undo move_topLeft
+                        for(int i = 0; i < 8; ++i)
+                            for(int j = 0; j < 8; ++j)
+                                tempBoard[i][j] = board[i][j];
+
+                        if(alpha >= beta)
+                            return alpha;
+                    }
+
+                    if(move_topRight(tempBoard, 1, i, j))
+                    {
+                        double eval = minimax(tempBoard, depth - 1, 2, alpha, beta);
+                        maxResult = eval > maxResult ? eval : maxResult;
+                        alpha = eval > alpha ? eval : alpha;
+
+                        for(int i = 0; i < 8; ++i)
+                            for(int j = 0; j < 8; ++j)
+                                tempBoard[i][j] = board[i][j];
+
+                        if(alpha >= beta)
+                            return alpha;
+                    }
+
+                    if(move_downLeft(tempBoard, 1, i, j))
+                    {
+                        double eval = minimax(tempBoard, depth - 1, 2, alpha, beta);
+                        maxResult = eval > maxResult ? eval : maxResult;
+                        alpha = eval > alpha ? eval : alpha;
+                        //Undo move_downLeft
+                        for(int i = 0; i < 8; ++i)
+                            for(int j = 0; j < 8; ++j)
+                                tempBoard[i][j] = board[i][j];
+
+                        if(alpha >= beta)
+                            return alpha;
+                    }
+
+                    if(move_downRight(tempBoard, 1, i, j))
+                    {
+                        double eval = minimax(tempBoard, depth - 1, 2, alpha, beta);
+                        maxResult = eval > maxResult ? eval : maxResult;
+                        alpha = eval > alpha ? eval : alpha;
+                        //Undo move_downRight
+                        for(int i = 0; i < 8; ++i)
+                            for(int j = 0; j < 8; ++j)
+                                tempBoard[i][j] = board[i][j];
+
+                        if(alpha >= beta)
+                            return alpha;
+                    }
+                }
+            }
+        }
+        return maxResult;
+    }
+    else
+    {
+        double minResult = POS_INF;
+        for(int i = 7; i >= 0; --i)
+        {
+            for(int j = 0; j < 8; ++j)
+            {
+                if(board[i][j] == Player::piece::o)
+                {
+                    if(move_downLeft(tempBoard, 2, i, j))
+                    {
+                        double eval = minimax(board, depth - 1, 1, alpha, beta);
+                        minResult = eval < minResult ? eval : minResult;
+                        beta = eval < beta ? eval : beta;
+
+                        //Undo move_downLeft
+                        for(int i = 0; i < 8; ++i)
+                            for(int j = 0; j < 8; ++j)
+                                tempBoard[i][j] = board[i][j];
+                        
+                        if(alpha >= beta)
+                            return beta;
+                    }
+
+                    if(move_downRight(tempBoard, 2, i, j))
+                    {
+                        double eval = minimax(board, depth - 1, 1, alpha, beta);
+                        minResult = eval < minResult ? eval : minResult;
+                        beta = eval < beta ? eval : beta;
+
+                        //Undo move_downRight
+                        for(int i = 0; i < 8; ++i)
+                            for(int j = 0; j < 8; ++j)
+                                tempBoard[i][j] = board[i][j];
+                        
+                        if(alpha >= beta)
+                            return beta;
+                    }
+                }
+                else if(board[i][j] == Player::piece::O)
+                {
+                    if(move_downLeft(tempBoard, 2, i, j))
+                    {
+                        double eval = minimax(board, depth - 1, 1, alpha, beta);
+                        minResult = eval < minResult ? eval : minResult;
+                        beta = eval < beta ? eval : beta;
+
+                        //Undo move_downLeft
+                        for(int i = 0; i < 8; ++i)
+                            for(int j = 0; j < 8; ++j)
+                                tempBoard[i][j] = board[i][j];
+                        
+                        if(alpha >= beta)
+                            return beta;
+                    }
+
+                    if(move_downRight(tempBoard, 2, i, j))
+                    {
+                        double eval = minimax(board, depth - 1, 1, alpha, beta);
+                        minResult = eval < minResult ? eval : minResult;
+                        beta = eval < beta ? eval : beta;
+
+                        //Undo move_downRight
+                        for(int i = 0; i < 8; ++i)
+                            for(int j = 0; j < 8; ++j)
+                                tempBoard[i][j] = board[i][j];
+                        
+                        if(alpha >= beta)
+                            return beta;
+                    }
+
+                    if(move_topLeft(tempBoard, 2, i, j))
+                    {
+                        double eval = minimax(board, depth - 1, 1, alpha, beta);
+                        minResult = eval < minResult ? eval : minResult;
+                        beta = eval < beta ? eval : beta;
+
+                        //Undo move_downLeft
+                        for(int i = 0; i < 8; ++i)
+                            for(int j = 0; j < 8; ++j)
+                                tempBoard[i][j] = board[i][j];
+                        
+                        if(alpha >= beta)
+                            return beta;
+                    }
+
+                    if(move_topRight(tempBoard, 2, i, j))
+                    {
+                        double eval = minimax(board, depth - 1, 1, alpha, beta);
+                        minResult = eval < minResult ? eval : minResult;
+                        beta = eval < beta ? eval : beta;
+
+                        //Undo move_downRight
+                        for(int i = 0; i < 8; ++i)
+                            for(int j = 0; j < 8; ++j)
+                                tempBoard[i][j] = board[i][j];
+                        
+                        if(alpha >= beta)
+                            return beta;
+                    }
+                }
+            }
+        }
+        return minResult;
+    }
 
     return 0; //Suppress Warning
 }
