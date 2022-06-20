@@ -479,7 +479,7 @@ bool move_topLeft(Player::piece board[8][8], int player_nr, int row, int col)
             if(board[row + 1][col - 1] == Player::piece::e) //TopLeft vuoto
             {
                 board[row][col] = Player::piece::e;
-                board[row + 1][col - 1] = row + 1 == 7 ? Player::piece::X : original; //Se il pezzo è 'X' è come avere due branch identici
+                board[row + 1][col - 1] = row + 1 == 7 ? Player::piece::X : original;
                 res = true;
             }
             else if(board[row + 1][col - 1] == Player::piece::o) //TopLeft pedina nemica
@@ -588,7 +588,8 @@ bool move_topRight(Player::piece board[8][8], int player_nr, int row, int col)
             else if(board[row + 1][col + 1] == Player::piece::x
                 || board[row + 1][col + 1] == Player::piece::X)
             {
-                if(row + 2 < 8 && col + 2 < 8)
+                if(row + 2 < 8 && col + 2 < 8
+                    && board[row + 2][col + 2] == Player::piece::e)
                 {
                     board[row][col] = Player::piece::e;
                     board[row + 1][col + 1] = Player::piece::e;
@@ -620,10 +621,11 @@ bool move_downLeft(Player::piece board[8][8], int player_nr, int row, int col)
                     board[row - 1][col - 1] = original;
                     res = true;
                 }
-                else if(board[row - 1][col - 1] == Player::piece::o)
+                else if(board[row - 1][col - 1] == Player::piece::o
                         || board[row - 1][col - 1] == Player::piece::O)
                 {
-                    if (row - 2 >= 0 && col - 2 >= 0)
+                    if (row - 2 >= 0 && col - 2 >= 0
+                        && board[row - 2][col - 2] == Player::piece::e)
                     {
                         board[row][col] = Player::piece::e;
                         board[row - 1][col - 1] = Player::piece::e;
@@ -636,7 +638,39 @@ bool move_downLeft(Player::piece board[8][8], int player_nr, int row, int col)
     }
     else
     {
+        if(row - 1 >= 0 && col - 1 >= 0)
+        {
+            if(board[row - 1][col - 1] == Player::piece::e)
+            {
+                board[row][col] = Player::piece::e;
+                board[row - 1][col - 1] = row - 1 == 0 ? Player::piece::O : original;
+                res = true;
+            }
+            else if(board[row - 1][col - 1] == Player::piece::x)
+            {
+                if(row - 2 >= 0 && col - 2 >= 0
+                    && board[row  - 2][col - 2] == Player::piece::e)
+                {
+                    board[row][col] = Player::piece::e;
+                    board[row - 1][col - 1] = Player::piece::e;
+                    board[row - 2][col - 2] = row - 2 == 0 ? Player::piece::O : original;
+                }
+            }
+            else if(board[row - 1][col - 1] == Player::piece::X)
+            {
+                if(original == Player::piece::O)
+                {
+                    if(row - 2 >= 0 && col - 2 >= 0
+                        && board[row - 2][col - 2] == Player::piece::e)
+                    {
+                        board[row][col] = Player::piece::e;
+                        board[row - 1][col - 1] = Player::piece::e;
+                        board[row - 2][col - 2] = original;
+                    }
+                }
+            }
 
+        }
     }
 
     return res;
@@ -645,7 +679,76 @@ bool move_downLeft(Player::piece board[8][8], int player_nr, int row, int col)
 
 // - +
 bool move_downRight(Player::piece board[8][8], int player_nr, int row, int col)
-{}
+{
+    bool res = false;
+    Player::piece original = board[row][col];
+    if(player_nr == 1)
+    {
+        //Solo dama
+        if(original == Player::piece::X)
+        {
+            if(row - 1 >= 0 && col + 1 < 8)
+            {
+                if(board[row - 1][col + 1] == Player::piece::e)
+                {
+                    board[row][col] = Player::piece::e;
+                    board[row - 1][col + 1] = original;
+                    res = true;
+                }
+                else if(board[row - 1][col + 1] == Player::piece::o
+                    || board[row - 1][col + 1] == Player::piece::O)
+                {
+                    if (row - 2 >= 0 && col + 2 < 8
+                        && board[row - 2][col + 2] == Player::piece::e)
+                    {
+                        board[row][col] = Player::piece::e;
+                        board[row - 1][col + 1] = Player::piece::e;
+                        board[row - 2][col + 2] = original;
+                        res = true;
+                    }
+                }
+            }
+        }
+    }
+    else
+    {
+        if(row - 1 >= 0 && col + 1 < 8)
+        {
+            if(board[row - 1][col + 1] == Player::piece::e)
+            {
+                board[row][col] = Player::piece::e;
+                board[row - 1][col + 1] = row - 1 == 0 ? Player::piece::O : original;
+                res = true;
+            }
+            else if(board[row - 1][col + 1] == Player::piece::x)
+            {
+                if(row - 2 >= 0 && col + 2 < 8
+                    && board[row  - 2][col + 2] == Player::piece::e)
+                {
+                    board[row][col] = Player::piece::e;
+                    board[row - 1][col + 1] = Player::piece::e;
+                    board[row - 2][col + 2] = row - 2 == 0 ? Player::piece::O : original;
+                }
+            }
+            else if(board[row - 1][col + 1] == Player::piece::X)
+            {
+                if(original == Player::piece::O)
+                {
+                    if(row - 2 >= 0 && col + 2 < 8
+                        && board[row - 2][col + 2] == Player::piece::e)
+                    {
+                        board[row][col] = Player::piece::e;
+                        board[row - 1][col + 1] = Player::piece::e;
+                        board[row - 2][col + 2] = original;
+                    }
+                }
+            }
+
+        }
+    }
+
+    return res;
+}
 
 double minimax(Player::piece board[8][8], int depth, int player_nr) 
 //TODO: Funzioni ausiliarie per muovere nelle 4 direzioni
