@@ -73,29 +73,29 @@ CMakeFiles/Dama_CLion.dir/main.cpp.o: CMakeFiles/Dama_CLion.dir/flags.make
 CMakeFiles/Dama_CLion.dir/main.cpp.o: ../main.cpp
 CMakeFiles/Dama_CLion.dir/main.cpp.o: CMakeFiles/Dama_CLion.dir/compiler_depend.ts
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/tom/Development/PeLDama_Mod2/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/Dama_CLion.dir/main.cpp.o"
-	/usr/bin/g++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/Dama_CLion.dir/main.cpp.o -MF CMakeFiles/Dama_CLion.dir/main.cpp.o.d -o CMakeFiles/Dama_CLion.dir/main.cpp.o -c /home/tom/Development/PeLDama_Mod2/main.cpp
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/Dama_CLion.dir/main.cpp.o -MF CMakeFiles/Dama_CLion.dir/main.cpp.o.d -o CMakeFiles/Dama_CLion.dir/main.cpp.o -c /home/tom/Development/PeLDama_Mod2/main.cpp
 
 CMakeFiles/Dama_CLion.dir/main.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/Dama_CLion.dir/main.cpp.i"
-	/usr/bin/g++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/tom/Development/PeLDama_Mod2/main.cpp > CMakeFiles/Dama_CLion.dir/main.cpp.i
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/tom/Development/PeLDama_Mod2/main.cpp > CMakeFiles/Dama_CLion.dir/main.cpp.i
 
 CMakeFiles/Dama_CLion.dir/main.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/Dama_CLion.dir/main.cpp.s"
-	/usr/bin/g++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/tom/Development/PeLDama_Mod2/main.cpp -o CMakeFiles/Dama_CLion.dir/main.cpp.s
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/tom/Development/PeLDama_Mod2/main.cpp -o CMakeFiles/Dama_CLion.dir/main.cpp.s
 
 CMakeFiles/Dama_CLion.dir/player.cpp.o: CMakeFiles/Dama_CLion.dir/flags.make
 CMakeFiles/Dama_CLion.dir/player.cpp.o: ../player.cpp
 CMakeFiles/Dama_CLion.dir/player.cpp.o: CMakeFiles/Dama_CLion.dir/compiler_depend.ts
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/tom/Development/PeLDama_Mod2/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/Dama_CLion.dir/player.cpp.o"
-	/usr/bin/g++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/Dama_CLion.dir/player.cpp.o -MF CMakeFiles/Dama_CLion.dir/player.cpp.o.d -o CMakeFiles/Dama_CLion.dir/player.cpp.o -c /home/tom/Development/PeLDama_Mod2/player.cpp
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/Dama_CLion.dir/player.cpp.o -MF CMakeFiles/Dama_CLion.dir/player.cpp.o.d -o CMakeFiles/Dama_CLion.dir/player.cpp.o -c /home/tom/Development/PeLDama_Mod2/player.cpp
 
 CMakeFiles/Dama_CLion.dir/player.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/Dama_CLion.dir/player.cpp.i"
-	/usr/bin/g++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/tom/Development/PeLDama_Mod2/player.cpp > CMakeFiles/Dama_CLion.dir/player.cpp.i
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/tom/Development/PeLDama_Mod2/player.cpp > CMakeFiles/Dama_CLion.dir/player.cpp.i
 
 CMakeFiles/Dama_CLion.dir/player.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/Dama_CLion.dir/player.cpp.s"
-	/usr/bin/g++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/tom/Development/PeLDama_Mod2/player.cpp -o CMakeFiles/Dama_CLion.dir/player.cpp.s
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/tom/Development/PeLDama_Mod2/player.cpp -o CMakeFiles/Dama_CLion.dir/player.cpp.s
 
 # Object files for target Dama_CLion
 Dama_CLion_OBJECTS = \

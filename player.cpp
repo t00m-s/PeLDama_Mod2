@@ -1,4 +1,5 @@
 #include "player.hpp"
+#include <utility>
 #define POS_INF  ((unsigned) ~0)
 //TODO:
 //Create functions to reuse code(eg. move legality)
@@ -472,7 +473,7 @@ bool move_topLeft(Player::piece board[8][8], int player_nr, int row, int col)
 {
     bool res = false;
     Player::piece original = board[row][col];
-    if(player_nr == 1)
+    if(player_nr == 1 && (original == Player::piece::x || original == Player::piece::X))
     {
         if(row + 1 < 8 && col - 1 >= 0)
         {
@@ -538,7 +539,7 @@ bool move_topRight(Player::piece board[8][8], int player_nr, int row, int col)
 {
     bool res = false;
     Player::piece original = board[row][col];
-    if(player_nr == 1)
+    if(player_nr == 1 && (original == Player::piece::x || original == Player::piece::X))
     {
         if(row + 1 < 8 && col + 1 < 8)
         {
@@ -638,7 +639,8 @@ bool move_downLeft(Player::piece board[8][8], int player_nr, int row, int col)
     }
     else
     {
-        if(row - 1 >= 0 && col - 1 >= 0)
+        if((original == Player::piece::o || original == Player::piece::O) 
+            && row - 1 >= 0 && col - 1 >= 0)
         {
             if(board[row - 1][col - 1] == Player::piece::e)
             {
@@ -714,7 +716,8 @@ bool move_downRight(Player::piece board[8][8], int player_nr, int row, int col)
     }
     else
     {
-        if(row - 1 >= 0 && col + 1 < 8)
+        if((original == Player::piece::o || original == Player::piece::O) 
+            &&row - 1 >= 0 && col + 1 < 8)
         {
             if(board[row - 1][col + 1] == Player::piece::e)
             {
@@ -754,232 +757,8 @@ bool move_downRight(Player::piece board[8][8], int player_nr, int row, int col)
     return res;
 }
 
-double minimax(Player::piece board[8][8], int depth, int player_nr, double alpha, double beta) 
-{
-    if(noMoves(board, player_nr))  //Settare un valore per indicare perdita per il giocatore
-        return player_nr == 1 ? -400000 : POS_INF;
-
-    if(depth == 0)
-        return evaluateBoard(board);
-    
-    Player::piece tempBoard[8][8];
-    for(int i = 0; i < 8; ++i)
-        for(int j = 0; j < 8; ++j)
-            tempBoard[i][j] = board[i][j];
-
-    if(player_nr == 1)
-    {
-        double maxResult = -400000;
-        for(int i = 0; i < 8; ++i)
-        {
-            for(int j = 0; j < 8; ++j)
-            {
-                if(board[i][j] == Player::piece::x)
-                {
-                    if(move_topLeft(tempBoard, 1, i, j))
-                    {
-                        double eval = minimax(tempBoard, depth - 1, 2, alpha, beta);
-                        maxResult = eval > maxResult ? eval : maxResult;
-                        alpha = eval > alpha ? eval : alpha;
-                        //Undo move_topLeft
-                        for(int i = 0; i < 8; ++i)
-                            for(int j = 0; j < 8; ++j)
-                                tempBoard[i][j] = board[i][j];
-
-                        if(alpha >= beta)
-                            return alpha;
-                    }
-                    if(move_topRight(tempBoard, 1, i, j))
-                    {
-                        double eval = minimax(tempBoard, depth - 1, 2, alpha, beta);
-                        maxResult = eval > maxResult ? eval : maxResult;
-                        alpha = eval > alpha ? eval : alpha;
-
-                        for(int i = 0; i < 8; ++i)
-                            for(int j = 0; j < 8; ++j)
-                                tempBoard[i][j] = board[i][j];
-
-                        if(alpha >= beta)
-                            return alpha;
-                    }
-                }
-                else if(board[i][j] == Player::piece::X)
-                {
-                    if(move_topLeft(tempBoard, 1, i, j))
-                    {
-                        double eval = minimax(tempBoard, depth - 1, 2, alpha, beta);
-                        maxResult = eval > maxResult ? eval : maxResult;
-                        alpha = eval > alpha ? eval : alpha;
-                        //Undo move_topLeft
-                        for(int i = 0; i < 8; ++i)
-                            for(int j = 0; j < 8; ++j)
-                                tempBoard[i][j] = board[i][j];
-
-                        if(alpha >= beta)
-                            return alpha;
-                    }
-
-                    if(move_topRight(tempBoard, 1, i, j))
-                    {
-                        double eval = minimax(tempBoard, depth - 1, 2, alpha, beta);
-                        maxResult = eval > maxResult ? eval : maxResult;
-                        alpha = eval > alpha ? eval : alpha;
-
-                        for(int i = 0; i < 8; ++i)
-                            for(int j = 0; j < 8; ++j)
-                                tempBoard[i][j] = board[i][j];
-
-                        if(alpha >= beta)
-                            return alpha;
-                    }
-
-                    if(move_downLeft(tempBoard, 1, i, j))
-                    {
-                        double eval = minimax(tempBoard, depth - 1, 2, alpha, beta);
-                        maxResult = eval > maxResult ? eval : maxResult;
-                        alpha = eval > alpha ? eval : alpha;
-                        //Undo move_downLeft
-                        for(int i = 0; i < 8; ++i)
-                            for(int j = 0; j < 8; ++j)
-                                tempBoard[i][j] = board[i][j];
-
-                        if(alpha >= beta)
-                            return alpha;
-                    }
-
-                    if(move_downRight(tempBoard, 1, i, j))
-                    {
-                        double eval = minimax(tempBoard, depth - 1, 2, alpha, beta);
-                        maxResult = eval > maxResult ? eval : maxResult;
-                        alpha = eval > alpha ? eval : alpha;
-                        //Undo move_downRight
-                        for(int i = 0; i < 8; ++i)
-                            for(int j = 0; j < 8; ++j)
-                                tempBoard[i][j] = board[i][j];
-
-                        if(alpha >= beta)
-                            return alpha;
-                    }
-                }
-            }
-        }
-        return maxResult;
-    }
-    else
-    {
-        double minResult = POS_INF;
-        for(int i = 7; i >= 0; --i)
-        {
-            for(int j = 0; j < 8; ++j)
-            {
-                if(board[i][j] == Player::piece::o)
-                {
-                    if(move_downLeft(tempBoard, 2, i, j))
-                    {
-                        double eval = minimax(board, depth - 1, 1, alpha, beta);
-                        minResult = eval < minResult ? eval : minResult;
-                        beta = eval < beta ? eval : beta;
-
-                        //Undo move_downLeft
-                        for(int i = 0; i < 8; ++i)
-                            for(int j = 0; j < 8; ++j)
-                                tempBoard[i][j] = board[i][j];
-                        
-                        if(alpha >= beta)
-                            return beta;
-                    }
-
-                    if(move_downRight(tempBoard, 2, i, j))
-                    {
-                        double eval = minimax(board, depth - 1, 1, alpha, beta);
-                        minResult = eval < minResult ? eval : minResult;
-                        beta = eval < beta ? eval : beta;
-
-                        //Undo move_downRight
-                        for(int i = 0; i < 8; ++i)
-                            for(int j = 0; j < 8; ++j)
-                                tempBoard[i][j] = board[i][j];
-                        
-                        if(alpha >= beta)
-                            return beta;
-                    }
-                }
-                else if(board[i][j] == Player::piece::O)
-                {
-                    if(move_downLeft(tempBoard, 2, i, j))
-                    {
-                        double eval = minimax(board, depth - 1, 1, alpha, beta);
-                        minResult = eval < minResult ? eval : minResult;
-                        beta = eval < beta ? eval : beta;
-
-                        //Undo move_downLeft
-                        for(int i = 0; i < 8; ++i)
-                            for(int j = 0; j < 8; ++j)
-                                tempBoard[i][j] = board[i][j];
-                        
-                        if(alpha >= beta)
-                            return beta;
-                    }
-
-                    if(move_downRight(tempBoard, 2, i, j))
-                    {
-                        double eval = minimax(board, depth - 1, 1, alpha, beta);
-                        minResult = eval < minResult ? eval : minResult;
-                        beta = eval < beta ? eval : beta;
-
-                        //Undo move_downRight
-                        for(int i = 0; i < 8; ++i)
-                            for(int j = 0; j < 8; ++j)
-                                tempBoard[i][j] = board[i][j];
-                        
-                        if(alpha >= beta)
-                            return beta;
-                    }
-
-                    if(move_topLeft(tempBoard, 2, i, j))
-                    {
-                        double eval = minimax(board, depth - 1, 1, alpha, beta);
-                        minResult = eval < minResult ? eval : minResult;
-                        beta = eval < beta ? eval : beta;
-
-                        //Undo move_downLeft
-                        for(int i = 0; i < 8; ++i)
-                            for(int j = 0; j < 8; ++j)
-                                tempBoard[i][j] = board[i][j];
-                        
-                        if(alpha >= beta)
-                            return beta;
-                    }
-
-                    if(move_topRight(tempBoard, 2, i, j))
-                    {
-                        double eval = minimax(board, depth - 1, 1, alpha, beta);
-                        minResult = eval < minResult ? eval : minResult;
-                        beta = eval < beta ? eval : beta;
-
-                        //Undo move_downRight
-                        for(int i = 0; i < 8; ++i)
-                            for(int j = 0; j < 8; ++j)
-                                tempBoard[i][j] = board[i][j];
-                        
-                        if(alpha >= beta)
-                            return beta;
-                    }
-                }
-            }
-        }
-        return minResult;
-    }
-
-    return 0; //Suppress Warning
-}
-
 void Player::move()
 {
-    //https://www.youtube.com/watch?v=l-hh51ncgDI
-    //Spiegazione minimax
-    int p2Depth = 5;
-    int p1Depth = 5;
 
     if(!this->pimpl->boardOffset)
         throw player_exception{player_exception::invalid_board, "Board history does not exist."};
@@ -989,7 +768,7 @@ void Player::move()
         for(int j = 0; j < 8; ++j)
             temporaryBoard[i][j] = this->pimpl->boardOffset->board[i][j];
     
-    if(noMoves(temporaryBoard, this->pimpl->player_nr)) //Salva una board uguale
+    if(noMoves(this->pimpl->boardOffset->board, this->pimpl->player_nr)) //Salva una board uguale
     {
         History* t = new History;
         for(int i = 0; i < 8; ++i)
@@ -1001,8 +780,176 @@ void Player::move()
         return;
     }
 
-    //Parte mossa
+    //Prova le 4 direzioni per ogni pezzo
+    //Simil minimax ma senza depth
+    //Visto che implementando il minimax 
+    //Non andava oltre la 90esima mossa correttamente :/
+    std::pair<int, int> coords(-1, -1);
+    char r = ' ';
+    if(this->pimpl->player_nr == 1)
+    {
+        double bestEval = -400000;
+        for(int i = 0; i < 8; ++i)
+        {
+            for(int j = 0; j < 8; ++j)
+            {
+                if(move_topLeft(temporaryBoard, 1, i, j))
+                {
+                    auto eval = evaluateBoard(temporaryBoard);
+                    if(eval > bestEval)
+                    {
+                        r = 'Q';
+                        coords.first = i;
+                        coords.second = j;
+                        bestEval = eval;
+                    }
 
+                    for(int i = 0; i < 8; ++i)
+                        for(int j = 0; j < 8; ++j)
+                            temporaryBoard[i][j] = this->pimpl->boardOffset->board[i][j];
+                }
+                
+                if(move_topRight(temporaryBoard, 1, i, j))
+                {
+                    auto eval = evaluateBoard(temporaryBoard);
+                    if(eval > bestEval)
+                    {
+                        r = 'E';
+                        coords.first = i;
+                        coords.second = j;
+                        bestEval = eval;
+                    }
+
+                    for(int i = 0; i < 8; ++i)
+                        for(int j = 0; j < 8; ++j)
+                            temporaryBoard[i][j] = this->pimpl->boardOffset->board[i][j];
+                }
+
+                if(move_downLeft(temporaryBoard, 1, i, j))
+                {
+                    auto eval = evaluateBoard(temporaryBoard);
+                    if(eval > bestEval)
+                    {
+                        r = 'A';
+                        coords.first = i;
+                        coords.second = j;
+                        bestEval = eval;
+                    }
+
+                    for(int i = 0; i < 8; ++i)
+                        for(int j = 0; j < 8; ++j)
+                            temporaryBoard[i][j] = this->pimpl->boardOffset->board[i][j];
+                }
+
+                if(move_downRight(temporaryBoard, 1, i, j))
+                {
+                    auto eval = evaluateBoard(temporaryBoard);
+                    if(eval > bestEval)
+                    {
+                        r = 'D';
+                        coords.first = i;
+                        coords.second = j;
+                        bestEval = eval;
+                    }
+
+                    for(int i = 0; i < 8; ++i)
+                        for(int j = 0; j < 8; ++j)
+                            temporaryBoard[i][j] = this->pimpl->boardOffset->board[i][j];
+                }
+            }
+        }
+    }
+    else 
+    {
+        double bestEval = POS_INF;
+        for(int i = 7; i >= 0; --i)
+        {
+            for(int j = 0; j < 8; ++j)
+            {
+                if(move_topLeft(temporaryBoard, 2, i, j))
+                {
+                    auto eval = evaluateBoard(temporaryBoard);
+                    if(eval < bestEval)
+                    {
+                        r = 'Q';
+                        coords.first = i;
+                        coords.second = j;
+                        bestEval = eval;
+                    }
+
+                    for(int i = 0; i < 8; ++i)
+                        for(int j = 0; j < 8; ++j)
+                            temporaryBoard[i][j] = this->pimpl->boardOffset->board[i][j];
+                }
+                
+                if(move_topRight(temporaryBoard, 2, i, j))
+                {
+                    auto eval = evaluateBoard(temporaryBoard);
+                    if(eval < bestEval)
+                    {
+                        r = 'E';
+                        coords.first = i;
+                        coords.second = j;
+                        bestEval = eval;
+                    }
+
+                    for(int i = 0; i < 8; ++i)
+                        for(int j = 0; j < 8; ++j)
+                            temporaryBoard[i][j] = this->pimpl->boardOffset->board[i][j];
+                }
+
+                if(move_downLeft(temporaryBoard, 2, i, j))
+                {
+                    auto eval = evaluateBoard(temporaryBoard);
+                    if(eval < bestEval)
+                    {
+                        r = 'A';
+                        coords.first = i;
+                        coords.second = j;
+                        bestEval = eval;
+                    }
+
+                    for(int i = 0; i < 8; ++i)
+                        for(int j = 0; j < 8; ++j)
+                            temporaryBoard[i][j] = this->pimpl->boardOffset->board[i][j];
+                }
+
+                if(move_downRight(temporaryBoard, 2, i, j))
+                {
+                    auto eval = evaluateBoard(temporaryBoard);
+                    if(eval < bestEval)
+                    {
+                        r = 'D';
+                        coords.first = i;
+                        coords.second = j;
+                        bestEval = eval;
+                    }
+
+                    for(int i = 0; i < 8; ++i)
+                        for(int j = 0; j < 8; ++j)
+                            temporaryBoard[i][j] = this->pimpl->boardOffset->board[i][j];
+                }
+            }
+        }
+    }
+    
+    switch (r) 
+    {
+        case 'Q':
+            move_topLeft(temporaryBoard, this->pimpl->player_nr, coords.first, coords.second);
+            break;
+        case 'E':
+            move_topRight(temporaryBoard, this->pimpl->player_nr, coords.first, coords.second);
+            break;
+        case 'A':
+            move_downLeft(temporaryBoard, this->pimpl->player_nr, coords.first, coords.second);
+            break;
+        case 'D':
+            move_downRight(temporaryBoard, this->pimpl->player_nr, coords.first, coords.second);
+            break;
+        default:
+            break;
+    }
     //Salva nella history
     History* t = new History;
     t->prev = this->pimpl->boardOffset;
@@ -1016,10 +963,11 @@ void Player::move()
 bool Player::valid_move() const
 {
     bool flag = true;
-    //Controllo se la board è uguale a quella precedente   
+
     if(!this->pimpl->boardOffset || !this->pimpl->boardOffset->prev)
         throw player_exception{player_exception::index_out_of_bounds, "Less than two boards in history."};
     
+    //Controllo se la board è uguale a quella precedente   
     for(int i = 0; i < 8; ++i)
         for(int j = 0; j < 8; ++j)
             flag = flag && 
@@ -1044,6 +992,29 @@ bool Player::valid_move() const
             || this->pimpl->boardOffset->board[7][j] == Player::piece::x)
                 flag = false;
     
+    std::pair<int, int> changes[3];
+    int aux = 0;
+    for(int i = 0; i < 8; ++i)
+    {
+        for(int j = 0; j < 8; ++j)
+            if(this->pimpl->boardOffset->board[i][j] != this->pimpl->boardOffset->prev->board[i][j])
+            {
+                if(aux < 3)
+                {
+                    changes[aux].first = i;
+                    changes[aux++].second = j;
+                }
+            }
+    }
+
+    if(aux > 3)
+        flag = false;
+
+    //Controlla
+    if(aux == 2)
+    {
+        
+    }
     return flag;
 }
 
