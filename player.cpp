@@ -512,7 +512,7 @@ bool move_topLeft(Player::piece board[8][8], int player_nr, int row, int col)
     else
     {
         //Player2 può muoversi solo se il pezzo è una dama
-        if(original == Player::piece::O)
+        if(original == Player::piece::O && row + 1 < 8 && col - 1 >= 0)
         {
             if(board[row + 1][col - 1] == Player::piece::e)
             {
@@ -520,8 +520,9 @@ bool move_topLeft(Player::piece board[8][8], int player_nr, int row, int col)
                 board[row + 1][col - 1] = original;
                 res = true;
             }
-            else if(board[row + 1][col - 1] == Player::piece::x
-                    || board[row + 1][col - 1] == Player::piece::X)
+            else if((board[row + 1][col - 1] == Player::piece::x
+                    || board[row + 1][col - 1] == Player::piece::X) 
+                    && row + 2 < 8 && col - 2 >=0)
             {
                 board[row][col] = Player::piece::e;
                 board[row + 1][col - 1] = Player::piece::e;
