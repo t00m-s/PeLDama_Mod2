@@ -1,5 +1,4 @@
 #include "player.hpp"
-#include <utility>
 #define POS_INF  ((unsigned) ~0)
 //TODO:
 //Create functions to reuse code(eg. move legality)
@@ -27,10 +26,11 @@ Player::Player(int player_nr)
 
 void deleteHistory(History* hist)
 {
-    if(hist->prev)
+    if(hist)
+    {
         deleteHistory(hist->prev);
-    
-    delete hist;
+        delete hist;
+    }
 }
 
 Player::~Player()
@@ -101,7 +101,7 @@ Player& Player::operator=(const Player &rhs)
 
 Player::piece Player::operator()(int r, int c, int history_offset) const
 {
-    //operator() per fare board[r][c] -> board(r, c);
+    //operator() per fare board[r][c] -> player(r, c, offset);
     //history_offset di quanto devo spostare il pointer della history
     if(r < 0 || r > 7)
         throw player_exception{player_exception::index_out_of_bounds, "Row not valid."};
@@ -135,17 +135,17 @@ void Player::load_board(const std::string &filename)
     History* newHead = new History;
     newHead->prev = this->pimpl->boardOffset; //Attacco in testa
     this->pimpl->boardOffset = newHead;
-    for(size_t i = 0; i < 8; ++i)
+    for(int i = 7; i >= 0; --i)
     {
         std::string temp;
         std::getline(loader, temp);
         for(size_t j = 0; j < 8; ++j)
         {   
             if(i % 2 == 0 && j % 2 == 0 && temp[j] != ' ')
-                throw player_exception{player_exception::invalid_board, "Pieces on white cells are not allowed."};
+                throw player_exception{player_exception::invalid_board, "1Pieces on white cells are not allowed."};
 
             if(i % 2 != 0 && j % 2 != 0 && temp[j] != ' ')
-                throw player_exception{player_exception::invalid_board, "Pieces on white cells are not allowed."};
+                throw player_exception{player_exception::invalid_board, "2Pieces on white cells are not allowed."};
 
             if(oPieces > 12 || xPieces > 12)
                 throw player_exception{player_exception::invalid_board, "Too many pieces."};
@@ -181,41 +181,33 @@ void Player::init_board(const std::string &filename) const
 {
     std::ofstream writeBoard;
     writeBoard.open(filename, std::ios::trunc);
-    Player::piece board[8][8];
-    //x
-    for(size_t i = 0; i < 3; ++i)
-    {
-        if(i % 2)
-            for(size_t j = 0; j < 8; ++j)
-                board[i][j] = j % 2 ? Player::piece::e : Player::piece::x;
-        else
-            for(size_t j = 0; j < 8; ++j)
-                board[i][j] = j % 2 ? Player::piece::x : Player::piece::e;
-    }
-
-    //empty
-    for(size_t i = 3; i < 5; ++i)
-        for(size_t j = 0; j < 8; ++j)
-            board[i][j] = Player::piece::e;
-
-    //o
-    for(size_t i = 5; i < 8; ++i)
-    {
-        if(i % 2)
-            for(size_t j = 0; j < 8; ++j)
-                board[i][j] = j % 2 ? Player::piece::e : Player::piece::o;
-        else
-            for(size_t j = 0; j < 8; ++j)
-                board[i][j] = j % 2 ? Player::piece::o : Player::piece::e;
-    }
 
     //Salva su file
-    for(size_t i = 0; i < 8; ++i)
+    for(int i = 7; i >= 0; --i)
     {
         std::string row;
         for(size_t j = 0; j < 8; ++j)
         {
-            switch(board[i][j])
+            Player::piece actual;
+
+            if(i >= 0 && i < 3)
+            {
+                if(i % 2)
+                    actual = j % 2 ? Player::piece::e : Player::piece::x; 
+                else
+                    actual = j % 2 ? Player::piece::x : Player::piece::e;
+            }
+            else if(i >= 3 && i < 5)
+                actual = Player::piece::e;
+            else
+            {
+                if(i % 2)
+                    actual = j % 2 ? Player::piece::e : Player::piece::o;
+                else
+                    actual = j % 2 ? Player::piece::o : Player::piece::e;
+            }
+
+            switch(actual)
             {
                 case Player::piece::x:
                     row.append("x");
@@ -234,8 +226,9 @@ void Player::init_board(const std::string &filename) const
                     break;
             }
         }
-        if(i < 7)
+        if(i != 0)
             row.append("\n");
+
         writeBoard << row;
     }
     writeBoard.close(); // Il distruttore si arrangia da solo teoricamente
@@ -258,7 +251,7 @@ void Player::store_board(const std::string& filename, int history_offset) const
         if(!temp || cnt != history_offset)
             throw player_exception{player_exception::index_out_of_bounds, "Board with chosen offset does not exist."};
 
-        for(size_t i = 0; i < 8; ++i)
+        for(int i = 7; i >= 0; --i)
         {
             std::string row = "";
             for(size_t j = 0; j < 8; ++j)
@@ -282,7 +275,7 @@ void Player::store_board(const std::string& filename, int history_offset) const
                         break;
                 }
             }
-            if(i < 7)
+            if(i != 0)
                 row.append("\n");
             
             writer << row;
@@ -322,445 +315,116 @@ double evaluateBoard(Player::piece board[8][8])
     return eval;
 }
 
+
 bool noMoves(Player::piece board[8][8], int player_nr)
 {
-    bool moves = false;
-    if(player_nr == 1)
-    {
-        int i = 0, j = 0;
-        while(!moves && i < 8)
-        {
-            while(!moves && j < 8)
-            {
-                if(board[i][j] == Player::piece::x)
-                {
-                    if(i + 1 < 8 && j - 1 >= 0 && board[i + 1][j - 1] == Player::piece::e) //casella vuota SX
-                        moves = true;
-
-                    if(!moves && i + 1 < 8 && j + 1 < 8 && board[i + 1][j + 1] == Player::piece::e) //casella vuota DX
-                        moves = true;
-
-                    //Pezzo nemico alto sx e posso mangiarlo
-                    if(!moves && i + 1 < 8 && j - 1 >= 0 && board[i + 1][j - 1] == Player::piece::o)
-                        if(i + 2 < 8 && j - 2 >= 0 && board[i + 2][j - 2] == Player::piece::e)
-                            moves = true;
-
-                    //Pezzo nemico alto dx e posso mangiarlo
-                    if(!moves && i + 1 < 8 && j + 1 < 8 && board[i + 1][j + 1] == Player::piece::o)
-                        if(i + 2 < 8 && j + 2 < 8 && board[i + 2][j + 2] == Player::piece::e)
-                            moves = true;
-                }
-                else if(board[i][j] == Player::piece::X)
-                {
-                    //Casella vuota alto SX
-                    if(i + 1 < 8 && j - 1 >= 0 && board[i + 1][j - 1] == Player::piece::e)
-                        moves = true;
-                    //Casella vuota alto DX
-                    if(!moves && i + 1 < 8 && j + 1 < 8 && board[i + 1][j + 1] == Player::piece::e)
-                        moves = true;
-
-                    //Casella vuota basso SX
-                    if(!moves && i - 1 >= 0 && j - 1 >= 0 && board[i - 1][j - 1] == Player::piece::e)
-                        moves = true;
-
-                    //Casella vuota basso DX
-                    if(!moves && i - 1 >= 0 && j + 1 < 8 && board[i - 1][j + 1] == Player::piece::e)
-                        moves = true;
-
-                    //Pezzo nemico alto sx e posso mangiarlo
-                    if(!moves && i + 1 < 8 && j - 1 >= 0 && (board[i + 1][j - 1] == Player::piece::o
-                                                         || board[i + 1][j - 1] == Player::piece::O))
-                        if(i + 2 < 8 && j - 2 >= 0 && board[i + 2][j - 2] == Player::piece::e)
-                            moves = true;
-
-                    //Pezzo nemico alto dx e posso mangiarlo
-                    if(!moves && i + 1 < 8 && j + 1 < 8 && (board[i + 1][j + 1] == Player::piece::o
-                                                        || board[i + 1][j + 1] == Player::piece::O))
-                        if(i + 2 < 8 && j + 2 < 8 && board[i + 2][j + 2] == Player::piece::e)
-                            moves = true;
-
-                    //Pezzo nemico basso sx e posso mangiarlo
-                    if(!moves && i - 1 >= 0 && j - 1 >= 0 && (board[i - 1][j - 1] == Player::piece::o
-                                                          || board[i - 1][j - 1] == Player::piece::O))
-                        if(i - 2 >= 0 && j - 2 >= 0 && board[i - 2][j - 2] == Player::piece::e)
-                            moves = true;
-
-                    //Pezzo nemico basso dx e posso mangiarlo
-                    if(!moves && i - 1 >= 0 && j + 1 < 8 && (board[i - 1][j + 1] == Player::piece::o
-                                                         || board[i - 1][j + 1] == Player::piece::O))
-                        if(i - 2 >= 0 && j + 2 < 8 && board[i - 2][j + 2] == Player::piece::e)
-                            moves = true;
-                }
-                ++j;
-            }
-            j = 0;
-            ++i;
-        }
-    }
-
-    if(player_nr == 2)
-    {
-        int i = 0, j = 0;
-        while(!moves && i < 8)
-        {
-            while(!moves && j < 8)
-            {
-                if(board[i][j] == Player::piece::o)
-                {
-                    //Casella vuota basso SX
-                    if(i - 1 >= 0 && j - 1 >= 0 && board[i - 1][j - 1] == Player::piece::e)
-                        moves = true;
-
-                    //Casella vuota basso DX
-                    if(!moves && i - 1 >= 0 && j + 1 < 8 && board[i - 1][j + 1] == Player::piece::e)
-                        moves = true;
-
-                    //Pezzo nemico sx e posso mangiarlo
-                    if(!moves && i - 1 >= 0 && j - 1 >= 0 && board[i - 1][j - 1] == Player::piece::x)
-                        if(i - 2 >= 0 && j - 2 >= 0 && board[i - 2][j - 2] == Player::piece::e)
-                            moves = true;
-
-                    //Pezzo nemico dx e posso mangiarlo
-                    if(!moves && i - 1 >= 0 && j + 1 < 8 && board[i - 1][j + 1] == Player::piece::x)
-                        if(i - 2 >= 0 && j + 2 < 8 && board[i - 2][j + 2] == Player::piece::e)
-                            moves = true;
-                }
-                else if(board[i][j] == Player::piece::O)
-                {
-                    //Casella vuota alto SX
-                    if(i + 1 < 8 && j - 1 >= 0 && board[i + 1][j - 1] == Player::piece::e)
-                        moves = true;
-
-                    //Casella vuota alto DX
-                    if(!moves && i + 1 < 8 && j + 1 < 8 && board[i + 1][j + 1] == Player::piece::e)
-                        moves = true;
-
-                    //Pezzo nemico alto SX e posso mangiarlo
-                    if(!moves && i + 1 < 8 && j - 1 >= 0 && (board[i + 1][j - 1] == Player::piece::x
-                                                          || board[i + 1][j - 1] == Player::piece::X))
-                        if(i + 2 < 8 && j - 2 >= 0 && board[i + 2][j - 2] == Player::piece::e)
-                            moves = true;
-
-                    //Pezzo nemico alto DX e posso mangiarlo
-                    if(!moves && i + 1 < 8 && j + 1 < 8 && (board[i + 1][j + 1] == Player::piece::x
-                                                         || board[i + 1][j + 1] == Player::piece::X))
-                        if(i + 2 < 8 && j + 2 < 8 && board[i + 2][j + 2] == Player::piece::e)
-                            moves = true;
-
-                    //Pezzo nemico basso SX e posso mangiarlo
-                    if(!moves && i - 1 >= 0 && j - 1 >= 0 && (board[i - 1][j - 1] == Player::piece::x
-                                                           || board[i - 1][j - 1] == Player::piece::X))
-                        if(i - 2 >= 0 && j - 2 >= 0 && board[i - 2][j - 2] == Player::piece::e)
-                            moves = true;
-
-                    //Pezzo nemico basso dx e posso mangiarlo
-                    if(!moves && i - 1 >= 0 && j + 1 < 8 && (board[i - 1][j + 1] == Player::piece::x
-                                                          || board[i - 1][j - 1] == Player::piece::X))
-                    if(i - 2 >= 0 && j + 2 < 8 && board[i - 2][j + 2] == Player::piece::e)
-                        moves = true;
-                }
-                ++j;
-            }
-            j = 0;
-            ++i;
-        }
-    }
-    return !moves;
+    return false;
 }
 
 // + -
-bool move_topLeft(Player::piece board[8][8], int player_nr, int row, int col)
+bool move_downLeft(Player::piece board[8][8], int player_nr, int row, int col)
 {
-    bool res = false;
-    Player::piece original = board[row][col];
-    if(player_nr == 1 && (original == Player::piece::x || original == Player::piece::X))
-    {
-        if(row + 1 < 8 && col - 1 >= 0)
-        {
-            if(board[row + 1][col - 1] == Player::piece::e) //TopLeft vuoto
-            {
-                board[row][col] = Player::piece::e;
-                board[row + 1][col - 1] = row + 1 == 7 ? Player::piece::X : original;
-                res = true;
-            }
-            else if(board[row + 1][col - 1] == Player::piece::o) //TopLeft pedina nemica
-            {
-                if (row + 2 < 8 && col - 2 >= 0
-                    && board[row + 2][col - 2] == Player::piece::e)
-                {
-                    board[row][col] = Player::piece::e;
-                    board[row + 1][col - 1] = Player::piece::e;
-                    board[row + 2][col - 2] = row + 2 == 7 ? Player::piece::X : original;
-                    res = true;
-                }
-            }
-            else if(board[row + 1][col - 1] == Player::piece::O)
-            {
+    //Boundaries check
+    if(row < 0 || row > 7)
+        return false;
 
-                if (row + 2 < 8 && col - 2 >= 0
-                    && board[row + 2][col - 2] == Player::piece::e
-                    && original == Player::piece::X)
+    if(col < 0 || col > 7)
+        return false;
+    
+    bool done = false;
+    if(player_nr == 1)
+    {
+        if(board[row][col] == Player::piece::x)
+        {
+            if(row + 1 < 8 && col - 1 >= 0)
+            {
+                if(board[row + 1][col - 1] == Player::piece::e)
                 {
                     board[row][col] = Player::piece::e;
-                    board[row + 1][col - 1] = Player::piece::e;
-                    board[row + 2][col - 2] = original;
-                    res = true;
+                    board[row + 1][col - 1] = row + 1 == 7 ? Player::piece::X : Player::piece::x;
+                    done = true;
+                }
+                else if(board[row + 1][col - 1] == Player::piece::o)
+                {
+                    if(row + 2 < 8 && col - 2 >= 0)
+                    {
+                        board[row][col] = Player::piece::e;
+                        board[row + 1][col - 1] = Player::piece::e;
+                        board[row + 2][col - 2] = row + 2 == 7 ? Player::piece::X : Player::piece::x;
+                        done = true;
+                    }
                 }
             }
         }
-    }
-    else
-    {
-        //Player2 può muoversi solo se il pezzo è una dama
-        if(original == Player::piece::O && row + 1 < 8 && col - 1 >= 0)
+        else if(board[row][col] == Player::piece::X)
         {
             if(board[row + 1][col - 1] == Player::piece::e)
             {
                 board[row][col] = Player::piece::e;
-                board[row + 1][col - 1] = original;
-                res = true;
+                board[row + 1][col - 1] = Player::piece::X;
+                done = true;
             }
-            else if((board[row + 1][col - 1] == Player::piece::x
-                    || board[row + 1][col - 1] == Player::piece::X) 
-                    && row + 2 < 8 && col - 2 >=0)
+            else if(board[row + 1][col - 1] == Player::piece::o
+                        || board[row + 1][col - 1] == Player::piece::O)
             {
-                board[row][col] = Player::piece::e;
-                board[row + 1][col - 1] = Player::piece::e;
-                board[row + 2][col - 2] = original;
-                res = true;
+                if(row + 2 < 8 && col - 2 >= 0)
+                {
+                    board[row][col] = Player::piece::e;
+                    board[row + 1][col - 1] = Player::piece::e;
+                    board[row + 2][col - 2] = Player::piece::X;
+                    done = true;
+                }
             }
         }
     }
+    else
+    {
+        if(board[row][col] == Player::piece::O)
+        {
 
-    return res;
+        }
+    }
+
+    return done;
 }
 
 // + +
-bool move_topRight(Player::piece board[8][8], int player_nr, int row, int col)
+bool move_downRight(Player::piece board[8][8], int player_nr, int row, int col)
 {
-    bool res = false;
-    Player::piece original = board[row][col];
-    if(player_nr == 1 && (original == Player::piece::x || original == Player::piece::X))
-    {
-        if(row + 1 < 8 && col + 1 < 8)
-        {
-            if(board[row + 1][col + 1] == Player::piece::e) //TopRight vuoto
-            {
-                board[row][col] = Player::piece::e;
-                board[row + 1][col + 1] = row + 1 == 7 ? Player::piece::X : original; //Se il pezzo è 'X' è come avere due branch identici
-                res = true;
-            }
-            else if(board[row + 1][col + 1] == Player::piece::o) //TopRight pedina nemica
-            {
-                if (row + 2 < 8 && col + 2 < 8
-                    && board[row + 2][col + 2] == Player::piece::e)
-                {
-                    board[row][col] = Player::piece::e;
-                    board[row + 1][col + 1] = Player::piece::e;
-                    board[row + 2][col + 2] = row + 2 == 7 ? Player::piece::X : original;
-                    res = true;
-                }
-            }
-            else if(board[row + 1][col + 1] == Player::piece::O)
-            {
-
-                if (row + 2 < 8 && col + 2 < 8
-                    && board[row + 2][col + 2] == Player::piece::e
-                    && original == Player::piece::X)
-                {
-                    board[row][col] = Player::piece::e;
-                    board[row + 1][col + 1] = Player::piece::e;
-                    board[row + 2][col + 2] = original;
-                    res = true;
-                }
-            }
-        }
-    }
-    else
-    {
-        //Player2 può muoversi solo se il pezzo è una dama
-        if(original == Player::piece::O)
-        {
-            if(board[row + 1][col + 1] == Player::piece::e)
-            {
-                board[row][col] = Player::piece::e;
-                board[row + 1][col + 1] = original;
-                res = true;
-            }
-            else if(board[row + 1][col + 1] == Player::piece::x
-                || board[row + 1][col + 1] == Player::piece::X)
-            {
-                if(row + 2 < 8 && col + 2 < 8
-                    && board[row + 2][col + 2] == Player::piece::e)
-                {
-                    board[row][col] = Player::piece::e;
-                    board[row + 1][col + 1] = Player::piece::e;
-                    board[row + 2][col + 2] = original;
-                    res = true;
-                }
-            }
-        }
-    }
-
-    return res;
+    //Boundaries check
+    if(row < 0 || row > 7)
+        return false;
+        
+    if(col < 0 || col > 7)
+        return false;
 }
 
 // - -
-bool move_downLeft(Player::piece board[8][8], int player_nr, int row, int col)
+bool move_topLeft(Player::piece board[8][8], int player_nr, int row, int col)
 {
-    bool res = false;
-    Player::piece original = board[row][col];
-    if(player_nr == 1)
-    {
-        //Solo dama
-        if(original == Player::piece::X)
-        {
-            if(row - 1 >= 0 && col - 1 >= 0)
-            {
-                if(board[row - 1][col - 1] == Player::piece::e)
-                {
-                    board[row][col] = Player::piece::e;
-                    board[row - 1][col - 1] = original;
-                    res = true;
-                }
-                else if(board[row - 1][col - 1] == Player::piece::o
-                        || board[row - 1][col - 1] == Player::piece::O)
-                {
-                    if (row - 2 >= 0 && col - 2 >= 0
-                        && board[row - 2][col - 2] == Player::piece::e)
-                    {
-                        board[row][col] = Player::piece::e;
-                        board[row - 1][col - 1] = Player::piece::e;
-                        board[row - 2][col - 2] = original;
-                        res = true;
-                    }
-                }
-            }
-        }
-    }
-    else
-    {
-        if((original == Player::piece::o || original == Player::piece::O) 
-            && row - 1 >= 0 && col - 1 >= 0)
-        {
-            if(board[row - 1][col - 1] == Player::piece::e)
-            {
-                board[row][col] = Player::piece::e;
-                board[row - 1][col - 1] = row - 1 == 0 ? Player::piece::O : original;
-                res = true;
-            }
-            else if(board[row - 1][col - 1] == Player::piece::x)
-            {
-                if(row - 2 >= 0 && col - 2 >= 0
-                    && board[row  - 2][col - 2] == Player::piece::e)
-                {
-                    board[row][col] = Player::piece::e;
-                    board[row - 1][col - 1] = Player::piece::e;
-                    board[row - 2][col - 2] = row - 2 == 0 ? Player::piece::O : original;
-                    res = true;
-                }
-            }
-            else if(board[row - 1][col - 1] == Player::piece::X)
-            {
-                if(original == Player::piece::O)
-                {
-                    if(row - 2 >= 0 && col - 2 >= 0
-                        && board[row - 2][col - 2] == Player::piece::e)
-                    {
-                        board[row][col] = Player::piece::e;
-                        board[row - 1][col - 1] = Player::piece::e;
-                        board[row - 2][col - 2] = original;
-                        res = true;
-                    }
-                }
-            }
-
-        }
-    }
-
-    return res;
+    //Boundaries check
+    if(row < 0 || row > 7)
+        return false;
+        
+    if(col < 0 || col > 7)
+        return false;
 }
-
 
 // - +
-bool move_downRight(Player::piece board[8][8], int player_nr, int row, int col)
+bool move_topRight(Player::piece board[8][8], int player_nr, int row, int col)
 {
-    bool res = false;
-    Player::piece original = board[row][col];
-    if(player_nr == 1)
-    {
-        //Solo dama
-        if(original == Player::piece::X)
-        {
-            if(row - 1 >= 0 && col + 1 < 8)
-            {
-                if(board[row - 1][col + 1] == Player::piece::e)
-                {
-                    board[row][col] = Player::piece::e;
-                    board[row - 1][col + 1] = original;
-                    res = true;
-                }
-                else if(board[row - 1][col + 1] == Player::piece::o
-                    || board[row - 1][col + 1] == Player::piece::O)
-                {
-                    if (row - 2 >= 0 && col + 2 < 8
-                        && board[row - 2][col + 2] == Player::piece::e)
-                    {
-                        board[row][col] = Player::piece::e;
-                        board[row - 1][col + 1] = Player::piece::e;
-                        board[row - 2][col + 2] = original;
-                        res = true;
-                    }
-                }
-            }
-        }
-    }
-    else
-    {
-        if((original == Player::piece::o || original == Player::piece::O) 
-            &&row - 1 >= 0 && col + 1 < 8)
-        {
-            if(board[row - 1][col + 1] == Player::piece::e)
-            {
-                board[row][col] = Player::piece::e;
-                board[row - 1][col + 1] = row - 1 == 0 ? Player::piece::O : original;
-                res = true;
-            }
-            else if(board[row - 1][col + 1] == Player::piece::x)
-            {
-                if(row - 2 >= 0 && col + 2 < 8
-                    && board[row  - 2][col + 2] == Player::piece::e)
-                {
-                    board[row][col] = Player::piece::e;
-                    board[row - 1][col + 1] = Player::piece::e;
-                    board[row - 2][col + 2] = row - 2 == 0 ? Player::piece::O : original;
-                    res = true;
-                }
-            }
-            else if(board[row - 1][col + 1] == Player::piece::X)
-            {
-                if(original == Player::piece::O)
-                {
-                    if(row - 2 >= 0 && col + 2 < 8
-                        && board[row - 2][col + 2] == Player::piece::e)
-                    {
-                        board[row][col] = Player::piece::e;
-                        board[row - 1][col + 1] = Player::piece::e;
-                        board[row - 2][col + 2] = original;
-                        res = true;
-                    }
-                }
-            }
-
-        }
-    }
-
-    return res;
+    //Boundaries check
+    if(row < 0 || row > 7)
+        return false;
+        
+    if(col < 0 || col > 7)
+        return false;
 }
 
+//PLAYER 1 X 
+//PLAYER 2 O
 void Player::move()
 {
-
     if(!this->pimpl->boardOffset)
         throw player_exception{player_exception::invalid_board, "Board history does not exist."};
 
@@ -769,7 +433,7 @@ void Player::move()
         for(int j = 0; j < 8; ++j)
             temporaryBoard[i][j] = this->pimpl->boardOffset->board[i][j];
     
-    if(noMoves(this->pimpl->boardOffset->board, this->pimpl->player_nr)) //Salva una board uguale
+    if(noMoves(temporaryBoard, this->pimpl->player_nr)) //Appende in testa una board uguale
     {
         History* t = new History;
         for(int i = 0; i < 8; ++i)
@@ -784,173 +448,9 @@ void Player::move()
     //Prova le 4 direzioni per ogni pezzo
     //Simil minimax ma senza depth
     //Visto che implementando il minimax 
-    //Non andava oltre la 90esima mossa correttamente :/
-    std::pair<int, int> coords(-1, -1);
-    char r = ' ';
-    if(this->pimpl->player_nr == 1)
-    {
-        double bestEval = -400000;
-        for(int i = 0; i < 8; ++i)
-        {
-            for(int j = 0; j < 8; ++j)
-            {
-                if(move_topLeft(temporaryBoard, 1, i, j))
-                {
-                    auto eval = evaluateBoard(temporaryBoard);
-                    if(eval > bestEval)
-                    {
-                        r = 'Q';
-                        coords.first = i;
-                        coords.second = j;
-                        bestEval = eval;
-                    }
-
-                    for(int i = 0; i < 8; ++i)
-                        for(int j = 0; j < 8; ++j)
-                            temporaryBoard[i][j] = this->pimpl->boardOffset->board[i][j];
-                }
-                
-                if(move_topRight(temporaryBoard, 1, i, j))
-                {
-                    auto eval = evaluateBoard(temporaryBoard);
-                    if(eval > bestEval)
-                    {
-                        r = 'E';
-                        coords.first = i;
-                        coords.second = j;
-                        bestEval = eval;
-                    }
-
-                    for(int i = 0; i < 8; ++i)
-                        for(int j = 0; j < 8; ++j)
-                            temporaryBoard[i][j] = this->pimpl->boardOffset->board[i][j];
-                }
-
-                if(move_downLeft(temporaryBoard, 1, i, j))
-                {
-                    auto eval = evaluateBoard(temporaryBoard);
-                    if(eval > bestEval)
-                    {
-                        r = 'A';
-                        coords.first = i;
-                        coords.second = j;
-                        bestEval = eval;
-                    }
-
-                    for(int i = 0; i < 8; ++i)
-                        for(int j = 0; j < 8; ++j)
-                            temporaryBoard[i][j] = this->pimpl->boardOffset->board[i][j];
-                }
-
-                if(move_downRight(temporaryBoard, 1, i, j))
-                {
-                    auto eval = evaluateBoard(temporaryBoard);
-                    if(eval > bestEval)
-                    {
-                        r = 'D';
-                        coords.first = i;
-                        coords.second = j;
-                        bestEval = eval;
-                    }
-
-                    for(int i = 0; i < 8; ++i)
-                        for(int j = 0; j < 8; ++j)
-                            temporaryBoard[i][j] = this->pimpl->boardOffset->board[i][j];
-                }
-            }
-        }
-    }
-    else 
-    {
-        double bestEval = POS_INF;
-        for(int i = 7; i >= 0; --i)
-        {
-            for(int j = 0; j < 8; ++j)
-            {
-                if(move_topLeft(temporaryBoard, 2, i, j))
-                {
-                    auto eval = evaluateBoard(temporaryBoard);
-                    if(eval < bestEval)
-                    {
-                        r = 'Q';
-                        coords.first = i;
-                        coords.second = j;
-                        bestEval = eval;
-                    }
-
-                    for(int i = 0; i < 8; ++i)
-                        for(int j = 0; j < 8; ++j)
-                            temporaryBoard[i][j] = this->pimpl->boardOffset->board[i][j];
-                }
-                
-                if(move_topRight(temporaryBoard, 2, i, j))
-                {
-                    auto eval = evaluateBoard(temporaryBoard);
-                    if(eval < bestEval)
-                    {
-                        r = 'E';
-                        coords.first = i;
-                        coords.second = j;
-                        bestEval = eval;
-                    }
-
-                    for(int i = 0; i < 8; ++i)
-                        for(int j = 0; j < 8; ++j)
-                            temporaryBoard[i][j] = this->pimpl->boardOffset->board[i][j];
-                }
-
-                if(move_downLeft(temporaryBoard, 2, i, j))
-                {
-                    auto eval = evaluateBoard(temporaryBoard);
-                    if(eval < bestEval)
-                    {
-                        r = 'A';
-                        coords.first = i;
-                        coords.second = j;
-                        bestEval = eval;
-                    }
-
-                    for(int i = 0; i < 8; ++i)
-                        for(int j = 0; j < 8; ++j)
-                            temporaryBoard[i][j] = this->pimpl->boardOffset->board[i][j];
-                }
-
-                if(move_downRight(temporaryBoard, 2, i, j))
-                {
-                    auto eval = evaluateBoard(temporaryBoard);
-                    if(eval < bestEval)
-                    {
-                        r = 'D';
-                        coords.first = i;
-                        coords.second = j;
-                        bestEval = eval;
-                    }
-
-                    for(int i = 0; i < 8; ++i)
-                        for(int j = 0; j < 8; ++j)
-                            temporaryBoard[i][j] = this->pimpl->boardOffset->board[i][j];
-                }
-            }
-        }
-    }
     
-    switch (r) 
-    {
-        case 'Q':
-            move_topLeft(temporaryBoard, this->pimpl->player_nr, coords.first, coords.second);
-            break;
-        case 'E':
-            move_topRight(temporaryBoard, this->pimpl->player_nr, coords.first, coords.second);
-            break;
-        case 'A':
-            move_downLeft(temporaryBoard, this->pimpl->player_nr, coords.first, coords.second);
-            break;
-        case 'D':
-            move_downRight(temporaryBoard, this->pimpl->player_nr, coords.first, coords.second);
-            break;
-        default:
-            break;
-    }
+
+
     //Salva nella history
     History* t = new History;
     t->prev = this->pimpl->boardOffset;
@@ -960,6 +460,7 @@ void Player::move()
             t->board[i][j] = temporaryBoard[i][j];
     
 }
+
 
 bool Player::valid_move() const
 {
@@ -1011,11 +512,8 @@ bool Player::valid_move() const
     if(aux > 3)
         flag = false;
 
-    //Controlla
-    if(aux == 2)
-    {
-        
-    }
+    
+
     return flag;
 }
 
@@ -1172,6 +670,8 @@ int Player::recurrence() const
 
 void Player::print() const
 {
+    if(!this->pimpl->boardOffset)
+        throw player_exception{player_exception::invalid_board, "History does not exist."};
     for(int i = 7; i >= 0; --i)
     {
         for(size_t j = 0; j < 8; ++j)
@@ -1202,7 +702,7 @@ void Player::print() const
 void Player::printHistory() const
 {
     History* temp = this->pimpl->boardOffset;
-    while(temp) //Apparently esiste una seconda board quando creo che è piena di x wtf
+    while(temp)
     {
         for(int i = 7; i >= 0; --i)
         {
@@ -1230,5 +730,34 @@ void Player::printHistory() const
             std::cout << std::endl;
         }
         temp = temp->prev;
+    }
+}
+
+void Player::printAsInMemory() const
+{
+    for(int i = 0; i < 8; ++i)
+    {
+        for(size_t j = 0; j < 8; ++j)
+        {
+            switch(this->pimpl->boardOffset->board[i][j])
+            {
+                case Player::piece::o:
+                    std::cout << "o";
+                    break;
+                case Player::piece::O:
+                    std::cout << "O";
+                    break;
+                case Player::piece::x:
+                    std::cout << "x";
+                    break;
+                case Player::piece::X:
+                    std::cout << "X";
+                    break;
+                default:
+                    std::cout << " ";
+                    break;
+            }
+        }
+        std::cout << std::endl;
     }
 }
