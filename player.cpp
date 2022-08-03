@@ -324,50 +324,32 @@ bool noMoves(Player::piece board[8][8], int player_nr)
 // + -
 bool move_downLeft(Player::piece board[8][8], int player_nr, int row, int col)
 {
-    //Boundaries check
-    if(row < 0 || row > 7)
-        return false;
-
-    if(col < 0 || col > 7)
-        return false;
-    
     bool done = false;
-    if(player_nr == 1)
+    if(row + 1 < 8 && col - 1 >= 0)
     {
-        if(board[row][col] == Player::piece::x)
-        {
-            if(row + 1 < 8 && col - 1 >= 0)
-            {
-                if(board[row + 1][col - 1] == Player::piece::e)
-                {
-                    board[row][col] = Player::piece::e;
-                    board[row + 1][col - 1] = row + 1 == 7 ? Player::piece::X : Player::piece::x;
-                    done = true;
-                }
-                else if(board[row + 1][col - 1] == Player::piece::o)
-                {
-                    if(row + 2 < 8 && col - 2 >= 0)
-                    {
-                        board[row][col] = Player::piece::e;
-                        board[row + 1][col - 1] = Player::piece::e;
-                        board[row + 2][col - 2] = row + 2 == 7 ? Player::piece::X : Player::piece::x;
-                        done = true;
-                    }
-                }
-            }
-        }
-        else if(board[row][col] == Player::piece::X)
+        if(player_nr == 1)
         {
             if(board[row + 1][col - 1] == Player::piece::e)
             {
+                Player::piece original = board[row][col];
                 board[row][col] = Player::piece::e;
-                board[row + 1][col - 1] = Player::piece::X;
+                board[row + 1][col - 1] = row + 1 == 7 ? Player::piece::X : original;
                 done = true;
             }
-            else if(board[row + 1][col - 1] == Player::piece::o
-                        || board[row + 1][col - 1] == Player::piece::O)
+            else if(board[row + 1][col - 1] == Player::piece::o)
             {
                 if(row + 2 < 8 && col - 2 >= 0)
+                {
+                    Player::piece original = board[row][col];
+                    board[row][col] = Player::piece::e;
+                    board[row + 1][col - 1] = Player::piece::e;
+                    board[row + 2][col - 2] = row + 2 == 7 ? Player::piece::X : original;
+                    done = true;
+                }
+            }
+            else if(board[row + 1][col - 1] == Player::piece::O)
+            {
+                if(row + 2 < 8 && col - 2 >= 0 && board[row][col] == Player::piece::X)
                 {
                     board[row][col] = Player::piece::e;
                     board[row + 1][col - 1] = Player::piece::e;
@@ -376,49 +358,223 @@ bool move_downLeft(Player::piece board[8][8], int player_nr, int row, int col)
                 }
             }
         }
-    }
-    else
-    {
-        if(board[row][col] == Player::piece::O)
+        else
         {
-
+            if(board[row][col] == Player::piece::O)
+            {
+                if(board[row + 1][col - 1] == Player::piece::e)
+                {
+                    board[row][col] = Player::piece::e;
+                    board[row + 1][col - 1] = Player::piece::O;
+                    done = true;
+                }
+                else if(board[row + 1][col - 1] == Player::piece::x
+                        || board[row + 1][col - 1] == Player::piece::X)
+                {
+                    if(row + 2 < 8 && col - 2 >= 0)
+                    {
+                        board[row][col] = Player::piece::e;
+                        board[row + 1][col - 1] = Player::piece::e;
+                        board[row + 2][col - 2] = Player::piece::O;
+                        done = true;
+                    }
+                }
+            }
         }
     }
-
     return done;
 }
 
 // + +
 bool move_downRight(Player::piece board[8][8], int player_nr, int row, int col)
 {
-    //Boundaries check
-    if(row < 0 || row > 7)
-        return false;
-        
-    if(col < 0 || col > 7)
-        return false;
+    bool done = false;
+    if(row + 1 < 8 && col + 1 < 8)
+    {
+        if(player_nr == 1)
+        {
+            if(board[row + 1][col + 1] == Player::piece::e)
+            {
+                Player::piece original = board[row][col];
+                board[row][col] = Player::piece::e;
+                board[row + 1][col + 1] = row + 1 == 7 ? Player::piece::X : original;
+                done = true;
+            }
+            else if(board[row + 1][col + 1] == Player::piece::o)
+            {
+                if(row + 2 < 8 && col - 2 >= 0)
+                {
+                    Player::piece original = board[row][col];
+                    board[row][col] = Player::piece::e;
+                    board[row + 1][col + 1] = Player::piece::e;
+                    board[row + 2][col + 2] = row + 2 == 7 ? Player::piece::X : original;
+                    done = true;
+                }
+            }
+            else if(board[row + 1][col + 1] == Player::piece::O)
+            {
+                if(row + 2 < 8 && col + 2 < 8 && board[row][col] == Player::piece::X)
+                {
+                    board[row][col] = Player::piece::e;
+                    board[row + 1][col + 1] = Player::piece::e;
+                    board[row + 2][col + 2] = Player::piece::X;
+                    done = true;
+                }
+            }
+        }
+        else
+        {
+            if(board[row][col] == Player::piece::O)
+            {
+                if(board[row + 1][col + 1] == Player::piece::e)
+                {
+                    board[row][col] = Player::piece::e;
+                    board[row + 1][col + 1] = Player::piece::O;
+                    done = true;
+                }
+                else if(board[row + 1][col + 1] == Player::piece::x
+                        || board[row + 1][col + 1] == Player::piece::X)
+                {
+                    if(row + 2 < 8 && col + 2 < 8)
+                    {
+                        board[row][col] = Player::piece::e;
+                        board[row + 1][col + 1] = Player::piece::e;
+                        board[row + 2][col + 2] = Player::piece::O;
+                        done = true;
+                    }
+                }
+            }
+        }
+    }
+    return done;
 }
 
 // - -
 bool move_topLeft(Player::piece board[8][8], int player_nr, int row, int col)
 {
-    //Boundaries check
-    if(row < 0 || row > 7)
-        return false;
-        
-    if(col < 0 || col > 7)
-        return false;
+    bool done = false;
+    if(row - 1 >= 0 && col - 1 >= 0)
+    {
+        if(player_nr == 2)
+        {
+            if(board[row - 1][col - 1] == Player::piece::e)
+            {
+                Player::piece original = board[row][col];
+                board[row][col] = Player::piece::e;
+                board[row - 1][col - 1] = row - 1 == 0 ? Player::piece::O : original;
+                done = true;
+            }
+            else if(board[row - 1][col - 1] == Player::piece::x)
+            {
+                if(row - 2 >= 0 && col - 2 >= 0)
+                {
+                    Player::piece original = board[row][col];
+                    board[row][col] = Player::piece::e;
+                    board[row - 1][col - 1] = Player::piece::e;
+                    board[row - 2][col - 2] = row - 2 == 0 ? Player::piece::O : original;
+                    done = true;
+                }
+            }
+            else if(board[row + 1][col - 1] == Player::piece::X)
+            {
+                if(row - 2 >= 0 && col - 2 >= 0 && board[row][col] == Player::piece::O)
+                {
+                    board[row][col] = Player::piece::e;
+                    board[row - 1][col - 1] = Player::piece::e;
+                    board[row - 2][col - 2] = Player::piece::X;
+                    done = true;
+                }
+            }
+        }
+        else
+        {
+            if(board[row][col] == Player::piece::X)
+            {
+                if(board[row - 1][col - 1] == Player::piece::e)
+                {
+                    board[row][col] = Player::piece::e;
+                    board[row - 1][col - 1] = Player::piece::X;
+                    done = true;
+                }
+                else if(board[row - 1][col - 1] == Player::piece::o
+                        || board[row - 1][col - 1] == Player::piece::O)
+                {
+                    if(row - 2 >= 0 && col - 2 >= 0)
+                    {
+                        board[row][col] = Player::piece::e;
+                        board[row - 1][col - 1] = Player::piece::e;
+                        board[row - 2][col - 2] = Player::piece::X;
+                        done = true;
+                    }
+                }
+            }
+        }
+    }
+    return done;
 }
 
 // - +
 bool move_topRight(Player::piece board[8][8], int player_nr, int row, int col)
 {
-    //Boundaries check
-    if(row < 0 || row > 7)
-        return false;
-        
-    if(col < 0 || col > 7)
-        return false;
+    bool done = false;
+    if(row - 1 >= 0 && col + 1 < 8)
+    {
+        if(player_nr == 2)
+        {
+            if(board[row - 1][col + 1] == Player::piece::e)
+            {
+                Player::piece original = board[row][col];
+                board[row][col] = Player::piece::e;
+                board[row - 1][col + 1] = row - 1 == 0 ? Player::piece::O : original;
+                done = true;
+            }
+            else if(board[row - 1][col + 1] == Player::piece::x)
+            {
+                if(row - 2 >= 0 && col + 2 < 8)
+                {
+                    Player::piece original = board[row][col];
+                    board[row][col] = Player::piece::e;
+                    board[row - 1][col + 1] = Player::piece::e;
+                    board[row - 2][col + 2] = row - 2 == 0 ? Player::piece::O : original;
+                    done = true;
+                }
+            }
+            else if(board[row + 1][col - 1] == Player::piece::X)
+            {
+                if(row - 2 >= 0 && col + 2 < 8 && board[row][col] == Player::piece::O)
+                {
+                    board[row][col] = Player::piece::e;
+                    board[row - 1][col + 1] = Player::piece::e;
+                    board[row - 2][col + 2] = Player::piece::X;
+                    done = true;
+                }
+            }
+        }
+        else
+        {
+            if(board[row][col] == Player::piece::X)
+            {
+                if(board[row - 1][col + 1] == Player::piece::e)
+                {
+                    board[row][col] = Player::piece::e;
+                    board[row - 1][col + 1] = Player::piece::X;
+                    done = true;
+                }
+                else if(board[row - 1][col + 1] == Player::piece::o
+                        || board[row - 1][col + 1] == Player::piece::O)
+                {
+                    if(row - 2 >= 0 && col - 2 >= 0)
+                    {
+                        board[row][col] = Player::piece::e;
+                        board[row - 1][col + 1] = Player::piece::e;
+                        board[row - 2][col + 2] = Player::piece::X;
+                        done = true;
+                    }
+                }
+            }
+        }
+    }
+    return done;
 }
 
 //PLAYER 1 X 
