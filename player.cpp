@@ -1,7 +1,6 @@
 #include "player.hpp"
 #define POS_INF  ((unsigned) ~0)
-//TODO:
-//Create functions to reuse code(eg. move legality)
+
 struct History
 {
     Player::piece board[8][8];
@@ -18,7 +17,7 @@ Player::Player(int player_nr)
 {
     if(!(player_nr == 1 || player_nr == 2))
         throw player_exception{player_exception::index_out_of_bounds, "Player value not valid."};
-        
+
     this->pimpl = new Impl;
     this->pimpl->player_nr = player_nr;
     this->pimpl->boardOffset = nullptr;
@@ -43,11 +42,11 @@ Player::Player(const Player& rhs)
 {
     this->pimpl = new Impl;
     this->pimpl->player_nr = rhs.pimpl->player_nr;
-    
+
     if(rhs.pimpl->boardOffset != nullptr)
     {
         this->pimpl->boardOffset = new History;
-    
+
         History* temp = rhs.pimpl->boardOffset;
         History* t  = this->pimpl->boardOffset;
         while(temp)
@@ -132,7 +131,7 @@ void Player::load_board(const std::string &filename)
 
     size_t oPieces = 0;
     size_t xPieces = 0;
-    History* newHead = new History;
+    auto* newHead = new History;
     newHead->prev = this->pimpl->boardOffset; //Attacco in testa
     this->pimpl->boardOffset = newHead;
     for(int i = 7; i >= 0; --i)
@@ -140,12 +139,12 @@ void Player::load_board(const std::string &filename)
         std::string temp;
         std::getline(loader, temp);
         for(size_t j = 0; j < 8; ++j)
-        {   
+        {
             if(i % 2 == 0 && j % 2 == 0 && temp[j] != ' ')
-                throw player_exception{player_exception::invalid_board, "1Pieces on white cells are not allowed."};
+                throw player_exception{player_exception::invalid_board, "Pieces on white cells are not allowed."};
 
             if(i % 2 != 0 && j % 2 != 0 && temp[j] != ' ')
-                throw player_exception{player_exception::invalid_board, "2Pieces on white cells are not allowed."};
+                throw player_exception{player_exception::invalid_board, "Pieces on white cells are not allowed."};
 
             if(oPieces > 12 || xPieces > 12)
                 throw player_exception{player_exception::invalid_board, "Too many pieces."};
@@ -193,7 +192,7 @@ void Player::init_board(const std::string &filename) const
             if(i >= 0 && i < 3)
             {
                 if(i % 2)
-                    actual = j % 2 ? Player::piece::e : Player::piece::x; 
+                    actual = j % 2 ? Player::piece::e : Player::piece::x;
                 else
                     actual = j % 2 ? Player::piece::x : Player::piece::e;
             }
@@ -247,7 +246,7 @@ void Player::store_board(const std::string& filename, int history_offset) const
             ++cnt;
             temp = temp->prev;
         }
-        
+
         if(!temp || cnt != history_offset)
             throw player_exception{player_exception::index_out_of_bounds, "Board with chosen offset does not exist."};
 
@@ -277,9 +276,9 @@ void Player::store_board(const std::string& filename, int history_offset) const
             }
             if(i != 0)
                 row.append("\n");
-            
+
             writer << row;
-        }   
+        }
     }
     writer.close();
 }
@@ -311,14 +310,8 @@ double evaluateBoard(Player::piece board[8][8])
                     break;
 
             }
-    
+
     return eval;
-}
-
-
-bool noMoves(Player::piece board[8][8], int player_nr)
-{
-    return false;
 }
 
 // + -
@@ -327,7 +320,7 @@ bool move_downLeft(Player::piece board[8][8], int player_nr, int row, int col)
     bool done = false;
     if(row + 1 < 8 && col - 1 >= 0)
     {
-        if(player_nr == 1)
+        if(player_nr == 1 && (board[row][col] == Player::piece::x || board[row][col] == Player::piece::X))
         {
             if(board[row + 1][col - 1] == Player::piece::e)
             {
@@ -338,7 +331,7 @@ bool move_downLeft(Player::piece board[8][8], int player_nr, int row, int col)
             }
             else if(board[row + 1][col - 1] == Player::piece::o)
             {
-                if(row + 2 < 8 && col - 2 >= 0)
+                if(row + 2 < 8 && col - 2 >= 0 && board[row + 2][col - 2] == Player::piece::e)
                 {
                     Player::piece original = board[row][col];
                     board[row][col] = Player::piece::e;
@@ -347,7 +340,7 @@ bool move_downLeft(Player::piece board[8][8], int player_nr, int row, int col)
                     done = true;
                 }
             }
-            else if(board[row + 1][col - 1] == Player::piece::O)
+            else if(board[row + 1][col - 1] == Player::piece::O && board[row + 2][col - 2] == Player::piece::e)
             {
                 if(row + 2 < 8 && col - 2 >= 0 && board[row][col] == Player::piece::X)
                 {
@@ -358,7 +351,7 @@ bool move_downLeft(Player::piece board[8][8], int player_nr, int row, int col)
                 }
             }
         }
-        else
+        else if(player_nr == 2)
         {
             if(board[row][col] == Player::piece::O)
             {
@@ -369,9 +362,9 @@ bool move_downLeft(Player::piece board[8][8], int player_nr, int row, int col)
                     done = true;
                 }
                 else if(board[row + 1][col - 1] == Player::piece::x
-                        || board[row + 1][col - 1] == Player::piece::X)
+                         || board[row + 1][col - 1] == Player::piece::X)
                 {
-                    if(row + 2 < 8 && col - 2 >= 0)
+                    if(row + 2 < 8 && col - 2 >= 0 && board[row + 2][col - 2] == Player::piece::e)
                     {
                         board[row][col] = Player::piece::e;
                         board[row + 1][col - 1] = Player::piece::e;
@@ -391,7 +384,7 @@ bool move_downRight(Player::piece board[8][8], int player_nr, int row, int col)
     bool done = false;
     if(row + 1 < 8 && col + 1 < 8)
     {
-        if(player_nr == 1)
+        if(player_nr == 1 && (board[row][col] == Player::piece::x || board[row][col] == Player::piece::X))
         {
             if(board[row + 1][col + 1] == Player::piece::e)
             {
@@ -402,7 +395,7 @@ bool move_downRight(Player::piece board[8][8], int player_nr, int row, int col)
             }
             else if(board[row + 1][col + 1] == Player::piece::o)
             {
-                if(row + 2 < 8 && col - 2 >= 0)
+                if(row + 2 < 8 && col - 2 >= 0 && board[row + 2][col + 2] == Player::piece::e)
                 {
                     Player::piece original = board[row][col];
                     board[row][col] = Player::piece::e;
@@ -413,7 +406,7 @@ bool move_downRight(Player::piece board[8][8], int player_nr, int row, int col)
             }
             else if(board[row + 1][col + 1] == Player::piece::O)
             {
-                if(row + 2 < 8 && col + 2 < 8 && board[row][col] == Player::piece::X)
+                if(row + 2 < 8 && col + 2 < 8 && board[row][col] == Player::piece::X && board[row + 2][col + 2] == Player::piece::e)
                 {
                     board[row][col] = Player::piece::e;
                     board[row + 1][col + 1] = Player::piece::e;
@@ -422,7 +415,7 @@ bool move_downRight(Player::piece board[8][8], int player_nr, int row, int col)
                 }
             }
         }
-        else
+        else if(player_nr == 2)
         {
             if(board[row][col] == Player::piece::O)
             {
@@ -433,9 +426,9 @@ bool move_downRight(Player::piece board[8][8], int player_nr, int row, int col)
                     done = true;
                 }
                 else if(board[row + 1][col + 1] == Player::piece::x
-                        || board[row + 1][col + 1] == Player::piece::X)
+                         || board[row + 1][col + 1] == Player::piece::X)
                 {
-                    if(row + 2 < 8 && col + 2 < 8)
+                    if(row + 2 < 8 && col + 2 < 8 && board[row + 2][col + 2] == Player::piece::e)
                     {
                         board[row][col] = Player::piece::e;
                         board[row + 1][col + 1] = Player::piece::e;
@@ -455,7 +448,7 @@ bool move_topLeft(Player::piece board[8][8], int player_nr, int row, int col)
     bool done = false;
     if(row - 1 >= 0 && col - 1 >= 0)
     {
-        if(player_nr == 2)
+        if(player_nr == 2 && (board[row][col] == Player::piece::o || board[row][col] == Player::piece::O))
         {
             if(board[row - 1][col - 1] == Player::piece::e)
             {
@@ -466,7 +459,7 @@ bool move_topLeft(Player::piece board[8][8], int player_nr, int row, int col)
             }
             else if(board[row - 1][col - 1] == Player::piece::x)
             {
-                if(row - 2 >= 0 && col - 2 >= 0)
+                if(row - 2 >= 0 && col - 2 >= 0 && board[row - 2][col - 2] == Player::piece::e)
                 {
                     Player::piece original = board[row][col];
                     board[row][col] = Player::piece::e;
@@ -477,7 +470,7 @@ bool move_topLeft(Player::piece board[8][8], int player_nr, int row, int col)
             }
             else if(board[row + 1][col - 1] == Player::piece::X)
             {
-                if(row - 2 >= 0 && col - 2 >= 0 && board[row][col] == Player::piece::O)
+                if(row - 2 >= 0 && col - 2 >= 0 && board[row][col] == Player::piece::O && board[row - 2][col - 2] == Player::piece::e)
                 {
                     board[row][col] = Player::piece::e;
                     board[row - 1][col - 1] = Player::piece::e;
@@ -486,7 +479,7 @@ bool move_topLeft(Player::piece board[8][8], int player_nr, int row, int col)
                 }
             }
         }
-        else
+        else if(player_nr == 1)
         {
             if(board[row][col] == Player::piece::X)
             {
@@ -497,9 +490,9 @@ bool move_topLeft(Player::piece board[8][8], int player_nr, int row, int col)
                     done = true;
                 }
                 else if(board[row - 1][col - 1] == Player::piece::o
-                        || board[row - 1][col - 1] == Player::piece::O)
+                         || board[row - 1][col - 1] == Player::piece::O)
                 {
-                    if(row - 2 >= 0 && col - 2 >= 0)
+                    if(row - 2 >= 0 && col - 2 >= 0 && board[row - 2][col - 2] == Player::piece::e)
                     {
                         board[row][col] = Player::piece::e;
                         board[row - 1][col - 1] = Player::piece::e;
@@ -519,7 +512,7 @@ bool move_topRight(Player::piece board[8][8], int player_nr, int row, int col)
     bool done = false;
     if(row - 1 >= 0 && col + 1 < 8)
     {
-        if(player_nr == 2)
+        if(player_nr == 2 && (board[row][col] == Player::piece::o || board[row][col] == Player::piece::O))
         {
             if(board[row - 1][col + 1] == Player::piece::e)
             {
@@ -530,7 +523,7 @@ bool move_topRight(Player::piece board[8][8], int player_nr, int row, int col)
             }
             else if(board[row - 1][col + 1] == Player::piece::x)
             {
-                if(row - 2 >= 0 && col + 2 < 8)
+                if(row - 2 >= 0 && col + 2 < 8 && board[row - 2][col + 2] == Player::piece::e)
                 {
                     Player::piece original = board[row][col];
                     board[row][col] = Player::piece::e;
@@ -541,7 +534,7 @@ bool move_topRight(Player::piece board[8][8], int player_nr, int row, int col)
             }
             else if(board[row + 1][col - 1] == Player::piece::X)
             {
-                if(row - 2 >= 0 && col + 2 < 8 && board[row][col] == Player::piece::O)
+                if(row - 2 >= 0 && col + 2 < 8 && board[row][col] == Player::piece::O && board[row - 2][col + 2] == Player::piece::e)
                 {
                     board[row][col] = Player::piece::e;
                     board[row - 1][col + 1] = Player::piece::e;
@@ -550,7 +543,7 @@ bool move_topRight(Player::piece board[8][8], int player_nr, int row, int col)
                 }
             }
         }
-        else
+        else if(player_nr == 1) //Might be bug fixed with this line ... YUP 
         {
             if(board[row][col] == Player::piece::X)
             {
@@ -561,9 +554,9 @@ bool move_topRight(Player::piece board[8][8], int player_nr, int row, int col)
                     done = true;
                 }
                 else if(board[row - 1][col + 1] == Player::piece::o
-                        || board[row - 1][col + 1] == Player::piece::O)
+                         || board[row - 1][col + 1] == Player::piece::O)
                 {
-                    if(row - 2 >= 0 && col - 2 >= 0)
+                    if(row - 2 >= 0 && col + 2 < 8 && board[row - 2][col + 2] == Player::piece::e)
                     {
                         board[row][col] = Player::piece::e;
                         board[row - 1][col + 1] = Player::piece::e;
@@ -577,7 +570,32 @@ bool move_topRight(Player::piece board[8][8], int player_nr, int row, int col)
     return done;
 }
 
-//PLAYER 1 X 
+bool noMoves(Player::piece board[8][8], int player_nr)
+{
+    bool moves = false;
+    int i = 0, j = 0;
+    while(!moves && i < 8)
+    {
+        while(!moves && j < 8)
+        {
+            if(move_topLeft(board, player_nr, i, j))
+                moves = true;
+            else if(move_topRight(board, player_nr, i, j))
+                moves = true;
+            else if(move_downLeft(board, player_nr, i, j))
+                moves = true;
+            else if(move_downRight(board, player_nr, i, j))
+                moves = true;
+
+            ++j;
+        }
+        j = 0;
+        ++i;
+    }
+    return !moves;
+}
+
+//PLAYER 1 X
 //PLAYER 2 O
 void Player::move()
 {
@@ -588,8 +606,9 @@ void Player::move()
     for(int i = 0; i < 8; ++i)
         for(int j = 0; j < 8; ++j)
             temporaryBoard[i][j] = this->pimpl->boardOffset->board[i][j];
-    
-    if(noMoves(temporaryBoard, this->pimpl->player_nr)) //Appende in testa una board uguale
+
+    /*
+    if(noMoves(otherTemp, this->pimpl->player_nr)) //Appende in testa una board uguale
     {
         History* t = new History;
         for(int i = 0; i < 8; ++i)
@@ -600,13 +619,156 @@ void Player::move()
         this->pimpl->boardOffset = t;
         return;
     }
-
+*/
     //Prova le 4 direzioni per ogni pezzo
     //Simil minimax ma senza depth
-    //Visto che implementando il minimax 
-    
+    double bestEval; //Bug was there, bestEval non veniva sovrascitto
+    if(this->pimpl->player_nr == 1)
+        bestEval = -400000;
+    else
+        bestEval = POS_INF;
+    std::pair<int, int> coords;
+    char direction = ' ';
+    for(int row = 0; row < 8; ++row)
+    {
+        for(int col = 0; col < 8; ++col)
+        {
+            if(move_topLeft(temporaryBoard, this->pimpl->player_nr, row, col))
+            {
+                double currentEval = evaluateBoard(temporaryBoard);
+                if(this->pimpl->player_nr == 1)
+                {
+                    if(currentEval > bestEval)
+                    {
+                        bestEval = currentEval;
+                        coords.first = row;
+                        coords.second = col;
+                        direction = 'Q';
+                    }
+                }
+                else
+                {
+                    if(currentEval < bestEval)
+                    {
+                        bestEval = currentEval;
+                        coords.first = row;
+                        coords.second = col;
+                        direction = 'Q';
+                    }
+                }
+                for(int i = 0; i < 8; ++i)
+                    for(int j = 0; j < 8; ++j)
+                        temporaryBoard[i][j] = this->pimpl->boardOffset->board[i][j];
+            }
 
+            if(move_topRight(temporaryBoard, this->pimpl->player_nr, row, col))
+            {
+                double currentEval = evaluateBoard(temporaryBoard);
+                if(this->pimpl->player_nr == 1)
+                {
+                    if(currentEval > bestEval)
+                    {
+                        bestEval = currentEval;
+                        coords.first = row;
+                        coords.second = col;
+                        direction = 'E';
+                    }
+                }
+                else
+                {
+                    if(currentEval < bestEval)
+                    {
+                        bestEval = currentEval;
+                        coords.first = row;
+                        coords.second = col;
+                        direction = 'E';
+                    }
+                }
+                for(int i = 0; i < 8; ++i)
+                    for(int j = 0; j < 8; ++j)
+                        temporaryBoard[i][j] = this->pimpl->boardOffset->board[i][j];
+            }
 
+            if(move_downLeft(temporaryBoard, this->pimpl->player_nr, row, col))
+            {
+                double currentEval = evaluateBoard(temporaryBoard);
+                if(this->pimpl->player_nr == 1)
+                {
+                    if(currentEval > bestEval)
+                    {
+                        bestEval = currentEval;
+                        coords.first = row;
+                        coords.second = col;
+                        direction = 'A';
+                    }
+                }
+                else
+                {
+                    if(currentEval < bestEval)
+                    {
+                        bestEval = currentEval;
+                        coords.first = row;
+                        coords.second = col;
+                        direction = 'A';
+                    }
+                }
+                for(int i = 0; i < 8; ++i)
+                    for(int j = 0; j < 8; ++j)
+                        temporaryBoard[i][j] = this->pimpl->boardOffset->board[i][j];
+            }
+
+            if(move_downRight(temporaryBoard, this->pimpl->player_nr, row, col))
+            {
+                double currentEval = evaluateBoard(temporaryBoard);
+                if(this->pimpl->player_nr == 1)
+                {
+                    if(currentEval > bestEval)
+                    {
+                        bestEval = currentEval;
+                        coords.first = row;
+                        coords.second = col;
+                        direction = 'D';
+                    }
+                }
+                else
+                {
+                    if(currentEval < bestEval)
+                    {
+                        bestEval = currentEval;
+                        coords.first = row;
+                        coords.second = col;
+                        direction = 'D';
+                    }
+                }
+
+                for(int i = 0; i < 8; ++i)
+                    for(int j = 0; j < 8; ++j)
+                        temporaryBoard[i][j] = this->pimpl->boardOffset->board[i][j];
+            }
+        }
+    }
+
+    std::cout << "PLAYER: " << this->pimpl->player_nr << std::endl;
+    if(direction != ' ')
+        std::cout << direction << " COORD: " << coords.first << ", " << coords.second << std::endl;
+
+    switch (direction)
+    {
+        case 'Q':
+            move_topLeft(temporaryBoard, this->pimpl->player_nr, coords.first, coords.second);
+            break;
+        case 'E':
+            move_topRight(temporaryBoard, this->pimpl->player_nr, coords.first, coords.second);
+            break;
+        case 'A':
+            move_downLeft(temporaryBoard, this->pimpl->player_nr, coords.first, coords.second);
+            break;
+        case 'D':
+            move_downRight(temporaryBoard, this->pimpl->player_nr, coords.first, coords.second);
+            break;
+        default:
+            break;
+    }
     //Salva nella history
     History* t = new History;
     t->prev = this->pimpl->boardOffset;
@@ -614,7 +776,7 @@ void Player::move()
     for(int i = 0; i < 8; ++i)
         for(int j = 0; j < 8; ++j)
             t->board[i][j] = temporaryBoard[i][j];
-    
+
 }
 
 
@@ -624,13 +786,13 @@ bool Player::valid_move() const
 
     if(!this->pimpl->boardOffset || !this->pimpl->boardOffset->prev)
         throw player_exception{player_exception::index_out_of_bounds, "Less than two boards in history."};
-    
-    //Controllo se la board è uguale a quella precedente   
+
+    //Controllo se la board è uguale a quella precedente
     for(int i = 0; i < 8; ++i)
         for(int j = 0; j < 8; ++j)
-            flag = flag && 
+            flag = flag &&
                 (this->pimpl->boardOffset->board[i][j] == this->pimpl->boardOffset->prev->board[i][j]);
-    
+
     if(flag)
         return false;
 
@@ -643,13 +805,13 @@ bool Player::valid_move() const
             if(i % 2 && j % 2 == 0 && this->pimpl->boardOffset->board[i][j] != Player::piece::e)
                 flag = false;
         }
-    
+
     //Pezzi non promossi
     for(int j = 0; j < 8; ++j)
-        if(this->pimpl->boardOffset->board[0][j] == Player::piece::o 
+        if(this->pimpl->boardOffset->board[0][j] == Player::piece::o
             || this->pimpl->boardOffset->board[7][j] == Player::piece::x)
-                flag = false;
-    
+            flag = false;
+
     std::pair<int, int> changes[3];
     int aux = 0;
     for(int i = 0; i < 8; ++i)
@@ -668,7 +830,7 @@ bool Player::valid_move() const
     if(aux > 3)
         flag = false;
 
-    
+
 
     return flag;
 }
@@ -677,7 +839,7 @@ void Player::pop()
 {
     if(!this->pimpl->boardOffset)
         throw player_exception{player_exception::index_out_of_bounds, "History does not exist."};
-    
+
     History* temp = this->pimpl->boardOffset;
     this->pimpl->boardOffset = this->pimpl->boardOffset->prev;
     delete temp;
@@ -693,7 +855,7 @@ bool Player::wins(int player_nr) const
     if(player_nr == 1) //'x'
     {
         size_t otherPieces = 0;
-        
+
         for(size_t i = 0; i < 8; ++i)
             for(size_t j = 0; j < 8; ++j)
                 switch(this->pimpl->boardOffset->board[i][j])
@@ -714,7 +876,7 @@ bool Player::wins(int player_nr) const
     else    // 'o'
     {
         size_t otherPieces = 0;
-        
+
         for(size_t i = 0; i < 8; ++i)
             for(size_t j = 0; j < 8; ++j)
                 switch(this->pimpl->boardOffset->board[i][j])
@@ -745,12 +907,12 @@ bool Player::loses(int player_nr) const
 {
     if(!(player_nr == 1 || player_nr == 2))
         throw player_exception{player_exception::index_out_of_bounds, "Player number not valid."};
-    
+
     bool lost = false;
     if(player_nr == 1) //'x'
     {
         size_t myPieces = 0;
-        
+
         for(size_t i = 0; i < 8; ++i)
             for(size_t j = 0; j < 8; ++j)
                 switch(this->pimpl->boardOffset->board[i][j])
@@ -772,7 +934,7 @@ bool Player::loses(int player_nr) const
     if(player_nr == 2) // 'o'
     {
         size_t myPieces = 0;
-        
+
         for(size_t i = 0; i < 8; ++i)
             for(size_t j = 0; j < 8; ++j)
                 switch(this->pimpl->boardOffset->board[i][j])
@@ -808,7 +970,7 @@ int Player::recurrence() const
     History* temp = this->pimpl->boardOffset->prev;
     if(!temp)
         return times;
-    
+
     while(temp)
     {
         bool equal = true;
@@ -818,7 +980,7 @@ int Player::recurrence() const
 
         if(equal)
             ++times;
-        
+
         temp = temp->prev;
     }
     return times;
@@ -886,34 +1048,5 @@ void Player::printHistory() const
             std::cout << std::endl;
         }
         temp = temp->prev;
-    }
-}
-
-void Player::printAsInMemory() const
-{
-    for(int i = 0; i < 8; ++i)
-    {
-        for(size_t j = 0; j < 8; ++j)
-        {
-            switch(this->pimpl->boardOffset->board[i][j])
-            {
-                case Player::piece::o:
-                    std::cout << "o";
-                    break;
-                case Player::piece::O:
-                    std::cout << "O";
-                    break;
-                case Player::piece::x:
-                    std::cout << "x";
-                    break;
-                case Player::piece::X:
-                    std::cout << "X";
-                    break;
-                default:
-                    std::cout << " ";
-                    break;
-            }
-        }
-        std::cout << std::endl;
     }
 }
