@@ -543,7 +543,7 @@ bool move_topRight(Player::piece board[8][8], int player_nr, int row, int col)
                 }
             }
         }
-        else if(player_nr == 1) //Might be bug fixed with this line ... YUP 
+        else if(player_nr == 1) //Might be bug fixed with this line ... YUP
         {
             if(board[row][col] == Player::piece::X)
             {
@@ -748,10 +748,6 @@ void Player::move()
         }
     }
 
-    std::cout << "PLAYER: " << this->pimpl->player_nr << std::endl;
-    if(direction != ' ')
-        std::cout << direction << " COORD: " << coords.first << ", " << coords.second << std::endl;
-
     switch (direction)
     {
         case 'Q':
@@ -793,9 +789,6 @@ bool Player::valid_move() const
             flag = flag &&
                 (this->pimpl->boardOffset->board[i][j] == this->pimpl->boardOffset->prev->board[i][j]);
 
-    if(flag)
-        return false;
-
     //Guardo eventuali celle bianche con pezzi
     for(int i = 0; i < 8; ++i)
         for(int j = 0; j < 8; ++j)
@@ -830,7 +823,68 @@ bool Player::valid_move() const
     if(aux > 3)
         flag = false;
 
+    //Al massimo ho tre possibilità x 4 direzioni (12 possibilità totali)
+    //Controllo se una mossa in una delle 4 direzioni (nelle coordinate cambiate) mi crea la board uguale
+    bool foundMove = false;
+    Player::piece tempBoard[8][8];
+    for(int i = 0; i < 8; ++i)
+        for(int j = 0; j < 8; ++j)
+            tempBoard[i][j] = this->pimpl->boardOffset->prev->board[i][j];
 
+    int i = 0;
+    while(i < 3 && !foundMove)
+    {
+        if(move_topLeft(tempBoard, this->pimpl->player_nr, changes[i].first, changes[i].second))
+        {
+            bool eq = true;
+            for(int r = 0; r < 8; ++r)
+                for(int c = 0; c < 8; ++c)
+                    eq = eq &&
+                        (this->pimpl->boardOffset->board[r][c] == tempBoard[r][c]);
+
+            if(eq)
+                foundMove = true;
+        }
+
+        if(!foundMove && move_topRight(tempBoard, this->pimpl->player_nr, changes[i].first, changes[i].second))
+        {
+            bool eq = true;
+            for(int r = 0; r < 8; ++r)
+                for(int c = 0; c < 8; ++c)
+                    eq = eq &&
+                        (this->pimpl->boardOffset->board[r][c] == tempBoard[r][c]);
+
+            if(eq)
+                foundMove = true;
+        }
+
+        if(!foundMove && move_downLeft(tempBoard, this->pimpl->player_nr, changes[i].first, changes[i].second))
+        {
+            bool eq = true;
+            for(int r = 0; r < 8; ++r)
+                for(int c = 0; c < 8; ++c)
+                    eq = eq &&
+                        (this->pimpl->boardOffset->board[r][c] == tempBoard[r][c]);
+
+            if(eq)
+                foundMove = true;
+        }
+
+        if(!foundMove && move_downRight(tempBoard, this->pimpl->player_nr, changes[i].first, changes[i].second))
+        {
+            bool eq = true;
+            for(int r = 0; r < 8; ++r)
+                for(int c = 0; c < 8; ++c)
+                    eq = eq &&
+                        (this->pimpl->boardOffset->board[r][c] == tempBoard[r][c]);
+
+            if(eq)
+                foundMove = true;
+        }
+        ++i;
+    }
+    if(!foundMove)
+        flag = false;
 
     return flag;
 }
