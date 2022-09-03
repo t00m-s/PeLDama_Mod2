@@ -844,6 +844,11 @@ bool Player::valid_move() const
 
             if(eq)
                 foundMove = true;
+
+            //Resetto la tempBoard allo stato precedente per sicurezza
+            for(int r = 0; r < 8; ++r)
+                for(int c = 0; c < 8; ++c)
+                    tempBoard[r][c] = this->pimpl->boardOffset->prev->board[r][c]
         }
 
         if(!foundMove && move_topRight(tempBoard, this->pimpl->player_nr, changes[i].first, changes[i].second))
@@ -856,6 +861,11 @@ bool Player::valid_move() const
 
             if(eq)
                 foundMove = true;
+            
+            //Resetto la tempBoard allo stato precedente per sicurezza
+            for(int r = 0; r < 8; ++r)
+                for(int c = 0; c < 8; ++c)
+                    tempBoard[r][c] = this->pimpl->boardOffset->prev->board[r][c];
         }
 
         if(!foundMove && move_downLeft(tempBoard, this->pimpl->player_nr, changes[i].first, changes[i].second))
@@ -868,8 +878,11 @@ bool Player::valid_move() const
 
             if(eq)
                 foundMove = true;
-        }
 
+            for(int r = 0; r < 8; ++r)
+                for(int c = 0; c < 8; ++c)
+                    tempBoard[r][c] = this->pimpl->boardOffset->prev->board[r][c];           
+        }
         if(!foundMove && move_downRight(tempBoard, this->pimpl->player_nr, changes[i].first, changes[i].second))
         {
             bool eq = true;
@@ -880,13 +893,15 @@ bool Player::valid_move() const
 
             if(eq)
                 foundMove = true;
+            
+            for(int r = 0; r < 8; ++r)
+                for(int c = 0; c < 8; ++c)
+                    tempBoard[r][c] = this->pimpl->boardOffset->prev->board[r][c];           
         }
         ++i;
     }
-    if(!foundMove)
-        flag = false;
 
-    return flag;
+    return foundMove;
 }
 
 void Player::pop()
