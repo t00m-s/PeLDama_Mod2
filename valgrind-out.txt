@@ -1,172 +1,172 @@
-==75701== Memcheck, a memory error detector
-==75701== Copyright (C) 2002-2022, and GNU GPL'd, by Julian Seward et al.
-==75701== Using Valgrind-3.19.0-8d3c8034b8-20220411 and LibVEX; rerun with -h for copyright info
-==75701== Command: ./DamaDebug
-==75701== Parent PID: 71531
-==75701== 
---75701-- 
---75701-- Valgrind options:
---75701--    --leak-check=full
---75701--    --show-leak-kinds=all
---75701--    --track-origins=yes
---75701--    --verbose
---75701--    --log-file=valgrind-out.txt
---75701-- Contents of /proc/version:
---75701--   Linux version 5.19.6-arch1-1 (linux@archlinux) (gcc (GCC) 12.2.0, GNU ld (GNU Binutils) 2.39.0) #1 SMP PREEMPT_DYNAMIC Wed, 31 Aug 2022 22:09:40 +0000
---75701-- 
---75701-- Arch and hwcaps: AMD64, LittleEndian, amd64-cx16-lzcnt-rdtscp-sse3-ssse3-avx-avx2-bmi-f16c-rdrand-rdseed
---75701-- Page sizes: currently 4096, max supported 4096
---75701-- Valgrind library directory: /usr/lib/valgrind
---75701-- Reading syms from /home/tom/Development/PeLDama_Mod2/DamaDebug
---75701-- Reading syms from /usr/lib/ld-linux-x86-64.so.2
-==75701== Downloading debug info for /usr/lib/ld-linux-x86-64.so.2...
---75701--   Considering /home/tom/.cache/debuginfod_client/da64753d57bf3801827448f53d911b041568e727/debuginfo ..
---75701--   .. CRC is valid
-==75701== Successfully downloaded debug file for /usr/lib/ld-linux-x86-64.so.2
---75701-- Reading syms from /usr/lib/valgrind/memcheck-amd64-linux
-==75701== Downloading debug info for /usr/lib/valgrind/memcheck-amd64-linux...
-==75701== Server query failed: No such file or directory
---75701--    object doesn't have a symbol table
---75701--    object doesn't have a dynamic symbol table
---75701-- Scheduler: using generic scheduler lock implementation.
---75701-- Reading suppressions file: /usr/lib/valgrind/default.supp
-==75701== embedded gdbserver: reading from /tmp/vgdb-pipe-from-vgdb-to-75701-by-tom-on-???
-==75701== embedded gdbserver: writing to   /tmp/vgdb-pipe-to-vgdb-from-75701-by-tom-on-???
-==75701== embedded gdbserver: shared mem   /tmp/vgdb-pipe-shared-mem-vgdb-75701-by-tom-on-???
-==75701== 
-==75701== TO CONTROL THIS PROCESS USING vgdb (which you probably
-==75701== don't want to do, unless you know exactly what you're doing,
-==75701== or are doing some strange experiment):
-==75701==   /usr/lib/valgrind/../../bin/vgdb --pid=75701 ...command...
-==75701== 
-==75701== TO DEBUG THIS PROCESS USING GDB: start GDB like this
-==75701==   /path/to/gdb ./DamaDebug
-==75701== and then give GDB the following command
-==75701==   target remote | /usr/lib/valgrind/../../bin/vgdb --pid=75701
-==75701== --pid is optional if only one valgrind process is running
-==75701== 
---75701-- REDIR: 0x40247f0 (ld-linux-x86-64.so.2:strlen) redirected to 0x580bd382 (???)
---75701-- REDIR: 0x4022fa0 (ld-linux-x86-64.so.2:index) redirected to 0x580bd39c (???)
---75701-- Reading syms from /usr/lib/valgrind/vgpreload_core-amd64-linux.so
-==75701== Downloading debug info for /usr/lib/valgrind/vgpreload_core-amd64-linux.so...
-==75701== Server query failed: No such file or directory
---75701--    object doesn't have a symbol table
---75701-- Reading syms from /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so
-==75701== Downloading debug info for /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so...
-==75701== Server query failed: No such file or directory
---75701--    object doesn't have a symbol table
-==75701== WARNING: new redirection conflicts with existing -- ignoring it
---75701--     old: 0x040247f0 (strlen              ) R-> (0000.0) 0x580bd382 ???
---75701--     new: 0x040247f0 (strlen              ) R-> (2007.0) 0x04847e20 strlen
---75701-- REDIR: 0x40231d0 (ld-linux-x86-64.so.2:strcmp) redirected to 0x4848d40 (strcmp)
---75701-- REDIR: 0x40223f0 (ld-linux-x86-64.so.2:mempcpy) redirected to 0x484c810 (mempcpy)
---75701-- Reading syms from /usr/lib/libstdc++.so.6.0.30
---75701-- Reading syms from /usr/lib/libm.so.6
-==75701== Downloading debug info for /usr/lib/libm.so.6...
---75701--   Considering /home/tom/.cache/debuginfod_client/0b8d43ea2dae21a1c5e44c3f0a9dc2fb292d27c0/debuginfo ..
---75701--   .. CRC is valid
-==75701== Successfully downloaded debug file for /usr/lib/libm.so.6
---75701-- Reading syms from /usr/lib/libgcc_s.so.1
---75701-- Reading syms from /usr/lib/libc.so.6
-==75701== Downloading debug info for /usr/lib/libc.so.6...
---75701--   Considering /home/tom/.cache/debuginfod_client/9c28cfc869012ebbd43cdb0f1eebcd14e1b8bdd8/debuginfo ..
---75701--   .. CRC is valid
-==75701== Successfully downloaded debug file for /usr/lib/libc.so.6
-==75701== WARNING: new redirection conflicts with existing -- ignoring it
---75701--     old: 0x04c43100 (memalign            ) R-> (1011.0) 0x04847070 memalign
---75701--     new: 0x04c43100 (memalign            ) R-> (1017.0) 0x04847040 aligned_alloc
-==75701== WARNING: new redirection conflicts with existing -- ignoring it
---75701--     old: 0x04c43100 (memalign            ) R-> (1011.0) 0x04847070 memalign
---75701--     new: 0x04c43100 (memalign            ) R-> (1017.0) 0x04847010 aligned_alloc
---75701-- REDIR: 0x4c48f60 (libc.so.6:strncasecmp) redirected to 0x48361c0 (_vgnU_ifunc_wrapper)
---75701-- REDIR: 0x4c47330 (libc.so.6:strchrnul) redirected to 0x48361c0 (_vgnU_ifunc_wrapper)
---75701-- REDIR: 0x4c46480 (libc.so.6:memrchr) redirected to 0x48361c0 (_vgnU_ifunc_wrapper)
---75701-- REDIR: 0x4c45b00 (libc.so.6:memcpy@@GLIBC_2.14) redirected to 0x48361c0 (_vgnU_ifunc_wrapper)
---75701-- REDIR: 0x4c5ad50 (libc.so.6:wcslen) redirected to 0x48361c0 (_vgnU_ifunc_wrapper)
---75701-- REDIR: 0x4c5c4e0 (libc.so.6:wcsnlen) redirected to 0x48361c0 (_vgnU_ifunc_wrapper)
---75701-- REDIR: 0x4c49240 (libc.so.6:strnlen) redirected to 0x48361c0 (_vgnU_ifunc_wrapper)
---75701-- REDIR: 0x4c492c0 (libc.so.6:strpbrk) redirected to 0x48361c0 (_vgnU_ifunc_wrapper)
---75701-- REDIR: 0x4c473b0 (libc.so.6:strcmp) redirected to 0x48361c0 (_vgnU_ifunc_wrapper)
---75701-- REDIR: 0x4c46500 (libc.so.6:memset) redirected to 0x48361c0 (_vgnU_ifunc_wrapper)
---75701-- REDIR: 0x4c5ab80 (libc.so.6:wcschr) redirected to 0x48361c0 (_vgnU_ifunc_wrapper)
---75701-- REDIR: 0x4c472b0 (libc.so.6:index) redirected to 0x48361c0 (_vgnU_ifunc_wrapper)
---75701-- REDIR: 0x4c492f0 (libc.so.6:rindex) redirected to 0x48361c0 (_vgnU_ifunc_wrapper)
---75701-- REDIR: 0x4c5ac00 (libc.so.6:wcscmp) redirected to 0x48361c0 (_vgnU_ifunc_wrapper)
---75701-- REDIR: 0x4c46750 (libc.so.6:stpncpy) redirected to 0x48361c0 (_vgnU_ifunc_wrapper)
---75701-- REDIR: 0x4c5b190 (libc.so.6:wmemchr) redirected to 0x48361c0 (_vgnU_ifunc_wrapper)
---75701-- REDIR: 0x4c490f0 (libc.so.6:strncmp) redirected to 0x48361c0 (_vgnU_ifunc_wrapper)
---75701-- REDIR: 0x4c467c0 (libc.so.6:strcasecmp) redirected to 0x48361c0 (_vgnU_ifunc_wrapper)
---75701-- REDIR: 0x4c48630 (libc.so.6:strcspn) redirected to 0x48361c0 (_vgnU_ifunc_wrapper)
---75701-- REDIR: 0x4c5ac80 (libc.so.6:wcscpy) redirected to 0x48361c0 (_vgnU_ifunc_wrapper)
---75701-- REDIR: 0x4c47230 (libc.so.6:strcat) redirected to 0x48361c0 (_vgnU_ifunc_wrapper)
---75701-- REDIR: 0x4c48ff0 (libc.so.6:strncasecmp_l) redirected to 0x48361c0 (_vgnU_ifunc_wrapper)
---75701-- REDIR: 0x4c45a00 (libc.so.6:bcmp) redirected to 0x48361c0 (_vgnU_ifunc_wrapper)
---75701-- REDIR: 0x4c485b0 (libc.so.6:strcpy) redirected to 0x48361c0 (_vgnU_ifunc_wrapper)
---75701-- REDIR: 0x4c46850 (libc.so.6:strcasecmp_l) redirected to 0x48361c0 (_vgnU_ifunc_wrapper)
---75701-- REDIR: 0x4c48ee0 (libc.so.6:strlen) redirected to 0x48361c0 (_vgnU_ifunc_wrapper)
---75701-- REDIR: 0x4c49180 (libc.so.6:strncpy) redirected to 0x48361c0 (_vgnU_ifunc_wrapper)
---75701-- REDIR: 0x4c466d0 (libc.so.6:stpcpy) redirected to 0x48361c0 (_vgnU_ifunc_wrapper)
---75701-- REDIR: 0x4c46240 (libc.so.6:memmove) redirected to 0x48361c0 (_vgnU_ifunc_wrapper)
-==75701== Preferring higher priority redirection:
---75701--     old: 0x04cff740 (__memcpy_avx_unalign) R-> (2018.0) 0x0484a040 __memcpy_avx_unaligned_erms
---75701--     new: 0x04cff740 (__memcpy_avx_unalign) R-> (2018.1) 0x0484b910 memmove
---75701-- REDIR: 0x4c45970 (libc.so.6:memchr) redirected to 0x48361c0 (_vgnU_ifunc_wrapper)
---75701-- REDIR: 0x4c494a0 (libc.so.6:strspn) redirected to 0x48361c0 (_vgnU_ifunc_wrapper)
---75701-- REDIR: 0x4c46360 (libc.so.6:mempcpy) redirected to 0x48361c0 (_vgnU_ifunc_wrapper)
---75701-- REDIR: 0x4c46600 (libc.so.6:rawmemchr) redirected to 0x48361c0 (_vgnU_ifunc_wrapper)
---75701-- REDIR: 0x4c49c50 (libc.so.6:strstr) redirected to 0x48361c0 (_vgnU_ifunc_wrapper)
---75701-- REDIR: 0x4d05830 (libc.so.6:__strrchr_avx2) redirected to 0x4847800 (rindex)
---75701-- REDIR: 0x4c42420 (libc.so.6:malloc) redirected to 0x4841810 (malloc)
---75701-- REDIR: 0x4d02ee0 (libc.so.6:__strlen_avx2) redirected to 0x4847d00 (strlen)
---75701-- REDIR: 0x4cfefe0 (libc.so.6:__memcmp_avx2_movbe) redirected to 0x484b0c0 (bcmp)
---75701-- REDIR: 0x4d025f0 (libc.so.6:__strcmp_avx2) redirected to 0x4848c40 (strcmp)
---75701-- REDIR: 0x4913460 (libstdc++.so.6:operator new(unsigned long)) redirected to 0x4841f90 (operator new(unsigned long))
---75701-- REDIR: 0x4cff740 (libc.so.6:__memcpy_avx_unaligned_erms) redirected to 0x484b910 (memmove)
---75701-- REDIR: 0x4d021c0 (libc.so.6:__strchr_avx2) redirected to 0x48479e0 (index)
---75701-- REDIR: 0x49134c0 (libstdc++.so.6:operator new[](unsigned long)) redirected to 0x4843270 (operator new[](unsigned long))
---75701-- REDIR: 0x4911700 (libstdc++.so.6:operator delete[](void*)) redirected to 0x4845a10 (operator delete[](void*))
---75701-- REDIR: 0x4c429c0 (libc.so.6:free) redirected to 0x4844200 (free)
---75701-- REDIR: 0x4cfed40 (libc.so.6:__memchr_avx2) redirected to 0x4848dc0 (memchr)
-==75701== Conditional jump or move depends on uninitialised value(s)
-==75701==    at 0x10AD70: move_topLeft(Player::piece (*) [8], int, int, int) (in /home/tom/Development/PeLDama_Mod2/DamaDebug)
-==75701==    by 0x10B451: Player::move() (in /home/tom/Development/PeLDama_Mod2/DamaDebug)
-==75701==    by 0x10CB2B: main (in /home/tom/Development/PeLDama_Mod2/DamaDebug)
-==75701==  Uninitialised value was created by a stack allocation
-==75701==    at 0x10B12C: Player::move() (in /home/tom/Development/PeLDama_Mod2/DamaDebug)
-==75701== 
-==75701== Conditional jump or move depends on uninitialised value(s)
-==75701==    at 0x10AF73: move_topRight(Player::piece (*) [8], int, int, int) (in /home/tom/Development/PeLDama_Mod2/DamaDebug)
-==75701==    by 0x10B46E: Player::move() (in /home/tom/Development/PeLDama_Mod2/DamaDebug)
-==75701==    by 0x10CB2B: main (in /home/tom/Development/PeLDama_Mod2/DamaDebug)
-==75701==  Uninitialised value was created by a stack allocation
-==75701==    at 0x10B12C: Player::move() (in /home/tom/Development/PeLDama_Mod2/DamaDebug)
-==75701== 
---75701-- REDIR: 0x4d00140 (libc.so.6:__memset_avx2_unaligned_erms) redirected to 0x484b810 (memset)
---75701-- REDIR: 0x49116e0 (libstdc++.so.6:operator delete(void*, unsigned long)) redirected to 0x4844af0 (operator delete(void*, unsigned long))
-==75701== 
-==75701== HEAP SUMMARY:
-==75701==     in use at exit: 0 bytes in 0 blocks
-==75701==   total heap usage: 605 allocs, 605 frees, 1,867,000 bytes allocated
-==75701== 
-==75701== All heap blocks were freed -- no leaks are possible
-==75701== 
-==75701== ERROR SUMMARY: 49 errors from 2 contexts (suppressed: 0 from 0)
-==75701== 
-==75701== 23 errors in context 1 of 2:
-==75701== Conditional jump or move depends on uninitialised value(s)
-==75701==    at 0x10AD70: move_topLeft(Player::piece (*) [8], int, int, int) (in /home/tom/Development/PeLDama_Mod2/DamaDebug)
-==75701==    by 0x10B451: Player::move() (in /home/tom/Development/PeLDama_Mod2/DamaDebug)
-==75701==    by 0x10CB2B: main (in /home/tom/Development/PeLDama_Mod2/DamaDebug)
-==75701==  Uninitialised value was created by a stack allocation
-==75701==    at 0x10B12C: Player::move() (in /home/tom/Development/PeLDama_Mod2/DamaDebug)
-==75701== 
-==75701== 
-==75701== 26 errors in context 2 of 2:
-==75701== Conditional jump or move depends on uninitialised value(s)
-==75701==    at 0x10AF73: move_topRight(Player::piece (*) [8], int, int, int) (in /home/tom/Development/PeLDama_Mod2/DamaDebug)
-==75701==    by 0x10B46E: Player::move() (in /home/tom/Development/PeLDama_Mod2/DamaDebug)
-==75701==    by 0x10CB2B: main (in /home/tom/Development/PeLDama_Mod2/DamaDebug)
-==75701==  Uninitialised value was created by a stack allocation
-==75701==    at 0x10B12C: Player::move() (in /home/tom/Development/PeLDama_Mod2/DamaDebug)
-==75701== 
-==75701== ERROR SUMMARY: 49 errors from 2 contexts (suppressed: 0 from 0)
+==81020== Memcheck, a memory error detector
+==81020== Copyright (C) 2002-2022, and GNU GPL'd, by Julian Seward et al.
+==81020== Using Valgrind-3.19.0-8d3c8034b8-20220411 and LibVEX; rerun with -h for copyright info
+==81020== Command: ./DamaDebug
+==81020== Parent PID: 71531
+==81020== 
+--81020-- 
+--81020-- Valgrind options:
+--81020--    --leak-check=full
+--81020--    --show-leak-kinds=all
+--81020--    --track-origins=yes
+--81020--    --verbose
+--81020--    --log-file=valgrind-out.txt
+--81020-- Contents of /proc/version:
+--81020--   Linux version 5.19.6-arch1-1 (linux@archlinux) (gcc (GCC) 12.2.0, GNU ld (GNU Binutils) 2.39.0) #1 SMP PREEMPT_DYNAMIC Wed, 31 Aug 2022 22:09:40 +0000
+--81020-- 
+--81020-- Arch and hwcaps: AMD64, LittleEndian, amd64-cx16-lzcnt-rdtscp-sse3-ssse3-avx-avx2-bmi-f16c-rdrand-rdseed
+--81020-- Page sizes: currently 4096, max supported 4096
+--81020-- Valgrind library directory: /usr/lib/valgrind
+--81020-- Reading syms from /home/tom/Development/PeLDama_Mod2/DamaDebug
+--81020-- Reading syms from /usr/lib/ld-linux-x86-64.so.2
+==81020== Downloading debug info for /usr/lib/ld-linux-x86-64.so.2...
+--81020--   Considering /home/tom/.cache/debuginfod_client/da64753d57bf3801827448f53d911b041568e727/debuginfo ..
+--81020--   .. CRC is valid
+==81020== Successfully downloaded debug file for /usr/lib/ld-linux-x86-64.so.2
+--81020-- Reading syms from /usr/lib/valgrind/memcheck-amd64-linux
+==81020== Downloading debug info for /usr/lib/valgrind/memcheck-amd64-linux...
+==81020== Server query failed: No such file or directory
+--81020--    object doesn't have a symbol table
+--81020--    object doesn't have a dynamic symbol table
+--81020-- Scheduler: using generic scheduler lock implementation.
+--81020-- Reading suppressions file: /usr/lib/valgrind/default.supp
+==81020== embedded gdbserver: reading from /tmp/vgdb-pipe-from-vgdb-to-81020-by-tom-on-???
+==81020== embedded gdbserver: writing to   /tmp/vgdb-pipe-to-vgdb-from-81020-by-tom-on-???
+==81020== embedded gdbserver: shared mem   /tmp/vgdb-pipe-shared-mem-vgdb-81020-by-tom-on-???
+==81020== 
+==81020== TO CONTROL THIS PROCESS USING vgdb (which you probably
+==81020== don't want to do, unless you know exactly what you're doing,
+==81020== or are doing some strange experiment):
+==81020==   /usr/lib/valgrind/../../bin/vgdb --pid=81020 ...command...
+==81020== 
+==81020== TO DEBUG THIS PROCESS USING GDB: start GDB like this
+==81020==   /path/to/gdb ./DamaDebug
+==81020== and then give GDB the following command
+==81020==   target remote | /usr/lib/valgrind/../../bin/vgdb --pid=81020
+==81020== --pid is optional if only one valgrind process is running
+==81020== 
+--81020-- REDIR: 0x40247f0 (ld-linux-x86-64.so.2:strlen) redirected to 0x580bd382 (???)
+--81020-- REDIR: 0x4022fa0 (ld-linux-x86-64.so.2:index) redirected to 0x580bd39c (???)
+--81020-- Reading syms from /usr/lib/valgrind/vgpreload_core-amd64-linux.so
+==81020== Downloading debug info for /usr/lib/valgrind/vgpreload_core-amd64-linux.so...
+==81020== Server query failed: No such file or directory
+--81020--    object doesn't have a symbol table
+--81020-- Reading syms from /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so
+==81020== Downloading debug info for /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so...
+==81020== Server query failed: No such file or directory
+--81020--    object doesn't have a symbol table
+==81020== WARNING: new redirection conflicts with existing -- ignoring it
+--81020--     old: 0x040247f0 (strlen              ) R-> (0000.0) 0x580bd382 ???
+--81020--     new: 0x040247f0 (strlen              ) R-> (2007.0) 0x04847e20 strlen
+--81020-- REDIR: 0x40231d0 (ld-linux-x86-64.so.2:strcmp) redirected to 0x4848d40 (strcmp)
+--81020-- REDIR: 0x40223f0 (ld-linux-x86-64.so.2:mempcpy) redirected to 0x484c810 (mempcpy)
+--81020-- Reading syms from /usr/lib/libstdc++.so.6.0.30
+--81020-- Reading syms from /usr/lib/libm.so.6
+==81020== Downloading debug info for /usr/lib/libm.so.6...
+--81020--   Considering /home/tom/.cache/debuginfod_client/0b8d43ea2dae21a1c5e44c3f0a9dc2fb292d27c0/debuginfo ..
+--81020--   .. CRC is valid
+==81020== Successfully downloaded debug file for /usr/lib/libm.so.6
+--81020-- Reading syms from /usr/lib/libgcc_s.so.1
+--81020-- Reading syms from /usr/lib/libc.so.6
+==81020== Downloading debug info for /usr/lib/libc.so.6...
+--81020--   Considering /home/tom/.cache/debuginfod_client/9c28cfc869012ebbd43cdb0f1eebcd14e1b8bdd8/debuginfo ..
+--81020--   .. CRC is valid
+==81020== Successfully downloaded debug file for /usr/lib/libc.so.6
+==81020== WARNING: new redirection conflicts with existing -- ignoring it
+--81020--     old: 0x04c43100 (memalign            ) R-> (1011.0) 0x04847070 memalign
+--81020--     new: 0x04c43100 (memalign            ) R-> (1017.0) 0x04847040 aligned_alloc
+==81020== WARNING: new redirection conflicts with existing -- ignoring it
+--81020--     old: 0x04c43100 (memalign            ) R-> (1011.0) 0x04847070 memalign
+--81020--     new: 0x04c43100 (memalign            ) R-> (1017.0) 0x04847010 aligned_alloc
+--81020-- REDIR: 0x4c48f60 (libc.so.6:strncasecmp) redirected to 0x48361c0 (_vgnU_ifunc_wrapper)
+--81020-- REDIR: 0x4c47330 (libc.so.6:strchrnul) redirected to 0x48361c0 (_vgnU_ifunc_wrapper)
+--81020-- REDIR: 0x4c46480 (libc.so.6:memrchr) redirected to 0x48361c0 (_vgnU_ifunc_wrapper)
+--81020-- REDIR: 0x4c45b00 (libc.so.6:memcpy@@GLIBC_2.14) redirected to 0x48361c0 (_vgnU_ifunc_wrapper)
+--81020-- REDIR: 0x4c5ad50 (libc.so.6:wcslen) redirected to 0x48361c0 (_vgnU_ifunc_wrapper)
+--81020-- REDIR: 0x4c5c4e0 (libc.so.6:wcsnlen) redirected to 0x48361c0 (_vgnU_ifunc_wrapper)
+--81020-- REDIR: 0x4c49240 (libc.so.6:strnlen) redirected to 0x48361c0 (_vgnU_ifunc_wrapper)
+--81020-- REDIR: 0x4c492c0 (libc.so.6:strpbrk) redirected to 0x48361c0 (_vgnU_ifunc_wrapper)
+--81020-- REDIR: 0x4c473b0 (libc.so.6:strcmp) redirected to 0x48361c0 (_vgnU_ifunc_wrapper)
+--81020-- REDIR: 0x4c46500 (libc.so.6:memset) redirected to 0x48361c0 (_vgnU_ifunc_wrapper)
+--81020-- REDIR: 0x4c5ab80 (libc.so.6:wcschr) redirected to 0x48361c0 (_vgnU_ifunc_wrapper)
+--81020-- REDIR: 0x4c472b0 (libc.so.6:index) redirected to 0x48361c0 (_vgnU_ifunc_wrapper)
+--81020-- REDIR: 0x4c492f0 (libc.so.6:rindex) redirected to 0x48361c0 (_vgnU_ifunc_wrapper)
+--81020-- REDIR: 0x4c5ac00 (libc.so.6:wcscmp) redirected to 0x48361c0 (_vgnU_ifunc_wrapper)
+--81020-- REDIR: 0x4c46750 (libc.so.6:stpncpy) redirected to 0x48361c0 (_vgnU_ifunc_wrapper)
+--81020-- REDIR: 0x4c5b190 (libc.so.6:wmemchr) redirected to 0x48361c0 (_vgnU_ifunc_wrapper)
+--81020-- REDIR: 0x4c490f0 (libc.so.6:strncmp) redirected to 0x48361c0 (_vgnU_ifunc_wrapper)
+--81020-- REDIR: 0x4c467c0 (libc.so.6:strcasecmp) redirected to 0x48361c0 (_vgnU_ifunc_wrapper)
+--81020-- REDIR: 0x4c48630 (libc.so.6:strcspn) redirected to 0x48361c0 (_vgnU_ifunc_wrapper)
+--81020-- REDIR: 0x4c5ac80 (libc.so.6:wcscpy) redirected to 0x48361c0 (_vgnU_ifunc_wrapper)
+--81020-- REDIR: 0x4c47230 (libc.so.6:strcat) redirected to 0x48361c0 (_vgnU_ifunc_wrapper)
+--81020-- REDIR: 0x4c48ff0 (libc.so.6:strncasecmp_l) redirected to 0x48361c0 (_vgnU_ifunc_wrapper)
+--81020-- REDIR: 0x4c45a00 (libc.so.6:bcmp) redirected to 0x48361c0 (_vgnU_ifunc_wrapper)
+--81020-- REDIR: 0x4c485b0 (libc.so.6:strcpy) redirected to 0x48361c0 (_vgnU_ifunc_wrapper)
+--81020-- REDIR: 0x4c46850 (libc.so.6:strcasecmp_l) redirected to 0x48361c0 (_vgnU_ifunc_wrapper)
+--81020-- REDIR: 0x4c48ee0 (libc.so.6:strlen) redirected to 0x48361c0 (_vgnU_ifunc_wrapper)
+--81020-- REDIR: 0x4c49180 (libc.so.6:strncpy) redirected to 0x48361c0 (_vgnU_ifunc_wrapper)
+--81020-- REDIR: 0x4c466d0 (libc.so.6:stpcpy) redirected to 0x48361c0 (_vgnU_ifunc_wrapper)
+--81020-- REDIR: 0x4c46240 (libc.so.6:memmove) redirected to 0x48361c0 (_vgnU_ifunc_wrapper)
+==81020== Preferring higher priority redirection:
+--81020--     old: 0x04cff740 (__memcpy_avx_unalign) R-> (2018.0) 0x0484a040 __memcpy_avx_unaligned_erms
+--81020--     new: 0x04cff740 (__memcpy_avx_unalign) R-> (2018.1) 0x0484b910 memmove
+--81020-- REDIR: 0x4c45970 (libc.so.6:memchr) redirected to 0x48361c0 (_vgnU_ifunc_wrapper)
+--81020-- REDIR: 0x4c494a0 (libc.so.6:strspn) redirected to 0x48361c0 (_vgnU_ifunc_wrapper)
+--81020-- REDIR: 0x4c46360 (libc.so.6:mempcpy) redirected to 0x48361c0 (_vgnU_ifunc_wrapper)
+--81020-- REDIR: 0x4c46600 (libc.so.6:rawmemchr) redirected to 0x48361c0 (_vgnU_ifunc_wrapper)
+--81020-- REDIR: 0x4c49c50 (libc.so.6:strstr) redirected to 0x48361c0 (_vgnU_ifunc_wrapper)
+--81020-- REDIR: 0x4d05830 (libc.so.6:__strrchr_avx2) redirected to 0x4847800 (rindex)
+--81020-- REDIR: 0x4c42420 (libc.so.6:malloc) redirected to 0x4841810 (malloc)
+--81020-- REDIR: 0x4d02ee0 (libc.so.6:__strlen_avx2) redirected to 0x4847d00 (strlen)
+--81020-- REDIR: 0x4cfefe0 (libc.so.6:__memcmp_avx2_movbe) redirected to 0x484b0c0 (bcmp)
+--81020-- REDIR: 0x4d025f0 (libc.so.6:__strcmp_avx2) redirected to 0x4848c40 (strcmp)
+--81020-- REDIR: 0x4913460 (libstdc++.so.6:operator new(unsigned long)) redirected to 0x4841f90 (operator new(unsigned long))
+--81020-- REDIR: 0x4cff740 (libc.so.6:__memcpy_avx_unaligned_erms) redirected to 0x484b910 (memmove)
+--81020-- REDIR: 0x4d021c0 (libc.so.6:__strchr_avx2) redirected to 0x48479e0 (index)
+--81020-- REDIR: 0x49134c0 (libstdc++.so.6:operator new[](unsigned long)) redirected to 0x4843270 (operator new[](unsigned long))
+--81020-- REDIR: 0x4911700 (libstdc++.so.6:operator delete[](void*)) redirected to 0x4845a10 (operator delete[](void*))
+--81020-- REDIR: 0x4c429c0 (libc.so.6:free) redirected to 0x4844200 (free)
+--81020-- REDIR: 0x4cfed40 (libc.so.6:__memchr_avx2) redirected to 0x4848dc0 (memchr)
+==81020== Conditional jump or move depends on uninitialised value(s)
+==81020==    at 0x10C409: move_topLeft(Player::piece (*) [8], int, int, int) (player.cpp:471)
+==81020==    by 0x10CDAA: Player::move() (player.cpp:621)
+==81020==    by 0x10ED94: main (main.cpp:19)
+==81020==  Uninitialised value was created by a stack allocation
+==81020==    at 0x10CBEA: Player::move() (player.cpp:602)
+==81020== 
+==81020== Conditional jump or move depends on uninitialised value(s)
+==81020==    at 0x10C8A4: move_topRight(Player::piece (*) [8], int, int, int) (player.cpp:535)
+==81020==    by 0x10CF0C: Player::move() (player.cpp:649)
+==81020==    by 0x10ED94: main (main.cpp:19)
+==81020==  Uninitialised value was created by a stack allocation
+==81020==    at 0x10CBEA: Player::move() (player.cpp:602)
+==81020== 
+--81020-- REDIR: 0x4d00140 (libc.so.6:__memset_avx2_unaligned_erms) redirected to 0x484b810 (memset)
+--81020-- REDIR: 0x49116e0 (libstdc++.so.6:operator delete(void*, unsigned long)) redirected to 0x4844af0 (operator delete(void*, unsigned long))
+==81020== 
+==81020== HEAP SUMMARY:
+==81020==     in use at exit: 0 bytes in 0 blocks
+==81020==   total heap usage: 605 allocs, 605 frees, 1,867,000 bytes allocated
+==81020== 
+==81020== All heap blocks were freed -- no leaks are possible
+==81020== 
+==81020== ERROR SUMMARY: 21 errors from 2 contexts (suppressed: 0 from 0)
+==81020== 
+==81020== 10 errors in context 1 of 2:
+==81020== Conditional jump or move depends on uninitialised value(s)
+==81020==    at 0x10C409: move_topLeft(Player::piece (*) [8], int, int, int) (player.cpp:471)
+==81020==    by 0x10CDAA: Player::move() (player.cpp:621)
+==81020==    by 0x10ED94: main (main.cpp:19)
+==81020==  Uninitialised value was created by a stack allocation
+==81020==    at 0x10CBEA: Player::move() (player.cpp:602)
+==81020== 
+==81020== 
+==81020== 11 errors in context 2 of 2:
+==81020== Conditional jump or move depends on uninitialised value(s)
+==81020==    at 0x10C8A4: move_topRight(Player::piece (*) [8], int, int, int) (player.cpp:535)
+==81020==    by 0x10CF0C: Player::move() (player.cpp:649)
+==81020==    by 0x10ED94: main (main.cpp:19)
+==81020==  Uninitialised value was created by a stack allocation
+==81020==    at 0x10CBEA: Player::move() (player.cpp:602)
+==81020== 
+==81020== ERROR SUMMARY: 21 errors from 2 contexts (suppressed: 0 from 0)

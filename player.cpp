@@ -597,6 +597,7 @@ bool noMoves(Player::piece board[8][8], int player_nr)
 
 //PLAYER 1 X
 //PLAYER 2 O
+//Gli errori rimasti di valgrind sono qua, controllare variabili non assegnate
 void Player::move()
 {
     if(!this->pimpl->boardOffset)
@@ -612,7 +613,7 @@ void Player::move()
     //Simil minimax ma senza depth
     double bestEval = this->pimpl->player_nr == 1 ? -400000 : POS_INF;
     std::pair<int, int> coords(-2, -2); //Valore scelto appositamente per non far funzionare le move in caso.
-    char direction = ' ';
+    char direction = 'W';
     for(int row = 0; row < 8; ++row)
     {
         for(int col = 0; col < 8; ++col)
