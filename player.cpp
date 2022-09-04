@@ -543,7 +543,7 @@ bool move_topRight(Player::piece board[8][8], int player_nr, int row, int col)
                 }
             }
         }
-        else if(player_nr == 1) //Might be bug fixed with this line ... YUP
+        else if(player_nr == 1) //Found the bug
         {
             if(board[row][col] == Player::piece::X)
             {
@@ -607,27 +607,11 @@ void Player::move()
         for(int j = 0; j < 8; ++j)
             temporaryBoard[i][j] = this->pimpl->boardOffset->board[i][j];
 
-    /*
-    if(noMoves(otherTemp, this->pimpl->player_nr)) //Appende in testa una board uguale
-    {
-        History* t = new History;
-        for(int i = 0; i < 8; ++i)
-            for(int j = 0; j < 8; ++j)
-                t->board[i][j] = temporaryBoard[i][j];
 
-        t->prev = this->pimpl->boardOffset;
-        this->pimpl->boardOffset = t;
-        return;
-    }
-*/
     //Prova le 4 direzioni per ogni pezzo
     //Simil minimax ma senza depth
-    double bestEval; //Bug was there, bestEval non veniva sovrascitto
-    if(this->pimpl->player_nr == 1)
-        bestEval = -400000;
-    else
-        bestEval = POS_INF;
-    std::pair<int, int> coords;
+    double bestEval = this->pimpl->player_nr == 1 ? -400000 : POS_INF;
+    std::pair<int, int> coords(-2, -2); //Valore scelto appositamente per non far funzionare le move in caso.
     char direction = ' ';
     for(int row = 0; row < 8; ++row)
     {
@@ -765,7 +749,9 @@ void Player::move()
         default:
             break;
     }
+
     //Salva nella history
+    //Anche se non ha fatto mosse
     History* t = new History;
     t->prev = this->pimpl->boardOffset;
     this->pimpl->boardOffset = t;
@@ -848,7 +834,7 @@ bool Player::valid_move() const
             //Resetto la tempBoard allo stato precedente per sicurezza
             for(int r = 0; r < 8; ++r)
                 for(int c = 0; c < 8; ++c)
-                    tempBoard[r][c] = this->pimpl->boardOffset->prev->board[r][c]
+                    tempBoard[r][c] = this->pimpl->boardOffset->prev->board[r][c];
         }
 
         if(!foundMove && move_topRight(tempBoard, this->pimpl->player_nr, changes[i].first, changes[i].second))
