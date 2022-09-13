@@ -308,7 +308,6 @@ double evaluateBoard(Player::piece board[8][8])
                     break;
                 default:
                     break;
-
             }
 
     return eval;
@@ -351,7 +350,8 @@ bool move_downLeft(Player::piece board[8][8], int player_nr, int row, int col)
                 }
             }
         }
-        else if(player_nr == 2)
+        
+        if(player_nr == 2)
         {
             if(board[row][col] == Player::piece::O)
             {
@@ -415,7 +415,8 @@ bool move_downRight(Player::piece board[8][8], int player_nr, int row, int col)
                 }
             }
         }
-        else if(player_nr == 2)
+        
+        if(player_nr == 2)
         {
             if(board[row][col] == Player::piece::O)
             {
@@ -468,7 +469,7 @@ bool move_topLeft(Player::piece board[8][8], int player_nr, int row, int col)
                     done = true;
                 }
             }
-            else if(board[row + 1][col - 1] == Player::piece::X)
+            else if(board[row - 1][col + 1] == Player::piece::X) 
             {
                 if(row - 2 >= 0 && col - 2 >= 0 && board[row][col] == Player::piece::O && board[row - 2][col - 2] == Player::piece::e)
                 {
@@ -479,7 +480,8 @@ bool move_topLeft(Player::piece board[8][8], int player_nr, int row, int col)
                 }
             }
         }
-        else if(player_nr == 1)
+        
+        if(player_nr == 1)
         {
             if(board[row][col] == Player::piece::X)
             {
@@ -532,7 +534,7 @@ bool move_topRight(Player::piece board[8][8], int player_nr, int row, int col)
                     done = true;
                 }
             }
-            else if(board[row + 1][col - 1] == Player::piece::X)
+            else if(board[row - 1][col + 1] == Player::piece::X) 
             {
                 if(row - 2 >= 0 && col + 2 < 8 && board[row][col] == Player::piece::O && board[row - 2][col + 2] == Player::piece::e)
                 {
@@ -543,7 +545,8 @@ bool move_topRight(Player::piece board[8][8], int player_nr, int row, int col)
                 }
             }
         }
-        else if(player_nr == 1) //Found the bug
+        
+        if(player_nr == 1) 
         {
             if(board[row][col] == Player::piece::X)
             {
@@ -597,22 +600,27 @@ bool noMoves(Player::piece board[8][8], int player_nr)
 
 //PLAYER 1 X
 //PLAYER 2 O
-//Gli errori rimasti di valgrind sono qua, controllare variabili non assegnate
 void Player::move()
 {
     if(!this->pimpl->boardOffset)
         throw player_exception{player_exception::invalid_board, "Board history does not exist."};
 
     Player::piece temporaryBoard[8][8];
+
     for(int i = 0; i < 8; ++i)
         for(int j = 0; j < 8; ++j)
             temporaryBoard[i][j] = this->pimpl->boardOffset->board[i][j];
 
 
     //Prova le 4 direzioni per ogni pezzo
-    //Simil minimax ma senza depth
-    double bestEval = this->pimpl->player_nr == 1 ? -400000 : POS_INF;
-    std::pair<int, int> coords(-2, -2); //Valore scelto appositamente per non far funzionare le move in caso.
+    //Minimax ma senza depth
+    double bestEval;
+    if(this->pimpl->player_nr == 1)
+        bestEval = -400000;
+    else
+        bestEval = POS_INF;
+        
+    std::pair<int, int> coords(-2, -2);
     char direction = 'W';
     for(int row = 0; row < 8; ++row)
     {
@@ -631,7 +639,7 @@ void Player::move()
                         direction = 'Q';
                     }
                 }
-                else
+                else if(this->pimpl->player_nr == 2)
                 {
                     if(currentEval < bestEval)
                     {
@@ -659,7 +667,7 @@ void Player::move()
                         direction = 'E';
                     }
                 }
-                else
+                else if(this->pimpl->player_nr == 2)
                 {
                     if(currentEval < bestEval)
                     {
@@ -687,7 +695,7 @@ void Player::move()
                         direction = 'A';
                     }
                 }
-                else
+                else if(this->pimpl->player_nr == 2)
                 {
                     if(currentEval < bestEval)
                     {
@@ -715,7 +723,7 @@ void Player::move()
                         direction = 'D';
                     }
                 }
-                else
+                else if(this->pimpl->player_nr == 2)
                 {
                     if(currentEval < bestEval)
                     {
@@ -765,16 +773,30 @@ void Player::move()
 
 bool Player::valid_move() const
 {
-    bool flag = true;
-
     if(!this->pimpl->boardOffset || !this->pimpl->boardOffset->prev)
         throw player_exception{player_exception::index_out_of_bounds, "Less than two boards in history."};
 
     //Controllo se la board è uguale a quella precedente
+    int r = 0, c = 0;
+    bool equalBoards = true;
+    bool flag = true;
+    while(r < 8 && equalBoards)
+    {
+        while(c < 8 && equalBoards)
+        {
+            equalBoards = equalBoards &&
+                        (this->pimpl->boardOffset->board[r][c] == this->pimpl->boardOffset->prev->board[r][c]);
+            ++c;
+        }
+        c = 0;
+        ++r;
+    }
+    flag = !equalBoards;
+
     for(int i = 0; i < 8; ++i)
         for(int j = 0; j < 8; ++j)
             flag = flag &&
-                (this->pimpl->boardOffset->board[i][j] == this->pimpl->boardOffset->prev->board[i][j]);
+                (this->pimpl->boardOffset->board[i][j] != this->pimpl->boardOffset->prev->board[i][j]);
 
     //Guardo eventuali celle bianche con pezzi
     for(int i = 0; i < 8; ++i)
@@ -848,7 +870,7 @@ bool Player::valid_move() const
 
             if(eq)
                 foundMove = true;
-            
+
             //Resetto la tempBoard allo stato precedente per sicurezza
             for(int r = 0; r < 8; ++r)
                 for(int c = 0; c < 8; ++c)
@@ -880,7 +902,7 @@ bool Player::valid_move() const
 
             if(eq)
                 foundMove = true;
-            
+
             for(int r = 0; r < 8; ++r)
                 for(int c = 0; c < 8; ++c)
                     tempBoard[r][c] = this->pimpl->boardOffset->prev->board[r][c];           
@@ -888,7 +910,7 @@ bool Player::valid_move() const
         ++i;
     }
 
-    return foundMove;
+    return flag && foundMove;        
 }
 
 void Player::pop()
@@ -1024,9 +1046,6 @@ int Player::recurrence() const
     int times = 1;
 
     History* temp = this->pimpl->boardOffset->prev;
-    if(!temp)
-        return times;
-
     while(temp)
     {
         bool equal = true;
@@ -1042,67 +1061,3 @@ int Player::recurrence() const
     return times;
 }
 
-void Player::print() const
-{
-    if(!this->pimpl->boardOffset)
-        throw player_exception{player_exception::invalid_board, "History does not exist."};
-    for(int i = 7; i >= 0; --i)
-    {
-        for(size_t j = 0; j < 8; ++j)
-        {
-            switch(this->pimpl->boardOffset->board[i][j])
-            {
-                case Player::piece::o:
-                    std::cout << "o";
-                    break;
-                case Player::piece::O:
-                    std::cout << "O";
-                    break;
-                case Player::piece::x:
-                    std::cout << "x";
-                    break;
-                case Player::piece::X:
-                    std::cout << "X";
-                    break;
-                default:
-                    std::cout << " ";
-                    break;
-            }
-        }
-        std::cout << std::endl;
-    }
-}
-
-void Player::printHistory() const
-{
-    History* temp = this->pimpl->boardOffset;
-    while(temp)
-    {
-        for(int i = 7; i >= 0; --i)
-        {
-            for(size_t j = 0; j < 8; ++j)
-            {
-                switch(temp->board[i][j])
-                {
-                    case Player::piece::o:
-                        std::cout << "o";
-                        break;
-                    case Player::piece::O:
-                        std::cout << "O";
-                        break;
-                    case Player::piece::x:
-                        std::cout << "x";
-                        break;
-                    case Player::piece::X:
-                        std::cout << "X";
-                        break;
-                    default:
-                        std::cout << " ";
-                        break;
-                }
-            }
-            std::cout << std::endl;
-        }
-        temp = temp->prev;
-    }
-}

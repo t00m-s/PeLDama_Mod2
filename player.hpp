@@ -89,12 +89,7 @@ public:
 	 * in the history
 	 */
 	int recurrence() const;
-	//Queste le ho aggiunte io per utility
-	void print() const;
-
-	void printAsInMemory() const;
-
-	void printHistory() const;
+	
 private:
 
 	struct Impl;
