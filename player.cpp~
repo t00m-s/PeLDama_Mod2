@@ -12,6 +12,13 @@ struct Player::Impl
     History* boardOffset;
     int player_nr;
 };
+//Definizione funzioni ausiliarie
+double evaluateBoard(Player::piece board[8][8]);
+bool move_downLeft(Player::piece board[8][8], int player_nr, int row, int col);
+bool move_downRight(Player::piece board[8][8], int player_nr, int row, int col);
+bool move_topLeft(Player::piece board[8][8], int player_nr, int row, int col);
+bool move_topRight(Player::piece board[8][8], int player_nr, int row, int col);
+bool noMoves(Player::piece board[8][8], int player_nr);
 
 Player::Player(int player_nr)
 {
@@ -48,17 +55,17 @@ Player::Player(const Player& rhs)
         this->pimpl->boardOffset = new History;
 
         History* temp = rhs.pimpl->boardOffset;
-        History* t  = this->pimpl->boardOffset;
+        History* playerHistory  = this->pimpl->boardOffset;
         while(temp)
         {
             for(int i = 0; i < 8; ++i)
                 for(int j = 0; j < 8; ++j)
-                    t->board[i][j] = temp->board[i][j];
+                   playerHistory->board[i][j] = temp->board[i][j];
 
             if(temp->prev)
             {
-                t->prev = new History;
-                t = t ->prev;
+                playerHistory->prev = new History;
+                playerHistory = playerHistory->prev;
             }
             temp = temp->prev;
         }
@@ -110,13 +117,12 @@ Player::piece Player::operator()(int r, int c, int history_offset) const
         throw player_exception{player_exception::index_out_of_bounds, "Negative offsets are not valid."};
 
     History* temp = this->pimpl->boardOffset;
-    while(history_offset > 0 && temp)
+    while(history_offset-- > 0 && temp)
     {
-        --history_offset;
         temp = temp->prev;
     }
 
-    if(history_offset || !temp)
+    if(history_offset < 0 || !temp)
         throw player_exception{player_exception::index_out_of_bounds, "Board with the given offset does not exist."};
 
     return temp->board[r][c];
@@ -124,163 +130,14 @@ Player::piece Player::operator()(int r, int c, int history_offset) const
 
 void Player::load_board(const std::string &filename)
 {
-    std::fstream loader;
-    loader.open(filename);
-    if(!loader)
-        throw player_exception{player_exception::missing_file, "Wrong file format."};
-
-    size_t oPieces = 0;
-    size_t xPieces = 0;
-    auto* newHead = new History;
-    newHead->prev = this->pimpl->boardOffset; //Attacco in testa
-    this->pimpl->boardOffset = newHead;
-    for(int i = 7; i >= 0; --i)
-    {
-        std::string temp;
-        std::getline(loader, temp);
-        for(size_t j = 0; j < 8; ++j)
-        {
-            if(i % 2 == 0 && j % 2 == 0 && temp[j] != ' ')
-                throw player_exception{player_exception::invalid_board, "Pieces on white cells are not allowed."};
-
-            if(i % 2 != 0 && j % 2 != 0 && temp[j] != ' ')
-                throw player_exception{player_exception::invalid_board, "Pieces on white cells are not allowed."};
-
-            if(oPieces > 12 || xPieces > 12)
-                throw player_exception{player_exception::invalid_board, "Too many pieces."};
-
-            switch(temp[j])
-            {
-                case 'x':
-                    newHead->board[i][j] = Player::piece::x;
-                    ++xPieces;
-                    break;
-                case 'X':
-                    newHead->board[i][j] = Player::piece::X;
-                    ++xPieces;
-                    break;
-                case 'o':
-                    newHead->board[i][j] = Player::piece::o;
-                    ++oPieces;
-                    break;
-                case 'O':
-                    newHead->board[i][j] = Player::piece::O;
-                    ++oPieces;
-                    break;
-                default:
-                    newHead->board[i][j] = Player::piece::e;
-                    break;
-            }
-        }
-    }
-    loader.close();
 }
 
 void Player::init_board(const std::string &filename) const
 {
-    std::ofstream writeBoard;
-    writeBoard.open(filename, std::ios::trunc);
-
-    //Salva su file
-    for(int i = 7; i >= 0; --i)
-    {
-        std::string row;
-        for(size_t j = 0; j < 8; ++j)
-        {
-            Player::piece actual;
-
-            if(i >= 0 && i < 3)
-            {
-                if(i % 2)
-                    actual = j % 2 ? Player::piece::e : Player::piece::x;
-                else
-                    actual = j % 2 ? Player::piece::x : Player::piece::e;
-            }
-            else if(i >= 3 && i < 5)
-                actual = Player::piece::e;
-            else
-            {
-                if(i % 2)
-                    actual = j % 2 ? Player::piece::e : Player::piece::o;
-                else
-                    actual = j % 2 ? Player::piece::o : Player::piece::e;
-            }
-
-            switch(actual)
-            {
-                case Player::piece::x:
-                    row.append("x");
-                    break;
-                case Player::piece::X:
-                    row.append("X");
-                    break;
-                case Player::piece::o:
-                    row.append("o");
-                    break;
-                case Player::piece::O:
-                    row.append("O");
-                    break;
-                default:
-                    row.append(" ");
-                    break;
-            }
-        }
-        if(i != 0)
-            row.append("\n");
-
-        writeBoard << row;
-    }
-    writeBoard.close(); // Il distruttore si arrangia da solo teoricamente
-
 }
 
-void Player::store_board(const std::string& filename, int history_offset) const
+void Player::store_board(const std::string &filename, int history_offset) const
 {
-    int cnt = 0;
-    std::ofstream writer(filename, std::ios::trunc);
-    if(writer)
-    {
-        History* temp = this->pimpl->boardOffset;
-        while(temp && cnt < history_offset)
-        {
-            ++cnt;
-            temp = temp->prev;
-        }
-
-        if(!temp || cnt != history_offset)
-            throw player_exception{player_exception::index_out_of_bounds, "Board with chosen offset does not exist."};
-
-        for(int i = 7; i >= 0; --i)
-        {
-            std::string row = "";
-            for(size_t j = 0; j < 8; ++j)
-            {
-                switch(temp->board[i][j])
-                {
-                    case Player::piece::x:
-                        row.append("x");
-                        break;
-                    case Player::piece::X:
-                        row.append("X");
-                        break;
-                    case Player::piece::o:
-                        row.append("o");
-                        break;
-                    case Player::piece::O:
-                        row.append("O");
-                        break;
-                    default:
-                        row.append(" ");
-                        break;
-                }
-            }
-            if(i != 0)
-                row.append("\n");
-
-            writer << row;
-        }
-    }
-    writer.close();
 }
 
 double evaluateBoard(Player::piece board[8][8])

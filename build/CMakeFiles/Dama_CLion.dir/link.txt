@@ -1,1 +1,0 @@
-/usr/bin/c++ -O2 -g -DNDEBUG CMakeFiles/Dama_CLion.dir/main.cpp.o CMakeFiles/Dama_CLion.dir/player.cpp.o -o Dama_CLion 
