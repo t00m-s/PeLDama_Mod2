@@ -1,6 +1,4 @@
 #include "player.hpp"
-#include <fstream>
-#include <string>
 #define POS_INF  ((unsigned) ~0)
 
 struct History
@@ -132,29 +130,128 @@ Player::piece Player::operator()(int r, int c, int history_offset) const
 
 void Player::load_board(const std::string &filename)
 {
+
+     std::ifstream reader(filename);
+     std::string line;
+     if(!reader)
+	  throw player_exception{player_exception::missing_file, "The file does not exist."};
+     
+     //Se non esiste la history
+     if(!this->pimpl->boardOffset)
+	 this->pimpl->boardOffset = new History;
+     else
+     {
+	 History* nextBoard = new History;
+	 nextBoard->prev = this->pimpl->boardOffset;
+	 this->pimpl->boardOffset = nextBoard;
+     }
+     
+     //Praticamente in ogni file va tipo:
+     //(CELLA SPAZIO)
+     //Ecco perchè non andava quando consegnato
+     for(size_t i = 0; i < 8; ++i)
+     {
+	 if(getline(reader, line))
+	 {
+	     size_t col = 0;
+	     Player::piece curr;
+	     for(size_t j = 0; j < line.size(); j += 2)
+	     {
+		 switch (line[j])
+		 {
+		     case 'x':
+			 curr = Player::piece::x;
+			 break;
+		     case 'X':
+			 curr = Player::piece::X;
+			 break;
+		     case 'o':
+		         curr = Player::piece::o;
+		         break;
+		     case 'O':
+		         curr = Player::piece::O;
+		         break;
+		     default:
+			curr = Player::piece::e;
+			break;
+			 
+		 }
+		 this->pimpl->boardOffset->board[i][col++] = curr;
+	     }
+	 }
+     }
+/*
+     for(int i = 0; i < 8; ++i)
+     {
+	 for(int j = 0; j < 8; ++j)
+	 {
+	     switch (this->pimpl->boardOffset->board[i][j])
+		 {
+		     case Player::piece::x:
+			 std::cout << "x";
+			 break;
+		 case Player::piece::X:
+		     std::cout << "X";
+			 break;
+		 case Player::piece::o:
+		 std::cout << "o";
+		         break;
+		 case Player::piece::O:
+		     std::cout << "O";
+		         break;
+		    default:
+			std::cout << " ";
+			break;
+			 
+		 }
+	 }
+	 if(i != 7)
+	     std::cout << std::endl;
+     }
+*/
+     
 }
 
 void Player::init_board(const std::string &filename) const
 {
-     std::ofstream initBoard(filename);
-     std::string row1 = "o o o o \n";
-     std::string row2 = " o o o o\n";
-     std::string empty = "        \n";
-     std::string row3 = " x x x x \n";
-     std::string row4 = "x x x x \n";
-     std::string lastRow =" x x x x";
-     initBoard << row1;
-     initBoard << row2;
-     initBoard << row1;
-     initBoard << empty;
-     initBoard << empty;
-     initBoard << row3;
-     initBoard << row4;
-     initBoard << lastRow;
+     std::ofstream writer(filename);
+     std::string row1 = "o   o   o   o  \n";
+     std::string row2 = "  o   o   o   o\n";
+     std::string emptyRow ="               \n";
+     std::string row3 = "  x   x   x   x\n";
+     std::string row4 = "x   x   x   x  \n";
+     std::string row5 = "  x   x   x   x";
+     writer << row1;
+     writer << row2;
+     writer << row1;
+     writer << emptyRow;
+     writer << emptyRow;
+     writer << row3;
+     writer << row4;
+     writer << row5;
+     
 }
 
 void Player::store_board(const std::string &filename, int history_offset) const
 {
+    std::ofstream writer(filename, std::ios::trunc);
+    History* index = this->pimpl->boardOffset;
+    while(index && history_offset != 0)
+    {
+	--history_offset;
+	index = index->prev;
+    }
+
+    if(!index || history_offset < 0)
+	throw player_exception{player_exception::err_type::index_out_of_bounds, "The given offset does not exist in memory."};
+    
+    for(int i = 7; i >= 0; --i)
+    {
+	for(int j = 0; j < 8; ++j)
+	{
+	    
+	}
+    }
 }
 
 double evaluateBoard(Player::piece board[8][8])
