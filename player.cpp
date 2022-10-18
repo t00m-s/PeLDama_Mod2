@@ -149,7 +149,8 @@ void Player::load_board(const std::string &filename)
      //Praticamente in ogni file va tipo:
      //(CELLA SPAZIO)
      //Ecco perchè non andava quando consegnato
-     for(size_t i = 0; i < 8; ++i)
+     size_t p1Pieces = 0, p2Pieces = 0;
+     for(int i = 7; i >= 0; --i)
      {
 	 if(getline(reader, line))
 	 {
@@ -161,15 +162,19 @@ void Player::load_board(const std::string &filename)
 		 {
 		     case 'x':
 			 curr = Player::piece::x;
+			 ++p1Pieces;
 			 break;
 		     case 'X':
 			 curr = Player::piece::X;
+			 ++p2Pieces;
 			 break;
 		     case 'o':
 		         curr = Player::piece::o;
+			 ++p2Pieces;
 		         break;
 		     case 'O':
 		         curr = Player::piece::O;
+			 ++p2Pieces;
 		         break;
 		     default:
 			curr = Player::piece::e;
@@ -180,7 +185,33 @@ void Player::load_board(const std::string &filename)
 	     }
 	 }
      }
-/*
+
+     if(p1Pieces > 12)
+	 throw player_exception{player_exception::invalid_board, "Player 1 has too many pieces"};
+
+     if(p2Pieces > 12)
+	 throw player_exception{player_exception::invalid_board, "Player 2 has too many pieces"};
+
+     //Controlla pezzi non promossi
+     for(size_t i = 0; i < 8; ++i)
+	 if(this->pimpl->boardOffset->board[0][i] == Player::piece::o
+	    || this->pimpl->boardOffset->board[7][i] == Player::piece::x)
+	     throw player_exception{player_exception::invalid_board, "Pieces were not promoted."};
+
+     //Pezzi nei posti sbagliati
+     //se i pari -> controllo j pari
+     //se i dispari -> controllo j dispari 
+     for(int i = 0; i < 8; ++i)
+	 for(int j = 0; j < 8; ++j)
+	 {
+	     if(i % 2 == 0 && j % 2 == 0 && this->pimpl->boardOffset->board[i][j] != Player::piece::e)
+		 throw player_exception{player_exception::invalid_board, "Invalid board"};
+	     if(i % 2 != 0 && j % 2 != 0 && this->pimpl->boardOffset->board[i][j] != Player::piece::e)
+		 throw player_exception{player_exception::invalid_board, "Invalid board"};
+	 }
+	
+     /*
+  Test stampa
      for(int i = 0; i < 8; ++i)
      {
 	 for(int j = 0; j < 8; ++j)
@@ -214,7 +245,7 @@ void Player::load_board(const std::string &filename)
 
 void Player::init_board(const std::string &filename) const
 {
-     std::ofstream writer(filename);
+    std::ofstream writer(filename, std::ios::trunc);
      std::string row1 = "o   o   o   o  \n";
      std::string row2 = "  o   o   o   o\n";
      std::string emptyRow ="               \n";
@@ -236,20 +267,84 @@ void Player::store_board(const std::string &filename, int history_offset) const
 {
     std::ofstream writer(filename, std::ios::trunc);
     History* index = this->pimpl->boardOffset;
-    while(index && history_offset != 0)
+    while(index && history_offset-- > 0)
     {
-	--history_offset;
 	index = index->prev;
     }
 
-    if(!index || history_offset < 0)
-	throw player_exception{player_exception::err_type::index_out_of_bounds, "The given offset does not exist in memory."};
+    if(!index)
+	throw player_exception{player_exception::index_out_of_bounds, "The given offset does not exist"};
     
     for(int i = 7; i >= 0; --i)
     {
 	for(int j = 0; j < 8; ++j)
 	{
-	    
+	    if(j != 7)
+	    {
+		switch (index->board[i][j])
+		{
+		case Player::piece::x:
+		    writer << "x ";
+		    break;
+		case Player::piece::X:
+		    writer << "X ";
+		    break;
+		case Player::piece::o:
+		    writer << "o ";
+		    break;
+		case Player::piece::O:
+		    writer << "O ";
+		    break;
+		default:
+		    writer << "  ";
+		    break;
+		}
+	    }
+	    else
+	    {
+		if(i != 0)
+		{
+		    switch (index->board[i][j])
+		    {
+		    case Player::piece::x:
+			writer << "x\n";
+			break;
+		    case Player::piece::X:
+			writer << "X\n";
+			break;
+		    case Player::piece::o:
+			writer << "o\n";
+			break;
+		    case Player::piece::O:
+			writer << "O\n";
+			break;
+		    default:
+			writer << " \n";
+			break;
+		    }
+		}
+		else //Ultima riga
+		{
+		    switch (index->board[i][j])
+		    {
+		    case Player::piece::x:
+			writer << "x";
+			break;
+		    case Player::piece::X:
+			writer << "X";
+			break;
+		    case Player::piece::o:
+			writer << "o";
+			break;
+		    case Player::piece::O:
+			writer << "O";
+			break;
+		    default:
+			writer << " ";
+			break;
+		    }
+		}
+	    }
 	}
     }
 }
