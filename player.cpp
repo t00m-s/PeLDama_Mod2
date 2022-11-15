@@ -866,22 +866,17 @@ bool Player::valid_move() const
         ++r;
     }
     legal = !equalBoards;
-
-    for(int i = 0; i < 8; ++i)
-        for(int j = 0; j < 8; ++j)
-            legal = legal &&
-                (this->pimpl->boardOffset->board[i][j] != this->pimpl->boardOffset->prev->board[i][j]);
-
+    
     //Guardo eventuali celle bianche con pezzi
     for(int i = 0; i < 8; ++i)
         for(int j = 0; j < 8; ++j)
         {
-            if(i % 2 == 0 && j % 2 && this->pimpl->boardOffset->board[i][j] != Player::piece::e)
+            if(i % 2 == 0 && j % 2 == 0 && this->pimpl->boardOffset->board[i][j] != Player::piece::e) // Righe pari
                 legal = false;
-            if(i % 2 && j % 2 == 0 && this->pimpl->boardOffset->board[i][j] != Player::piece::e)
+            if(i % 2 != 0 && j % 2 != 0 && this->pimpl->boardOffset->board[i][j] != Player::piece::e) // Righe dispari
                 legal = false;
         }
-
+    
     //Pezzi non promossi
     for(int j = 0; j < 8; ++j)
         if(this->pimpl->boardOffset->board[0][j] == Player::piece::o
@@ -889,23 +884,27 @@ bool Player::valid_move() const
             legal = false;
 
     std::pair<int, int> changes[3];
-    int aux = 0;
+    int changedPositions = 0;
     for(int i = 0; i < 8; ++i)
     {
         for(int j = 0; j < 8; ++j)
             if(this->pimpl->boardOffset->board[i][j] != this->pimpl->boardOffset->prev->board[i][j])
             {
-                if(aux < 3)
+                if(changedPositions < 3)
                 {
-                    changes[aux].first = i;
-                    changes[aux++].second = j;
+                    changes[changedPositions].first = i;
+                    changes[changedPositions++].second = j;
                 }
             }
     }
 
-    if(aux > 3)
+    if(changedPositions > 3)
         legal = false;
 
+    //Evito di controllare le mosse se ho già più di tre caselle
+    if(!legal)
+        return false;
+    
     //Al massimo ho tre possibilità x 4 direzioni (12 possibilità totali)
     //Controllo se una mossa in una delle 4 direzioni (nelle coordinate cambiate) mi crea la board uguale
     bool foundMove = false;
@@ -928,7 +927,7 @@ bool Player::valid_move() const
             if(eq)
                 foundMove = true;
 
-            //Resetto la tempBoard allo stato precedente per sicurezza
+            //reset allo stato precedente
             for(int r = 0; r < 8; ++r)
                 for(int c = 0; c < 8; ++c)
                     tempBoard[r][c] = this->pimpl->boardOffset->prev->board[r][c];
@@ -945,7 +944,7 @@ bool Player::valid_move() const
             if(eq)
                 foundMove = true;
 
-            //Resetto la tempBoard allo stato precedente per sicurezza
+            //reset allo stato precedente
             for(int r = 0; r < 8; ++r)
                 for(int c = 0; c < 8; ++c)
                     tempBoard[r][c] = this->pimpl->boardOffset->prev->board[r][c];
@@ -962,6 +961,7 @@ bool Player::valid_move() const
             if(eq)
                 foundMove = true;
 
+            //reset allo stato precedente
             for(int r = 0; r < 8; ++r)
                 for(int c = 0; c < 8; ++c)
                     tempBoard[r][c] = this->pimpl->boardOffset->prev->board[r][c];
@@ -977,6 +977,7 @@ bool Player::valid_move() const
             if(eq)
                 foundMove = true;
 
+            //reset allo stato precedente
             for(int r = 0; r < 8; ++r)
                 for(int c = 0; c < 8; ++c)
                     tempBoard[r][c] = this->pimpl->boardOffset->prev->board[r][c];
@@ -984,7 +985,7 @@ bool Player::valid_move() const
         ++i;
     }
 
-    return !legal && foundMove;
+    return foundMove;
 }
 
 void Player::pop()
@@ -992,9 +993,9 @@ void Player::pop()
     if(!this->pimpl->boardOffset)
         throw player_exception{player_exception::index_out_of_bounds, "History does not exist."};
 
-    History* temp = this->pimpl->boardOffset;
+    History* currentBoard = this->pimpl->boardOffset;
     this->pimpl->boardOffset = this->pimpl->boardOffset->prev;
-    delete temp;
+    delete currentBoard;
 }
 
 bool Player::wins(int player_nr) const
@@ -1027,7 +1028,8 @@ bool Player::wins(int player_nr) const
         if(otherPieces == 0)
             win = true;
     }
-    else    // 'o'
+    
+    if(player_nr == 2)    // 'o'
     {
         size_t otherPieces = 0;
 
@@ -1124,18 +1126,18 @@ int Player::recurrence() const
         throw player_exception{player_exception::index_out_of_bounds, "History does not exist."};
     int times = 1;
 
-    History* temp = this->pimpl->boardOffset->prev;
-    while(temp)
+    History* playerHistory = this->pimpl->boardOffset->prev;
+    while(playerHistory)
     {
         bool equal = true;
         for(size_t i = 0; i < 8; ++i)
             for(size_t j = 0; j < 8; ++j)
-                equal = equal && (this->pimpl->boardOffset->board[i][j] == temp->board[i][j]);
+                equal = equal && (this->pimpl->boardOffset->board[i][j] == playerHistory->board[i][j]);
 
         if(equal)
             ++times;
 
-        temp = temp->prev;
+        playerHistory = playerHistory->prev;
     }
     return times;
 }
