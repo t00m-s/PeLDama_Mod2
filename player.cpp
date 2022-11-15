@@ -608,7 +608,7 @@ bool move_topRight(Player::piece board[8][8], int player_nr, int row, int col)
                     done = true;
                 }
             }
-            else if(board[row - 1][col + 1] == Player::piece::X) 
+            else if(board[row - 1][col + 1] == Player::piece::X)
             {
                 if(row - 2 >= 0 && col + 2 < 8 && board[row][col] == Player::piece::O && board[row - 2][col + 2] == Player::piece::e)
                 {
@@ -620,7 +620,7 @@ bool move_topRight(Player::piece board[8][8], int player_nr, int row, int col)
             }
         }
         
-        if(player_nr == 1) 
+        if(player_nr == 1)
         {
             if(board[row][col] == Player::piece::X)
             {
@@ -693,7 +693,7 @@ void Player::move()
         bestEval = -400000;
     else
         bestEval = POS_INF;
-        
+    
     std::pair<int, int> coords(-2, -2);
     char direction = 'W';
     for(int row = 0; row < 8; ++row)
@@ -835,12 +835,12 @@ void Player::move()
 
     //Salva nella history
     //Anche se non ha fatto mosse
-    History* t = new History;
-    t->prev = this->pimpl->boardOffset;
-    this->pimpl->boardOffset = t;
+    History* nextMove = new History;
+    nextMove->prev = this->pimpl->boardOffset;
+    this->pimpl->boardOffset = nextMove;
     for(int i = 0; i < 8; ++i)
         for(int j = 0; j < 8; ++j)
-            t->board[i][j] = temporaryBoard[i][j];
+            nextMove->board[i][j] = temporaryBoard[i][j];
 
 }
 
