@@ -65,7 +65,8 @@ Player::Player(const Player& rhs)
             for(int j = 0; j < 8; ++j)
                 playerHistory->board[i][j] = rhsHistory->board[i][j];
 
-        playerHistory->prev = rhsHistory->prev ? new History : nullptr; //Flag valgrind
+        //Ex flag valgrind
+        playerHistory->prev = rhsHistory->prev ? new History : nullptr;
 
         rhsHistory = rhsHistory->prev;
         playerHistory = playerHistory->prev;
@@ -83,7 +84,8 @@ Player& Player::operator=(const Player& rhs)
         if(rhs.pimpl->boardOffset != nullptr)
         {
             this->pimpl->boardOffset = new History;
-            this->pimpl->boardOffset->prev = nullptr; // Quello che dimenticavo
+            //Ex flag valgrind perchè dimenticato
+            this->pimpl->boardOffset->prev = nullptr;
             History* rhsHistory = rhs.pimpl->boardOffset;
             History* playerHistory  = this->pimpl->boardOffset;
             while(rhsHistory)
@@ -163,7 +165,8 @@ void Player::load_board(const std::string &filename)
                 throw player_exception{player_exception::invalid_board, "Wrong line size"};
             size_t col = 0;
             Player::piece curr;
-            for(size_t j = 0; j < line.size(); j += 2)
+            //Modificato j += 2 con ++j e aggiunto if, vediamo se cambia qualcosa
+            for(size_t j = 0; j < line.size(); ++j)
             {
                 switch (line[j])
                 {
@@ -190,7 +193,8 @@ void Player::load_board(const std::string &filename)
                     throw player_exception{player_exception::invalid_board, "Not a valid piece"};
                     break;
                 }
-                this->pimpl->boardOffset->board[i][col++] = curr;
+                if(j % 2 == 0)
+                    this->pimpl->boardOffset->board[i][col++] = curr;
             }
         }
     }
@@ -218,38 +222,6 @@ void Player::load_board(const std::string &filename)
             if(i % 2 != 0 && j % 2 != 0 && this->pimpl->boardOffset->board[i][j] != Player::piece::e)
                 throw player_exception{player_exception::invalid_board, "Invalid board"};
         }
-	
-    /*
-      Test stampa
-      for(int i = 0; i < 8; ++i)
-      {
-      for(int j = 0; j < 8; ++j)
-      {
-      switch (this->pimpl->boardOffset->board[i][j])
-      {
-      case Player::piece::x:
-      std::cout << "x";
-      break;
-      case Player::piece::X:
-      std::cout << "X";
-      break;
-      case Player::piece::o:
-      std::cout << "o";
-      break;
-      case Player::piece::O:
-      std::cout << "O";
-      break;
-      default:
-      std::cout << " ";
-      break;
-			 
-      }
-      }
-      if(i != 7)
-      std::cout << std::endl;
-      }
-    */
-     
 }
 
 void Player::init_board(const std::string &filename) const
@@ -853,7 +825,7 @@ bool Player::valid_move() const
     //Controllo se la board è uguale a quella precedente
     int r = 0, c = 0;
     bool equalBoards = true;
-    bool legal = true;
+    bool legalBoard = true;
     while(r < 8 && equalBoards)
     {
         while(c < 8 && equalBoards)
@@ -865,23 +837,23 @@ bool Player::valid_move() const
         c = 0;
         ++r;
     }
-    legal = !equalBoards;
+    legalBoard = !equalBoards;
     
     //Guardo eventuali celle bianche con pezzi
     for(int i = 0; i < 8; ++i)
         for(int j = 0; j < 8; ++j)
         {
             if(i % 2 == 0 && j % 2 == 0 && this->pimpl->boardOffset->board[i][j] != Player::piece::e) // Righe pari
-                legal = false;
+                legalBoard = false;
             if(i % 2 != 0 && j % 2 != 0 && this->pimpl->boardOffset->board[i][j] != Player::piece::e) // Righe dispari
-                legal = false;
+                legalBoard = false;
         }
     
     //Pezzi non promossi
     for(int j = 0; j < 8; ++j)
         if(this->pimpl->boardOffset->board[0][j] == Player::piece::o
            || this->pimpl->boardOffset->board[7][j] == Player::piece::x)
-            legal = false;
+            legalBoard = false;
 
     std::pair<int, int> changes[3];
     int changedPositions = 0;
@@ -899,10 +871,10 @@ bool Player::valid_move() const
     }
 
     if(changedPositions > 3)
-        legal = false;
+        legalBoard = false;
 
     //Evito di controllare le mosse se ho già più di tre caselle
-    if(!legal)
+    if(!legalBoard)
         return false;
     
     //Al massimo ho tre possibilità x 4 direzioni (12 possibilità totali)

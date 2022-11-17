@@ -32,7 +32,7 @@ int main()
             else
                 std::cout << "Player2 Mossa non valida. " << std::endl;
             p2.store_board("board_" + std::to_string(i) + ".txt");
-/*
+
             if(p1.wins())
             {    std::cout << "1 HA VINTO.";
                 break;
@@ -42,8 +42,9 @@ int main()
                 std::cout << "2 HA VINTO.";
                 break;
             }
+
         }
-	*/
+	
         catch(player_exception e)
         {
             std::cerr << e.msg << std::endl;
