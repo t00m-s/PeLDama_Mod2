@@ -11,7 +11,7 @@ debug.o: player.cpp
 	g++ -c -std=c++14 -g -Wall -Wextra -o debug.o player.cpp
 
 clean:
-	rm *.o *.txt
+	rm *.o board_*
 
 cleanExecutable:
 	rm Dama
